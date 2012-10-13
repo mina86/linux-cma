@@ -1,0 +1,115 @@
+\documentclass[a4paper,onecolumn,oneside,11pt,wide,floatssmall]{mwrep}
+\usepackage[MeX]{polski}
+\usepackage[utf8]{inputenc}
+
+\usepackage{bookman}
+\usepackage[T1]{fontenc}
+
+\usepackage{hyperref}
+\usepackage{url}
+\usepackage{breakurl}
+
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{bookman}
+
+\usepackage{listings}
+\lstset{language=C}
+\renewcommand*\lstlistingname{Wydruk}
+\renewcommand*\lstlistlistingname{Spis wydruków}
+
+\usepackage{geometry}
+\textwidth\paperwidth
+\advance\textwidth -55mm
+\oddsidemargin-0.9in
+\advance\oddsidemargin 33mm
+\evensidemargin-0.9in
+\advance\evensidemargin 33mm
+\topmargin -1in
+\advance\topmargin 25mm
+\setlength\textheight{48\baselineskip}
+\addtolength\textheight{\topskip}
+\marginparwidth15mm
+
+\clubpenalty=10000
+\widowpenalty=10000
+\brokenpenalty=10000
+\sloppy
+
+\tolerance4500
+\pretolerance250
+\hfuzz=1.5pt
+\hbadness1450
+
+\renewcommand{\chaptermark}[1]{\markboth{\scshape\small\bfseries \
+#1}{\small\bfseries \ #1}}
+\renewcommand{\sectionmark}[1]{\markboth{\scshape\small\bfseries\thesection.\
+#1}{\small\bfseries\thesection.\ #1}}
+\newcommand{\headrulewidth}{0.5pt}
+\newcommand{\footrulewidth}{0.pt}
+\pagestyle{uheadings}
+
+\usepackage[pdftex]{color,graphicx}
+\usepackage[polish]{babel}
+
+\usepackage[sort,compress]{cite}
+
+\theoremstyle{definition}
+\newtheorem{defn}{Definicja}[section]
+\newtheorem{conj}{Teza}[section]
+\newtheorem{conjmain}{Teza}
+\newtheorem{exmp}{Przykład}[section]
+
+\theoremstyle{plain}
+\newtheorem{thm}{Twierdzenie}[section]
+\newtheorem{lem}[thm]{Lemat}
+\newtheorem{prop}[thm]{Hipoteza}
+\newtheorem*{cor}{Wniosek}
+
+\theoremstyle{remark}
+\newtheorem*{rem}{Uwaga}
+\newtheorem*{note}{Uwaga}
+\newtheorem{case}{Przypadek}
+
+\newcommand{\TODO}[1]{{\setlength{\fboxsep}{0pt}\tiny (\colorbox{red}{TODO}: #1)}}
+
+\usepackage{titling}
+\title{Alokacja ciągłych fizycznie obszarów pamięci w~systemie Linux}
+\author{Michał Nazarewicz}
+\date{\today}
+\newcommand{\theengishtitle}{Physically contiguous memory alloction in Linux-based systems}
+
+
+\begin{document}
+
+\pagenumbering{roman}
+\renewcommand{\baselinestretch}{1.0}
+\raggedbottom
+
+\input{src/title}
+
+
+\tableofcontents
+
+% \chapter*{Spis tablic, rysunków i~wydruków}
+% \listoftables
+% \listoffigures
+% \lstlistoflistings
+
+
+\newpage
+\pagenumbering{arabic}
+\setcounter{page}{1}
+
+\input{src/content}
+
+
+\appendix
+
+\nocite{*}
+\bibliographystyle{plplain}
+\input{src/bib}
+
+\end{document}

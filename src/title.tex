@@ -1,0 +1,150 @@
+\begin{titlepage}
+    % Strona tytułowa
+    \vbox to\textheight{\hyphenpenalty=10000
+    \begin{center}
+	\begin{tabular}{p{107mm} p{9cm}}
+	    \begin{minipage}{9cm}
+	      \begin{center}
+	      Politechnika Warszawska \\
+	      Wydział Elektroniki i~Technik Informacyjnych \\
+	      Instytut Informatyki
+	      \end{center}
+	    \end{minipage}
+	    &
+	    \begin{minipage}{8cm}
+	    \begin{flushleft}
+	     \footnotesize
+	      Rok akademicki 2011/2012
+	    \vspace*{2.75\baselineskip}
+	    \end{flushleft}
+	    \end{minipage} \\
+	\end{tabular}
+	\vspace*{3.75\baselineskip}
+	\par\vspace{\smallskipamount}
+	\vspace*{2\baselineskip}{\LARGE Praca dyplomowa magisterska\par}
+	\vspace{3\baselineskip}{\LARGE\strut \theauthor\par}
+	\vspace*{2\baselineskip}{\huge\bfseries \thetitle\par}
+
+	\vspace*{7\baselineskip}
+	\hfill\mbox{}\par\vspace*{\baselineskip}\noindent
+	\begin{tabular}[b]{@{}p{3cm}@{\ }l@{}}
+	    {\large\hfill } & {\large }
+	\end{tabular}
+	\hfill
+	\begin{tabular}[b]{@{}l@{}}
+	Opiekun pracy: \\[\smallskipamount]
+	{\large mgr inż.\ Wojciech Zabołotny}
+	\end{tabular}\par
+	\vspace*{4\baselineskip}
+    \begin{tabular}{p{\textwidth}}
+    \begin{flushleft}
+	\begin{minipage}{7cm}
+	Ocena \dotfill
+	\par\vspace{1.6\baselineskip}
+	\dotfill
+	\par\noindent
+	\centerline{\footnotesize Podpis Przewodniczącego} \par
+	\centerline{\footnotesize Komisji Egzaminu Dyplomowego}\par
+	\end{minipage}
+    \end{flushleft}
+    \end{tabular}
+    \end{center}}
+
+    % Życiorys
+    \newpage\thispagestyle{empty}
+    \begin{tabular}{p{5cm} p{12cm}}
+    \begin{minipage}{5cm}
+    \center
+    \end{minipage}
+    &
+    \begin{minipage}{12cm}
+    \begin{flushleft}
+    \par\noindent\vspace{1\baselineskip}
+    \begin{tabular}[h]{l l}
+    {\normalsize\it Specjalność:} & Informatyka -- \\
+    & Inżynieria oprogramowania \\
+    & i~systemy informacyjne
+    \end{tabular}
+    \par\noindent\vspace{1\baselineskip}
+    \begin{tabular}[h]{l l}
+    {\normalsize\it Data urodzenia:} & {\normalsize 31 sierpnia 1986~r.}
+    \end{tabular}
+    \par\noindent\vspace{1\baselineskip}
+    \begin{tabular}[h]{l l}
+    {\normalsize\it Data rozpoczęcia studiów:} & {\normalsize 1 lutego 2006 r.}
+    \end{tabular}
+    \par\noindent\vspace{1\baselineskip}
+    \end{flushleft}
+    \end{minipage}
+    \end{tabular}
+    \vspace*{1\baselineskip}
+    \begin{center}
+	{\large\bfseries Życiorys}\par\bigskip
+    \end{center}
+
+    \indent
+    Nazywam się \theauthor \dots \TODO{do wypełnienia}
+    \par
+    \vspace{2\baselineskip}
+    \hfill\parbox{15em}{{\small\dotfill}\\[-.3ex]
+    \centerline{\footnotesize podpis studenta}}\par
+    \vspace{3\baselineskip}
+    \begin{center}
+ 	{\large\bfseries Egzamin dyplomowy} \par\bigskip\bigskip
+    \end{center}
+    \par\noindent\vspace{1.5\baselineskip}
+    Złożył egzamin dyplomowy w dn. \dotfill
+    \par\noindent\vspace{1.5\baselineskip}
+    Z wynikiem \dotfill
+    \par\noindent\vspace{1.5\baselineskip}
+    Ogólny wynik studiów \dotfill
+    \par\noindent\vspace{1.5\baselineskip}
+    Dodatkowe wnioski i uwagi Komisji \dotfill
+    \par\noindent\vspace{1.5\baselineskip}
+    \dotfill
+
+    % Streszczenie
+    \newpage\thispagestyle{empty}
+    \vspace*{2\baselineskip}
+    \begin{center}
+	{\large\bfseries Streszczenie}\par\bigskip
+    \end{center}
+
+    {\itshape Praca ta prezentuje sposób alokacji dużych obszarów
+      ciągłej fizycznie pamięci w~systemach opartych na jądrze Linux.
+      Zastosowanie w~procesorach jednostek zarządzania pamięcią
+      pozwala na uniknięcie konieczności takich alokacji, jednak
+      w~systemach wbudowanych poszczególne komponenty są często
+      pozbawiony jednostki transakcji adresów pamięci, przez co muszą
+      operować bezpośrednio na adresach fizycznych.  Aby temu
+      zaradzić, stworzyłem alokator pamięci ciągłej (ang. {\it
+        Contiguous Memory Allocator}, CMA), który pozwala przydzielać
+      duże ciągłe fizycznie obszary pamięci, bez konieczności
+      rezerwowania na wyłączność dużych obszarów przy starcie systemu.}
+    \vspace*{1\baselineskip}
+
+    \noindent{\bf Słowa kluczowe}: {\itshape alokacja pamięci, Linux,
+      systemy wbudowane.}
+    \par
+    \vspace{4\baselineskip}
+    \begin{center}
+	{\large\bfseries Abstract}\par\bigskip
+    \end{center}
+    \noindent{\bf Title}: {\itshape \theengishtitle}\par
+    \vspace*{1\baselineskip}
+
+    {\itshape This thesis describes a~way to allocate large physically
+      contiguous memory regions in Linux-based systems.  Memory
+      management units allows to avoid the need of such allocations,
+      but in embedded systems, individual components often lack an
+      address translation unit and thus need to operate directly on
+      physical addresses.  To address this issue, I~have created
+      a~Contiguous Memory Allocator (or CMA) which allows to allocate
+      big physically contiguous memory regions without the need to
+      reserve memory for exclusive use during system start.}
+    \vspace*{1\baselineskip}
+
+    \noindent{\bf Key words}: {\itshape memory allocation, Linux,
+      embedded systems.}
+
+\end{titlepage}
