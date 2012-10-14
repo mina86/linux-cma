@@ -203,14 +203,14 @@ bliźniaczymi.  Cały proces ilustruje algorytm \ref{alg:buddy-alloc}
 \begin{algorithm}
 \caption{Alokacja strony rzędu $k$ w~algorytmie bliźniaków}
 \label{alg:buddy-alloc}
-\begin{algorithmic}
+\begin{algorithmic}[1]
 \REQUIRE $0 \leq k < \mathrm{MAX\_ORDER}$
 
 \STATE $i \gets k$
-\WHILE {lista stron rzędu $i$ jest pusta}
+\WHILE {lista stron rzędu $i = \emptyset$}
     \STATE $i \gets i + 1$
     \IF {$i = \mathrm{MAX\_ORDER}$}
-        \STATE \RETURN błąd alokacji
+        \RETURN alokacja nie powiodła się
     \ENDIF
 \ENDWHILE
 
@@ -222,8 +222,7 @@ bliźniaczymi.  Cały proces ilustruje algorytm \ref{alg:buddy-alloc}
     \STATE $p \gets p_1$
     \STATE dodaj $p_2$ do listy stron rzędu $i$
 \ENDWHILE
-\STATE \RETURN $p$
-
+\RETURN $p$
 \end{algorithmic}
 \end{algorithm}
 
@@ -235,7 +234,7 @@ stron o~dużym rzędzie.  Proces ten ilustruje algorytm
 \begin{algorithm}
 \caption{Zwalnianie strony $p$ rzędu $k$ w algorytmie bliźniaków}
 \label{alg:buddy-free}
-\begin{algorithmic}
+\begin{algorithmic}[1]
 \WHILE {$k + 1 \ne \mathrm{MAX\_ORDER}$}
     \STATE $p' \gets$ strona bliźniacza do $p$
     \IF {$p'$ istnieje i~jest wolna}
@@ -245,12 +244,11 @@ stron o~dużym rzędzie.  Proces ten ilustruje algorytm
         \STATE {\bf Zakończ}
     \ENDIF
 \ENDWHILE
-
 \end{algorithmic}
 \end{algorithm}
 
 
-\section{Typy migracji i~bloki stron}
+\section{Typy migracji}
 
 Powyższy opis pomija niektóre szczegóły alokatora stron.  Po pierwsze,
 nawet jeżeli w~danej chwili nie istnieje wolna strona o~żądanym
@@ -261,10 +259,13 @@ dla tematyki niniejszej pracy i~dlatego zostały pominięte.
 
 Jednak ważnym czynnikiem są typy migracji (\ang{migrate type}).
 W~dużym uproszczeniu, strony mogą one być ruchome (\ang{movable}) albo
-nie\footnote{W~rzeczywistości jest więcej typów migracji, ale na
-  potrzeby tej pracy można przyjąć, że są to jedyne dwa typy.}.
-Ruchoma strona to taka, której adres fizyczny nie jest istotny i~może
-być przeniesiona w~inne miejsce jeżeli jest to konieczne.
+nie\footnote{W~rzeczywistości jest więcej typów migracji ({\it
+    movable}, {\it reclaimable}, {\it movable}, {\it cma}, {\it
+    reserve} oraz {\it isolate}), ale na potrzeby tej pracy można
+  przyjąć, że są to jedyne dwa typy.} (CMA dodaje kolejny typ, ale
+wrócę do niego w~rozdziale \ref{cma}). Ruchoma strona to taka, której
+adres fizyczny nie jest istotny i~może być przeniesiona w~inne miejsce
+jeżeli jest to konieczne.
 
 Jednym z~przykładów są strony anonimowe działających procesów.
 Ponieważ program odwołują się do nich poprzez mapowania wirtualne,
@@ -284,3 +285,56 @@ przekazywany jako argument, co pozwala alokatorowi stron grupować
 strony tego samego typu.  Jest to istotne, gdyż mechanizm zagęszczania
 nie działa zbyt dobrze jeżeli strony ruchomy przelatywały się
 z~pozostałymi stronami, które nie podlegają migracji.
+
+\section{Grupy stron i~zmiana typu migracji}
+
+Grupowanie to realizowane jest poprzez podział pamięci na bloki
+składające się z~\lstinline|pageblock_nr_pages| stron (czy też
+równoważnie rząd takiego bloku to \lstinline|pageblock_order|).  Jak
+wiele rzeczy w~Linuksie, konkretne wartości tych stałych mogą zależeć
+od architektury, no którą jądro zostało skompilowane, jak i~opcji
+konfiguracyjnych wybranych w~trakcie kompilacji.  Niemniej, przeważnie
+wartość tych stałych to odpowiednio 1024 (stron) i~(rząd) 10.
+
+Każdy blok stron (\ang{pageblock}) ma przypisany typ migracji,
+a~alokator stron posiada oddzielne listy wolnych stron dla każdego
+typu migracji.  Zatem patrząc na algorytm \ref{alg:buddy-alloc} należy
+zdawać sobie sprawę, iż rozpatruje on listy wolnych stron danego typu
+migracji.
+
+Istotne jest, iż dla jądra zrealizowanie alokacji jest ważniejsze od
+trzymania stron o~tym samym typie migracji razem.  Dlatego dla każdego
+typu migracji istnieje list zapasowych typów migracji.  Jeżeli
+alokacja dla żądanego typu migracji nie powiedzie się, alokator stron
+będzie próbował z~kolejnymi typami z~list, tak jak to pokazuje
+alogrytm \ref{alg:buddy-fallback}
+
+Co więcej, jeżęli rząd żądanej strony jest dostatecznie duży, typ
+migracji wszystkich wolnych stron w~danym bloku stron zostaje
+zmieniany na ten zgodny z~wywołąniem funkcji
+\lstinline|alloc_pages()|.
+
+\begin{algorithm}
+\caption{Alokacja strony rzędu $k$ z~uwzględnieniem typu migracji $m$}
+\label{alg:buddy-fallback}
+\begin{algorithmic}[1]
+\STATE $l \gets$ lista zapasowych typów migracji dla typu $m$
+\STATE dodaj $m$ na początek $l$
+\FORALL{$m \in l$}
+    \STATE $p \gets$ alokuj stronę rzędu $k$ spośród stron typu
+    migracji $m$ zgodnie z~algorytmem \ref{alg:buddy-alloc}
+    \IF {alokacja powiodła się}
+        \IF {$k \geq \nicefrac{\mathrm{page\_order}}{2}$}
+            \STATE $b \gets$ blok stron zawierający $p$
+            \STATE zmień typ migracjy stron z~$b$ na $m$
+        \ENDIF
+        \RETURN $p$
+    \ENDIF
+\ENDFOR
+\RETURN alokacja nie powiodła się
+\end{algorithmic}
+\end{algorithm}
+
+Istotne jest tutaj, iż bloki stron mogą zmieniać swój typ migracji,
+a~także, że nawet jeżeli blok ma dany typ migracji, strony o~innym
+typie migracji mogą być z~niego przydzielone.
