@@ -1,7 +1,7 @@
 \chapter{Wstęp}
 
-Nowoczesne procesory przeznaczone do serwerów i~komputów osobistych
-posiadają jednostkę zarządzania pamięcią (ang.\ {\it memory management
+Nowoczesne procesory przeznaczone do serwerów i~komputerów osobistych
+posiadają jednostkę zarządzania pamięcią (\ang{memory management
   unit}, MMU), która tłumaczy adresy logiczne, widziane przez
 procesor, na adresy fizyczne.  Dzięki temu, obszary pamięci, które
 z~punktu widzenia procesora (a~więc programów na nim uruchomionych)
@@ -11,18 +11,18 @@ program alokuje wielomegabajtowy\footnote{Aby uniknąć wieloznaczności,
   stosuję przedrostki „kilo-” i~„mega-” w~znaczeniu odpowiednio tysiąc
   i~milion (zgodnie z~układem SI), a~„kibi-” i~„mebi-” w~znaczeniu
   odpowiednie $2^{10} = 1024$ i~$2^{20}$ (zgodnie
-  z~tzw.\ przedrostkami ICE).} obszary, system może zrealizować żądanie
-alokując wiele czterokilobajtowych stron i~nie przejmować się
+  z~tzw.\ przedrostkami ICE).} obszary, system może zrealizować
+żądanie alokując wiele czterokilobajtowych stron i~nie przejmować się
 fragmentacją pamięci.
 
 Niemniej, MMU nie jest zazwyczaj dostępny dla pozostałych układów
 zintegrowanych znajdujących się w~urządzeniu, takich jak np.\ karta
 dźwiękowa, czy kontroler sieciowy.  Jednak także i~dla tych przypadków
 istnieją rozwiązania w~postaci mechanizmu bezpośredniego dostępu do
-pamięci (ang.\ {\it Dircet Memory Access}, DMA) z~obsługą mechanizmu
+pamięci (\ang{Dircet Memory Access}, DMA) z~obsługą mechanizmu
 vectored IO \TODO{przetłumaczyć}, który pozwala na „złożenie” buforu
 z~wielu mniejszych buforów (stąd też inna nazwa tego mechanizmu:
-ang.\ {\it scatter-gather}).
+\ang{scatter-gather}).
 
 Niestety, zarówno MMU jak i~DMA obsługujące vectored IO
 \TODO{przetłumaczyć} nie są pozbawione kosztów -- zarówno związanych
@@ -111,8 +111,8 @@ sterownikom i~programom na alokowanie obszarów ciągłych fizycznie
 Pierwsze wersje CMA skupiały się głównie na rozwiązywaniu problemu
 przypisywania różnych zarezerwowanych obszarów do różnych urządzeń,
 a~także umożliwianiu sterownikom alokowanie różnych buforów w~różnych
-obszarach pamięci.  Było to potrzebne, gdyż dekoder wideo (ang.\ {\it
-  Multi-Format Codec}, lub MFC) stosowany na platformie S5PV110
+obszarach pamięci.  Było to potrzebne, gdyż dekoder wideo
+(\ang{Multi-Format Codec}, lub MFC) stosowany na platformie S5PV110
 wymagał, aby różne dane były dostępne w~różnych bankach pamięci.
 Pozwalało to na zwiększenie szybkości dostępu do tych danych dzięki
 zastosowaniu odczytu z~dwóch banków pamięci jednocześnie.
@@ -128,3 +128,159 @@ w~formie w~jakiej znalazł się on w~Linuksie 3.5\footnote{Należy
   oprogramowania i~ponieważ CMA używana jest przez coraz więcej osób,
   jest ona ciągle rozwijana i~im dalej w~przyszłość, tym bardziej opis
   w~niniejszej pracy będzie się różnił od stanu faktycznego.}.
+
+
+\chapter{Alokator stron}
+
+Ponieważ CMA integruje się dość mocno z~podsystemem zarządzania
+pamięci (\ang{memory management}), do jej zrozumienia potrzeba
+choć ogólnej wiedzy na temat tego w~jaki sposób Linuks zarządza
+pamięcią \TODO{powtórzenie zarządza pamięcią}.
+
+Linuks posiada wiele mechanizmów dzięki którym sterowniki mogą
+alokować pamięć.  Począwszy od funkcji \lstinline|kmalloc()|
+i \lstinline|vmalloc()|, poprzez mechanizmy puli pamięci, aż do
+alokatora czasu bootowania i~alokatorów pamięci dostępnej dla urządzeń
+zewnętrznych \cite[rozdział 8]{bib:ldd3}.  Pomimo, tak dużej liczby
+interfejsów, wiele z~nich sprowadza się do alokatora stron (\ang{page
+  allocator}), który jest sercem całego podsystemu zarządzania
+pamięcią.
+
+\section{Algorytm bliźniaków}
+
+Alokator stron implementuje algorytm bliźniaków (skąd też jego inna
+angielska nazwa: {\it buddy system} lub {\it buddy allocator}), który
+operuje na blakach o~rozmiarze $2^k$ jednostek.  W~przypadku Linuksa
+jednostką jest pojedyncza strona fizyczna, a~na $k$~narzucone jest
+ograniczenie $k < \mathrm{MAX\_ORDER}$.  \lstinline|MAX_ORDER| może
+zależeć od architektury, na którą Linuks jest kompilowany, ale
+zazwyczaj ma wartość $11$ (toteż na potrzeby tej pracy zakładam, iż $0
+\le k \le 10$).
+
+W~Linuksie, przez $k$ rozumie się rząd\TODO{może po prostu lepiej
+  zostawić „order” i~nie tłumaczyć?} strony (\ang{page order}).
+Strona rzędu 0 to pojedyncza strona fizyczna, strona rzędu 1
+(\ang{1-order page}) to dwie strony fizyczne itd.\ aż do strony rzędu
+10, czy też strony maksymalnego rzędu (\ang{max order page}), która
+składa się z~1024 stron fizycznych.  Ogólnie, strona rzędu $n$ składa
+się z~dwóch stron rzędu $n-1$.
+
+Funkcja \lstinline|alloc_pages()|, która jest interfejsem dla
+alokatora stron, przyjmuje jako argument właśnie rząd żądanej strony.
+
+Z~powyższego opisu wynikają następujące właściwości alokatora stron.
+
+\begin{itemize}
+\item Nie można za jego pomocą zaalokować mniej niż jednej strony,
+  tj.\ 4096 bajtów.
+\item Interfejs zwyczajnie nie pozwala alokować obszarów, których
+  rozmiar nie jest potęgą dwójki.
+\item Gdyby jednak chcieć zaalokować taki obszar, wiązałoby się to
+  z~potencjalnie dużą fragmentacją wewnętrzną.  Dla przykładu bufor
+  dla kolorowej tekstury o~rozmiarze $512 \times 512$ pikseli
+  wymagałby obszaru o~rozmiarze \unit[1]{MiB}, z~których
+  \unit[256]{KiB}, a~więc \nicefrac{1}{4}, byłoby nieużywane.
+\item Alokator stron nie jest w~stanie zaalokować obszaru większego
+  niż \unit[4]{MiB}.  Z~tego powodu, nie nadaje się do alokowania
+  ciągłego fizycznie buforu dla 5 megapikselowej kamery, czy nawet dla
+  pojedynczej ramki {\it full HD}.
+\end{itemize}
+
+Jak zatem działa algorytm bliźniaków.  Alokator posiada listę wolnych
+stron, których rząd jest pomiędzy $0$ a~$10$.  W~Linuksie zrealizowane
+jest to poprzez 11 list dwukierunkowych, gdzie każda przeznaczona jest
+dla stron o~konkretnym rzędzie.
+
+Gdy sterownik chce zaalokować stronę rzędu $n$, alokator sprawdza
+odpowiednią listę.  Jeżeli jest ona pusta, przechodzi do listy ze
+stronami rzędu $n+1$, aż znajdzie wolną stronę (lub dojdzie do
+maksymalnego rzędu, co sygnalizuje nieudaną alokacji.  Jeżeli uzyskana
+w~ten sposób strona ma rząd większy niż żądany, jest ona dzielona na
+pół, aż do osiągnięcia żądanego rozmiaru.  Strony, które powstały na
+skutek podziału większej strony na pół, nazywamy stronami
+bliźniaczymi.  Cały proces ilustruje algorytm \ref{alg:buddy-alloc}
+
+\begin{algorithm}
+\caption{Alokacja strony rzędu $k$ w~algorytmie bliźniaków}
+\label{alg:buddy-alloc}
+\begin{algorithmic}
+\REQUIRE $0 \leq k < \mathrm{MAX\_ORDER}$
+
+\STATE $i \gets k$
+\WHILE {lista stron rzędu $i$ jest pusta}
+    \STATE $i \gets i + 1$
+    \IF {$i = \mathrm{MAX\_ORDER}$}
+        \STATE \RETURN błąd alokacji
+    \ENDIF
+\ENDWHILE
+
+\STATE $p \gets$ strona z listy stron rzędu $i$
+\WHILE {$i \ne k$}
+    \STATE $i \gets i - 1$
+    \STATE podziel $p$ na pół na $p_1$ i $p_2$
+    \COMMENT{Strony $p_1$ i $p_2$ nazywamy stronami bliźniaczymi}
+    \STATE $p \gets p_1$
+    \STATE dodaj $p_2$ do listy stron rzędu $i$
+\ENDWHILE
+\STATE \RETURN $p$
+
+\end{algorithmic}
+\end{algorithm}
+
+Przy zwalnianiu, dopóki to możliwe, strona jest łączona ze swoją
+bliźniaczą stroną, dzięki czemu strony są dodawane do lista wolnych
+stron o~dużym rzędzie.  Proces ten ilustruje algorytm
+\ref{alg:buddy-free}
+
+\begin{algorithm}
+\caption{Zwalnianie strony $p$ rzędu $k$ w algorytmie bliźniaków}
+\label{alg:buddy-free}
+\begin{algorithmic}
+\WHILE {$k + 1 \ne \mathrm{MAX\_ORDER}$}
+    \STATE $p' \gets$ strona bliźniacza do $p$
+    \IF {$p'$ istnieje i~jest wolna}
+        \STATE $k \gets k + 1$
+        \STATE $p~\gets$ strona powstała w~wyniku połączenia $p$ i~$p'$
+    \ELSE
+        \STATE {\bf Zakończ}
+    \ENDIF
+\ENDWHILE
+
+\end{algorithmic}
+\end{algorithm}
+
+
+\section{Typy migracji i~bloki stron}
+
+Powyższy opis pomija niektóre szczegóły alokatora stron.  Po pierwsze,
+nawet jeżeli w~danej chwili nie istnieje wolna strona o~żądanym
+rzędzie, aktywowane są mechanizmy odzyskiwania pamięci (np.\ poprzez
+zwalnianie buforów dyskowych, czy w~najgorszym przypadku zabiciu
+jednego z~działających procesów).  Mechanizmy te nie są jednak istotne
+dla tematyki niniejszej pracy i~dlatego zostały pominięte.
+
+Jednak ważnym czynnikiem są typy migracji (\ang{migrate type}).
+W~dużym uproszczeniu, strony mogą one być ruchome (\ang{movable}) albo
+nie\footnote{W~rzeczywistości jest więcej typów migracji, ale na
+  potrzeby tej pracy można przyjąć, że są to jedyne dwa typy.}.
+Ruchoma strona to taka, której adres fizyczny nie jest istotny i~może
+być przeniesiona w~inne miejsce jeżeli jest to konieczne.
+
+Jednym z~przykładów są strony anonimowe działających procesów.
+Ponieważ program odwołują się do nich poprzez mapowania wirtualne,
+o~ile tablice translacji zostaną uaktualnione, zawartość strony może
+być przeniesiona w~dowolne miejsce.  Podobnie wygląda sprawa
+z~buforami dyskowymi i~wieloma innymi strukturami, którymi zarządza
+jądro.
+
+Proces przenoszenia ruchomej strony z~jednego miejsca w~inne nazywa
+się migracją i wykorzystywany jest między innymi przy obsłudze
+hot-swapu pamięci, a~także w~trackie procesu zagęszczania (opisanego
+w~\cite{bib:compaction}), którego celem jest zwiększenie liczby
+dostępnych stron o~wysokich rzędach.
+
+Wołając funkcję \lstinline|alloc_pages()|, typ migracji strony jest
+przekazywany jako argument, co pozwala alokatorowi stron grupować
+strony tego samego typu.  Jest to istotne, gdyż mechanizm zagęszczania
+nie działa zbyt dobrze jeżeli strony ruchomy przelatywały się
+z~pozostałymi stronami, które nie podlegają migracji.

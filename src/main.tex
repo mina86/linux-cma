@@ -1,6 +1,7 @@
 \documentclass[a4paper,onecolumn,oneside,11pt,wide,floatssmall]{mwrep}
 \usepackage[MeX]{polski}
 \usepackage[utf8]{inputenc}
+\usepackage[polish]{babel}
 
 \usepackage{bookman}
 \usepackage[T1]{fontenc}
@@ -9,11 +10,39 @@
 \usepackage{url}
 \usepackage{breakurl}
 
+\usepackage{units}
 
 \usepackage{listings}
 \lstset{language=C}
 \renewcommand*\lstlistingname{Wydruk}
 \renewcommand*\lstlistlistingname{Spis wydruków}
+
+
+\usepackage{algorithm}
+\usepackage[noend]{algorithmic}
+\algsetup{indent=2em}
+\renewcommand{\algorithmicrequire}{\textbf{Wymaga:}}
+\renewcommand{\algorithmicensure}{\textbf{Zapewnia:}}
+\renewcommand{\algorithmiccomment}[1]{{\footnotesize \it \{ #1 \}}}
+\renewcommand{\algorithmicif}{\textbf{Jeżeli}}
+\renewcommand{\algorithmicthen}{\textbf{wówczas}}
+\renewcommand{\algorithmicelse}{\textbf{wpp.}}
+\renewcommand{\algorithmicelsif}{\algorithmicelse jeżeli}
+\renewcommand{\algorithmicfor}{\textbf{Dla}}
+\renewcommand{\algorithmicforall}{\textbf{Dla wszystkich}}
+\renewcommand{\algorithmicdo}{\textbf{wykonuj}}
+\renewcommand{\algorithmicwhile}{\textbf{Dopóki}}
+\renewcommand{\algorithmicloop}{\textbf{Wykonuj}}
+\renewcommand{\algorithmicrepeat}{\textbf{Powtarzaj}}
+\renewcommand{\algorithmicuntil}{\textbf{aż}}
+\renewcommand{\algorithmicprint}{\textbf{print}}
+\renewcommand{\algorithmicreturn}{\textbf{Zwróć}}
+\makeatletter
+\renewcommand{\ALG@name}{Algorytm}
+\renewcommand{\listalgorithmname}{Lista algorytmów}
+\renewcommand{\thealgorithm}{\arabic{algorithm}.}
+\makeatother
+
 
 \usepackage{geometry}
 \textwidth\paperwidth
@@ -47,11 +76,11 @@
 \pagestyle{uheadings}
 
 \usepackage{color,graphicx}
-\usepackage[polish]{babel}
 
 \usepackage[sort,compress]{cite}
 
 \newcommand{\TODO}[1]{{\setlength{\fboxsep}{0pt}\tiny (\colorbox{red}{TODO}: #1)}}
+\newcommand{\ang}[1]{ang.\ {\it #1}}
 
 \usepackage{titling}
 \title{Alokacja ciągłych fizycznie obszarów pamięci w~systemie Linux}
