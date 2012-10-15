@@ -208,9 +208,8 @@ pół, aż do osiągnięcia żądanego rozmiaru.  Strony, które powstały na
 skutek podziału większej strony na pół, nazywamy stronami
 bliźniaczymi.  Cały proces ilustruje algorytm \ref{alg:buddy-alloc}
 
-\begin{algorithm}
+\begin{algorithm}\label{alg:buddy-alloc}
 \caption{Alokacja strony rzędu $k$ w~algorytmie bliźniaków}
-\label{alg:buddy-alloc}
 \begin{algorithmic}[1]
 \Require $0 \leq k < \mathrm{MAX\_ORDER}$
 \Function{AllocatePage}{$k$}
@@ -240,9 +239,8 @@ bliźniaczą stroną, dzięki czemu strony są dodawane do lista wolnych
 stron o~dużym rzędzie.  Proces ten ilustruje algorytm
 \ref{alg:buddy-free}
 
-\begin{algorithm}
+\begin{algorithm}\label{alg:buddy-free}
 \caption{Zwalnianie strony $p$ rzędu $k$ w algorytmie bliźniaków}
-\label{alg:buddy-free}
 \begin{algorithmic}[1]
 \Procedure{FreePage}{$p$, $k$}
     \While {$k + 1 \neq \mathrm{MAX\_ORDER} \wedge p$ posiada wolną stronę bliźniaczą}
@@ -257,7 +255,7 @@ stron o~dużym rzędzie.  Proces ten ilustruje algorytm
 \end{algorithm}
 
 
-\section{Typy migracji}
+\section{Typy migracji}\label{sec:migratetype}
 
 Powyższy opis pomija niektóre szczegóły alokatora stron.  Po pierwsze,
 nawet jeżeli w~danej chwili nie istnieje wolna strona o~żądanym
@@ -267,22 +265,32 @@ zwalnianie buforów dyskowych, czy w~najgorszym przypadku zabiciu
 jednego z~działających procesów).  Mechanizmy te nie są jednak istotne
 dla tematyki niniejszej pracy i~dlatego zostały pominięte.
 
-Ważnym czynnikiem są typy migracji (\ang{migrate type}).  W~dużym
-uproszczeniu, strony mogą one być ruchome (\ang{movable}) albo
-nie\footnote{W~rzeczywistości jest więcej typów migracji ({\it
-    movable}, {\it reclaimable}, {\it movable}, {\it cma}, {\it
-    reserve} oraz {\it isolate}), ale na potrzeby tej pracy można
-  przyjąć, że są to jedyne dwa typy.} (CMA dodaje kolejny typ, ale
-wrócę do niego w~rozdziale \ref{cma}). Ruchoma strona to taka, której
-adres fizyczny nie jest istotny i~może być przeniesiona w~inne miejsce
-jeżeli jest to konieczne.
+Ważnym czynnikiem są typy migracji (\ang{migratetype}), których jest
+sześć: {\it unmovable}, {\it reclaimable}, {\it movable}, {\it cma},
+{\it reserve} oraz {\it isolate}).
 
-Jednym z~przykładów są strony anonimowe działających procesów.
-Ponieważ program odwołują się do nich poprzez mapowania wirtualne,
-o~ile tablice translacji zostaną uaktualnione, zawartość strony może
-być przeniesiona w~dowolne miejsce.  Podobnie wygląda sprawa
-z~buforami dyskowymi i~wieloma innymi strukturami, którymi zarządza
-jądro.
+\begin{itemize}
+\item Dla potrzeb tej pracy traktuję typy {\it unmovable}, {\it
+  reclaimable} i~{\it reserve} jak jeden typ -- typ nieruchomy.  To
+  uproszczenie wynika z~faktu, iż dla CMA-y istotne jest tylko
+  rozróżnienie pomiędzy stroną ruchomą i~nieruchomą.
+\item Strony które są typu ruchomego charakteryzują się tym, że ich
+  adres fizyczny nie jest istotny, w~związku z~czym mogą być
+  przeniesione w~inne miejsce pamięci RAM.
+\item Typ cma jest nowym typem dodanym przez CMA i~jest opisany
+  dokładniej w~podrozdziale \ref{sec:migrate-cma}
+\item Typ {\it isolate} jest niejako pseudo-typem, gdyż jeżeli wolna
+  strona ma taki typ, nie może ona zostać zaalokowana.  Więcej na
+  temat sposobu w~jaki ten typ może być wykorzystywany opisuję
+  w~podrozdziale \ref{sec:alloc-contig-range}
+\end{itemize}
+
+Jednym z~przykładów stron ruchomych są strony anonimowe działających
+procesów.  Ponieważ program odwołują się do nich poprzez mapowania
+wirtualne, o~ile tablice translacji zostaną uaktualnione, zawartość
+strony może być przeniesiona w~dowolne miejsce.  Podobnie wygląda
+sprawa z~buforami dyskowymi i~wieloma innymi strukturami, którymi
+zarządza jądro.
 
 Proces przenoszenia ruchomej strony z~jednego miejsca w~inne nazywa
 się migracją i wykorzystywany jest między innymi przy obsłudze
@@ -296,7 +304,7 @@ strony tego samego typu.  Jest to istotne, gdyż mechanizm zagęszczania
 nie działa zbyt dobrze jeżeli strony ruchomy przelatywały się
 z~pozostałymi stronami, które nie podlegają migracji.
 
-\section{Grupy stron i~zmiana typu migracji}
+\section{Grupy stron}
 
 Grupowanie to realizowane jest poprzez podział pamięci na bloki
 składające się z~\lstinline|pageblock_nr_pages| stron (czy też
@@ -312,22 +320,30 @@ typu migracji.  Zatem patrząc na algorytm \ref{alg:buddy-alloc} należy
 zdawać sobie sprawę, iż rozpatruje on listy wolnych stron danego typu
 migracji.
 
+\section{Zmiana typu migracji}\label{sec:type-change}
+
 Należy pamiętać, iż dla jądra zrealizowanie alokacji jest ważniejsze
 od trzymania stron o~tym samym typie migracji razem.  Dlatego dla
-każdego typu migracji istnieje list zapasowych typów migracji.  Jeżeli
-alokacja dla żądanego typu migracji nie powiedzie się, alokator stron
-będzie próbował z~kolejnymi typami z~list, tak jak to pokazuje
-algorytm \ref{alg:buddy-fallback}
+każdego typu migracji istnieje list zapasowych (\ang{fallback}) typów
+migracji.  Jeżeli alokacja dla żądanego typu migracji nie powiedzie
+się, alokator stron będzie próbował z~kolejnymi typami z~list, tak jak
+to pokazuje algorytm \ref{alg:buddy-fallback}
 
 Co więcej, jeżęli rząd żądanej strony jest dostatecznie duży, typ
 migracji wszystkich wolnych stron w~danym bloku stron zostaje
 zmieniany na ten zgodny z~wywołąniem funkcji
 \lstinline|alloc_pages()|.
 
-\begin{algorithm}
+\begin{algorithm}\label{alg:buddy-fallback}
 \caption{Alokacja strony rzędu $k$ z~uwzględnieniem typu migracji $m$}
-\label{alg:buddy-fallback}
 \begin{algorithmic}[1]
+\Function{ChangeBlockMigrateType}{$b$, $m$}
+\State zmień typ migracji $b$ na $m$
+\ForAll {wolnych stron $p' \in b$}
+    \State przenieś $p'$ na listę wolnych stron typu $m$
+\EndFor
+\EndFunction
+\Statex
 \Function{AllocPageMigrateType}{$k$, $m$}
     \State $f \gets$ lista zapasowych typów migracji dla typu $m$
     \State dodaj $m$ na początek $f$
@@ -336,10 +352,7 @@ zmieniany na ten zgodny z~wywołąniem funkcji
         \If {$p \neq \emptyset$}
             \If {$m \neq m' \wedge k \geq \nicefrac{\mathrm{page\_order}}{2}$}
                 \State $b \gets$ blok stron zawierający $p$
-                \State zmień typ migracji $b$ na $m$
-                \ForAll {wolnych stron $p' \in b$}
-                    \State przenieś $p'$ na listę wolnych stron typu $m$
-                \EndFor
+                \State \Call{ChangeBlockMigrateType}{$b$, $m$}
             \EndIf
             \State \Return $p$
         \EndIf
@@ -371,10 +384,9 @@ których znajdują się wolne strony rzędu 0.  Biorąc również i~ten
 aspekt pod uwagę, alokacja przyjmuje postać przedstawianą w~algorytmie
 \ref{alg:buddy-pcp}
 
-\begin{algorithm}
+\begin{algorithm}\label{alg:buddy-pcp}
 \caption{Alokacja strony rzędu $k$ z~typem migracji $m$
   z~uwzględnieniem list PCP}
-\label{alg:buddy-pcp}
 \begin{algorithmic}[1]
 \Function{AllocPageUsePCP}{$k$, $m$}
     \If {$k \neq 0$}
@@ -401,6 +413,70 @@ aspekt pod uwagę, alokacja przyjmuje postać przedstawianą w~algorytmie
         \EndIf
     \EndIf
     \State \Return $p$
+\EndFunction
+\end{algorithmic}
+\end{algorithm}
+
+
+\chapter{Contiguous Memory Allocator}\label{sec:cma}
+
+Podstawowym założeniem CMA jest umożliwienie alokowania dużych
+obszarów ciągłych fizycznie bez konieczneści rezerwacji na wyłączność
+dużej ilości pamięci.  Aby to umożliwić, CMA korzysta z~mechanizmu
+migracji stron opisanego w~podrozdziale \ref{sec:migratetype}.
+
+\section{Typ migracji CMA}\label{sec:migrate-cma}
+
+Migracja jest możliwa tylko dla stron ruchomych.  Niestety, przed
+zaimplementowaniem CMA, w~Linuksie nie istniał mechanizm, który
+pozwalałby zagwarantować, aby w~systemie istniał duży obszar, w~którym
+strony są wolne albo ruchome.  Ponieważ (jak opisałem w~podrozdziale
+\ref{sec:type-change}) jądro dopuszcza alokacje nieruchomych stron
+z~bloków stron oznaczonych jako przechowujące strony ruchome, a~także
+posiada mechanizm na skutek którego bloki stron zmieniają swój typ,
+oznaczenie bloku stron jako ruchome nie gwarantuje, że tylko strony
+ruchome będą alokowane z~tego bloku stron.
+
+Z~tego powodu, aby CMA dobrze działała, pierwszym krokiem było
+stworzenie nowego typu migracji, nazwanym po prostu typem migracji CMA
+(\lstinline|MIGRATE_CMA|).  Typ ten posiada dwie bardzo istotne cechy:
+
+\begin{itemize}
+\item Z~bloków stron oznaczonych typem CMA mogą być alokowane tylko
+  strony ruchome.  Innymi słowy, typ migracji CMA istnieje w~lista
+  zaposowych typów migracji jedynie dla typu ruchomego.
+\item Blok oznaczony typem CMA nie zmienia swojego typu (na skutek
+  działania alokatora stron).
+\end{itemize}
+
+O~ile pierwsza właściwość jest stosunkowo prosta do osiągnięcia,
+zagwarantowania niezmienności typu bloku stron wymagało
+zidentyfikowaniem wszystkich sytuacji, w~których blok może zmienić
+swój typ (a~także sytuacji, w~których strony mogą trafić na listy
+wolnych stron dla typu niezgodnego z~typem bloku, do którego należą)
+i~dodanie odpowiednich warunków zapewniających, że nieporządana zmiana
+nie nastąpi.
+
+\section{Alokowanie obszaru pamięci}\label{sec:alloc-contig-range}
+
+W~sytuacji, gdy istnieje gwarancja, że dany zakres stron posiada
+jedynie strony wolne i~ruchome, można przystąpić do jej alokacji.
+Drugim krokiem implementowania CMA było zatem stworzenie funkcji,
+które dostaje jako argument zakres stron, a~następnie migruje
+wszystkie zajęte strony, a~wolne usuwa z~listy wolnych stron.
+
+\begin{algorithm}\label{alg:alloc-contig-range}
+\caption{Alokacja strony z~podanego zakresu}
+\begin{algorithmic}[1]
+\Function{AllocContigRange}{$s$, $e$}
+    \State $s' \gets s$ wyrównane w~dół do płnej strony maksymalnego rzędu
+    \State $e' \gets e$ wyrównane w~górę do płnej strony maksymalnego rzędu
+    \State izoluj strony z~zakresu $\left< s', e' \right)$
+    \State migruj zajęte strony z~zakresu $\left< s, e~\right)$
+    \State wyczyść PCP listy
+    \ForAll{$p \in $\left< s', e' \right)$}
+        \State usuń $p$ z listy wolnych stron
+    \EndFor
 \EndFunction
 \end{algorithmic}
 \end{algorithm}
