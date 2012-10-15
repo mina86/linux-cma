@@ -1,136 +1,4 @@
-\chapter{Wstęp}
-
-Nowoczesne procesory przeznaczone do serwerów i~komputerów osobistych
-posiadają jednostkę zarządzania pamięcią (\ang{memory management
-  unit}, MMU), która tłumaczy adresy logiczne, widziane przez
-procesor, na adresy fizyczne.  Dzięki temu, obszary pamięci, które
-z~punktu widzenia procesora (a~więc programów na nim uruchomionych)
-mają ciągłe adresy, mogą w~rzeczywistości być podzielone na wiele
-stron rozrzuconych po pamięci fizycznej.  W~ten sposób, nawet jeżeli
-program alokuje wielomegabajtowy\footnote{Aby uniknąć wieloznaczności,
-  stosuję przedrostki „kilo-” i~„mega-” w~znaczeniu odpowiednio tysiąc
-  i~milion (zgodnie z~układem SI), a~„kibi-” i~„mebi-” w~znaczeniu
-  odpowiednie $2^{10} = 1024$ i~$2^{20}$ (zgodnie
-  z~tzw.\ przedrostkami ICE).} obszary, system może zrealizować
-żądanie alokując wiele czterokilobajtowych stron i~nie przejmować się
-fragmentacją pamięci.
-
-Niemniej, MMU nie jest zazwyczaj dostępny dla pozostałych układów
-zintegrowanych znajdujących się w~urządzeniu, takich jak np.\ karta
-dźwiękowa, czy kontroler sieciowy.  Jednak także i~dla tych przypadków
-istnieją rozwiązania w~postaci mechanizmu bezpośredniego dostępu do
-pamięci (\ang{Dircet Memory Access}, DMA) z~obsługą mechanizmu
-vectored IO \TODO{przetłumaczyć}, który pozwala na „złożenie” buforu
-z~wielu mniejszych buforów (stąd też inna nazwa tego mechanizmu:
-\ang{scatter-gather}).
-
-Niestety, zarówno MMU jak i~DMA obsługujące vectored IO
-\TODO{przetłumaczyć} nie są pozbawione kosztów -- zarówno związanych
-z~koniecznością fizycznego wyprodukowaniom odpowiedniego układu, ale
-także związanych z~szybkością dostępu do pamięci.  Z~tego powodu,
-w~systemach wbudowanych, takich jak np.\ telefony komórkowe, takie
-mechanizmy są często niedostępne dla zewnętrznych (z~punktu widzenia
-procesora) układów.  Jednocześnie, właśnie takie urządzenia posiadają
-dużo takich układów, jak chociażby aparat fotograficzny, czy układ do
-szybkiego dekodowania strumieni multimedialnych.
-
-Powoduje to, że tego typu układy muszą operować bezpośrednio na
-adresach fizycznych i~w~konsekwencji, wszelkie stosowane przez nie
-bufory muszą być ciągłe w~pamięci fizycznej.  Niestety, Linux nie jest
-dobrze przystosowany do alokowania dużych obszarów ciągłych
-fizycznie\TODO{zbyt dużo „fizycznie”}\footnote{Dla przykładu,
-  pięciomegapikselowa kamera potrzebuje buforu o~rozmiarze 15
-  megabajtów, a~pojedyncza ramka {\it full HD} (tj.\ $1920 \times
-  1080$) zajmuje ponad sześć megabajtów (i~dodatkowo dekoder musi
-  często przechowywać kilka ramek).  Linux nie jest nawet w~stanie
-  (bez modyfikowania źródła) zarządzać obszarami większymi niż cztery
-  megabajty (1024 strony).  Na domiar złego fragmentacja zewnętrzna
-  utrudnia alokacje, a~fragmentacja wewnętrzna powoduje duże straty
-  pamięci.}.
-
-Najprostszym, i~stosunkowo często stosowanym, rozwiązaniem tego
-problemu jest zarezerwowanie przy starcie systemu pewnego obszaru
-pamięci na potrzeby danego sterownika.  Niestety, o~ile taki mechanizm
-może być wystarczający, jeżeli podzespoły wymagają stosunkowo małych
-buforów, przestaje się on skalować przy współczesnych systemach, gdyż
-wymaga rezerwacji wielu megabajtów pamięci, która przez większość
-czasu nie jest do niczego wykorzystywana.
-
-\section{Physical Memory Manager}\label{sec:pmm}
-
-Bardziej skomplikowanym rozwiązaniem jest mechanizm, który rezerwuje
-pewną przestrzeń pamięci, ale zamiast na stałe przypisywać regiony
-pamięci do urządzeń, pozwala sterownikom alokować bufory, wtedy, gdy
-są one potrzebne.
-
-W~trakcie moich prac napisałem {\it Physical Memory Manager} (lub PMM)
-\cite{patch:pmm}, który implementuje dokładnie te założenia. W~tym
-podstawowym założeniu, PMM nie przedstawia sobą nic nowego.  Bowiem
-w~1996 roku Matt Welsh napisał pierwszą wersję patcha
-\emph{bigphysarea} dla jądra 1.3.71, który był z~różnym zaangażowaniem
-utrzymywany i~przystosowywany do nowszych wersji Linuksa
-\cite{patch:bigphys}.
-
-PMM umożliwiał alokowanie dużych obszarów ciągłej pamięci fizycznej
-nie tylko sterownikom działającym w~przestrzeni jądra, ale także
-programom działających pod kontrolą systemu.  W~ten sposób, aplikacja
-mogła zaalokować pamięć, tak aby (dla przykładu) dekoder JPEG mógł
-zdekodować plik graficzny i~umieścić go w~pamięci bezpośrednio
-dostępnej dla aplikacji.  W~ten sposób, kod odpowiedzialny za
-mapowanie zaalokowanej pamięci był umieszczony wewnątrz PMM in
-poszczególne sterowniki nie musiały się tym problemem zajmować.
-
-Co więcej, PMM został zintegrowany z~mechanizmem współdzielenia
-pamięci Systemu V~(tj.\ funkcjami \lstinline|shmget()|,
-\lstinline|shmat()|, \lstinline|shmdt()| itp).  Mechanizm ten jest
-wykorzystywany między innymi przez system X~Window do umożliwienia
-współdzielenia pixmap pomiędzy klientem i~serwerem (działającymi na
-tej samej maszynie) bez konieczności przysłania danych przez gniazdo
-sieciowe.
-
-Pozwalało to na dekodowanie obrazów i~strumieni video bezpośrednio do
-obszarów pamięci z~których X11 odczytywał dane.  Dzięki temu, w~całym
-procesie dane nie były niepotrzebnie kopiowane z~jednego miejsca
-w~pamięci do drugiego, co minimalizowało zużycie procesora i~szyny
-pamięci i~w~rezultacie przyśpieszało działanie systemu.
-
-Jednakże, pamięć zarezerwowana przez PMM i~tak przez większość czasu
-jest zupełnie nieużywana, a~więc marnowana.  Z~tego powodu, PMM
-w~formie zaprezentowanej na początku nie został przyjęty przez
-społeczność programistów Linuksa i~musiałem rozwijać go dalej.
-
-\section{Contiguous Memory Allocator}\label{sec:cma}
-
-Aby rozwiązać i~ten problem, zacząłem rozwijać {\it Contiguous Memory
-  Allocator} (lub CMA).  W~swoich początkowych wersjach, i~ten
-mechanizm działał na założeniach identycznych do PMM -- rezerwował
-pamięć przy starcie systemu, którą potem zarządzał pozwalając
-sterownikom i~programom na alokowanie obszarów ciągłych fizycznie
-\cite{patch:cma-4}.
-
-Pierwsze wersje CMA skupiały się głównie na rozwiązywaniu problemu
-przypisywania różnych zarezerwowanych obszarów do różnych urządzeń,
-a~także umożliwianiu sterownikom alokowanie różnych buforów w~różnych
-obszarach pamięci.  Było to potrzebne, gdyż dekoder wideo
-(\ang{Multi-Format Codec}, lub MFC) stosowany na platformie S5PV110
-wymagał, aby różne dane były dostępne w~różnych bankach pamięci.
-Pozwalało to na zwiększenie szybkości dostępu do tych danych dzięki
-zastosowaniu odczytu z~dwóch banków pamięci jednocześnie.
-
-Z~czasem, coraz bardziej integrowałem CMA z~kodem zarządzania pamięci
-w~Linuksie w~wyniku czego, pamięć rezerwowana przy starcie systemu,
-stała się dostępna dla reszty systemu, jeżeli żaden sterownik jej nie
-używał \cite{patch:cma-24}.  Takie rozwiązanie zostało ostatecznie
-zaakceptowane przez społeczność deweloperów Linuksa i~jest dostępne
-w~źródłach Linuksa począwszy od wersji 3.5.  W~tej pracy opisuję CMA
-w~formie w~jakiej znalazł się on w~Linuksie 3.5\footnote{Należy
-  zauważyć, że Linuks jest szybko rozwijającym się projektem wolnego
-  oprogramowania i~ponieważ CMA używana jest przez coraz więcej osób,
-  jest ona ciągle rozwijana i~im dalej w~przyszłość, tym bardziej opis
-  w~niniejszej pracy będzie się różnił od stanu faktycznego.}.
-
-
-\chapter{Alokator stron}
+\chapter{Zapoznanie z~alokatorem stron}
 
 Ponieważ CMA integruje się dość mocno z~podsystemem zarządzania
 pamięci (\ang{memory management}), do jej zrozumienia potrzeba
@@ -148,9 +16,9 @@ pamięcią.
 
 \section{Algorytm bliźniaków}
 
-\begin{wrapfigure}{p}{0.4\textwidth}
+\begin{wrapfigure}{o}[1.5cm]{0.3\textwidth}
 \begin{center}
-\includegraphics[width=0.30\textwidth]{build/alloc-free-cycle.eps}
+\includegraphics[width=0.25\textwidth]{build/alloc-free-cycle.eps}
 \end{center}
 \caption{Graficzna reprezentacja cyklu alokacji i~zwalniania buforów
   w~algorytmie bliźniaków.}
@@ -194,7 +62,7 @@ Z~powyższego opisu wynikają następujące właściwości alokatora stron.
   pojedynczej ramki {\it full HD}.
 \end{itemize}
 
-Jak zatem działa algorytm bliźniaków.  Alokator posiada listę wolnych
+Jak zatem działa algorytm bliźniaków?  Alokator posiada listę wolnych
 stron, których rząd jest pomiędzy $0$ a~$10$.  W~Linuksie zrealizowane
 jest to poprzez 11 list dwukierunkowych, gdzie każda przeznaczona jest
 dla stron o~konkretnym rzędzie.
@@ -247,7 +115,7 @@ stron o~dużym rzędzie.  Proces ten ilustruje algorytm
         \State $p' \gets$ strona bliźniacza $p$
         \State usuń $p'$ z~listy wolnych stron
         \State $k \gets k + 1$
-        \State $p~\gets$ strona powstała w~wyniku połączenia $p$ i~$p'$
+        \State $p~\gets$ strona powstała w~wyniku połączenia $p$ i~$p'$ \label{alg:buddy-free:join}
     \EndWhile
     \State dodaj $p$ do listy wolnych stron rzędu $k$\label{alg:buddy-free:add}
 \EndProcedure
@@ -314,6 +182,15 @@ skompilowane, jak i~opcji konfiguracyjnych wybranych w~trakcie
 kompilacji.  Niemniej, przeważnie wartość tych stałych to odpowiednio
 1024 (stron) i~(rząd) 10 i~właśnie takie są przyjęte w~tej pracy.
 
+\begin{figure}[tbh]
+\begin{center}
+\includegraphics[width=0.8\textwidth]{build/pages.eps}
+\end{center}
+\TODO{przetłumaczyć, przerobić na SVG}
+\caption{Graficzna reprezentacja organizacji stron pamięci stosowanej
+  przez Linuksa.}
+\end{figure}
+
 Każdy blok stron (\ang{pageblock}) ma przypisany typ migracji,
 a~alokator stron posiada oddzielne listy wolnych stron dla każdego
 typu migracji.  Zatem patrząc na algorytm \ref{alg:buddy-alloc} należy
@@ -373,7 +250,7 @@ typ migracji, a~także, że nawet jeżeli blok ma dany typ migracji,
 strony o~innym typie migracji mogą być z~niego przydzielone.
 
 
-\section{Listy PCP}
+\section{Listy PCP}\label{sec:pcp-lists}
 
 Ostatnim istotnym, z~punktu widzenia CMA, aspektem alokatora stron są
 listy PCP.  Ponieważ listy wolnych stron są współdzielone w~obrębie
@@ -413,70 +290,6 @@ aspekt pod uwagę, alokacja przyjmuje postać przedstawianą w~algorytmie
         \EndIf
     \EndIf
     \State \Return $p$
-\EndFunction
-\end{algorithmic}
-\end{algorithm}
-
-
-\chapter{Contiguous Memory Allocator}\label{sec:cma}
-
-Podstawowym założeniem CMA jest umożliwienie alokowania dużych
-obszarów ciągłych fizycznie bez konieczneści rezerwacji na wyłączność
-dużej ilości pamięci.  Aby to umożliwić, CMA korzysta z~mechanizmu
-migracji stron opisanego w~podrozdziale \ref{sec:migratetype}.
-
-\section{Typ migracji CMA}\label{sec:migrate-cma}
-
-Migracja jest możliwa tylko dla stron ruchomych.  Niestety, przed
-zaimplementowaniem CMA, w~Linuksie nie istniał mechanizm, który
-pozwalałby zagwarantować, aby w~systemie istniał duży obszar, w~którym
-strony są wolne albo ruchome.  Ponieważ (jak opisałem w~podrozdziale
-\ref{sec:type-change}) jądro dopuszcza alokacje nieruchomych stron
-z~bloków stron oznaczonych jako przechowujące strony ruchome, a~także
-posiada mechanizm na skutek którego bloki stron zmieniają swój typ,
-oznaczenie bloku stron jako ruchome nie gwarantuje, że tylko strony
-ruchome będą alokowane z~tego bloku stron.
-
-Z~tego powodu, aby CMA dobrze działała, pierwszym krokiem było
-stworzenie nowego typu migracji, nazwanym po prostu typem migracji CMA
-(\lstinline|MIGRATE_CMA|).  Typ ten posiada dwie bardzo istotne cechy:
-
-\begin{itemize}
-\item Z~bloków stron oznaczonych typem CMA mogą być alokowane tylko
-  strony ruchome.  Innymi słowy, typ migracji CMA istnieje w~lista
-  zaposowych typów migracji jedynie dla typu ruchomego.
-\item Blok oznaczony typem CMA nie zmienia swojego typu (na skutek
-  działania alokatora stron).
-\end{itemize}
-
-O~ile pierwsza właściwość jest stosunkowo prosta do osiągnięcia,
-zagwarantowania niezmienności typu bloku stron wymagało
-zidentyfikowaniem wszystkich sytuacji, w~których blok może zmienić
-swój typ (a~także sytuacji, w~których strony mogą trafić na listy
-wolnych stron dla typu niezgodnego z~typem bloku, do którego należą)
-i~dodanie odpowiednich warunków zapewniających, że nieporządana zmiana
-nie nastąpi.
-
-\section{Alokowanie obszaru pamięci}\label{sec:alloc-contig-range}
-
-W~sytuacji, gdy istnieje gwarancja, że dany zakres stron posiada
-jedynie strony wolne i~ruchome, można przystąpić do jej alokacji.
-Drugim krokiem implementowania CMA było zatem stworzenie funkcji,
-które dostaje jako argument zakres stron, a~następnie migruje
-wszystkie zajęte strony, a~wolne usuwa z~listy wolnych stron.
-
-\begin{algorithm}\label{alg:alloc-contig-range}
-\caption{Alokacja strony z~podanego zakresu}
-\begin{algorithmic}[1]
-\Function{AllocContigRange}{$s$, $e$}
-    \State $s' \gets s$ wyrównane w~dół do płnej strony maksymalnego rzędu
-    \State $e' \gets e$ wyrównane w~górę do płnej strony maksymalnego rzędu
-    \State izoluj strony z~zakresu $\left< s', e' \right)$
-    \State migruj zajęte strony z~zakresu $\left< s, e~\right)$
-    \State wyczyść PCP listy
-    \ForAll{$p \in $\left< s', e' \right)$}
-        \State usuń $p$ z listy wolnych stron
-    \EndFor
 \EndFunction
 \end{algorithmic}
 \end{algorithm}
