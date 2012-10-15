@@ -245,15 +245,13 @@ stron o~dużym rzędzie.  Proces ten ilustruje algorytm
 \label{alg:buddy-free}
 \begin{algorithmic}[1]
 \Procedure{FreePage}{$p$, $k$}
-    \While {$k + 1 \neq \mathrm{MAX\_ORDER}$}
-        \State $p' \gets$ strona bliźniacza do $p$
-        \If {$p'$ istnieje i~jest wolna}
-            \State $k \gets k + 1$
-            \State $p~\gets$ strona powstała w~wyniku połączenia $p$ i~$p'$
-        \Else
-            \State {\bf Zakończ}
-        \EndIf
+    \While {$k + 1 \neq \mathrm{MAX\_ORDER} \wedge p$ posiada wolną stronę bliźniaczą}
+        \State $p' \gets$ strona bliźniacza $p$
+        \State usuń $p'$ z~listy wolnych stron
+        \State $k \gets k + 1$
+        \State $p~\gets$ strona powstała w~wyniku połączenia $p$ i~$p'$
     \EndWhile
+    \State dodaj $p$ do listy wolnych stron rzędu $k$\label{alg:buddy-free:add}
 \EndProcedure
 \end{algorithmic}
 \end{algorithm}
@@ -302,11 +300,11 @@ z~pozostałymi stronami, które nie podlegają migracji.
 
 Grupowanie to realizowane jest poprzez podział pamięci na bloki
 składające się z~\lstinline|pageblock_nr_pages| stron (czy też
-równoważnie rząd takiego bloku to \lstinline|pageblock_order|).  Jak
-wiele rzeczy w~Linuksie, konkretne wartości tych stałych mogą zależeć
-od architektury, no którą jądro zostało skompilowane, jak i~opcji
-konfiguracyjnych wybranych w~trakcie kompilacji.  Niemniej, przeważnie
-wartość tych stałych to odpowiednio 1024 (stron) i~(rząd) 10.
+równoważnie na bloki rzędu \lstinline|pageblock_order|).  Konkretne
+wartości tych stałych zależą od architektury, no którą jądro zostało
+skompilowane, jak i~opcji konfiguracyjnych wybranych w~trakcie
+kompilacji.  Niemniej, przeważnie wartość tych stałych to odpowiednio
+1024 (stron) i~(rząd) 10 i~właśnie takie są przyjęte w~tej pracy.
 
 Każdy blok stron (\ang{pageblock}) ma przypisany typ migracji,
 a~alokator stron posiada oddzielne listy wolnych stron dla każdego
@@ -314,9 +312,9 @@ typu migracji.  Zatem patrząc na algorytm \ref{alg:buddy-alloc} należy
 zdawać sobie sprawę, iż rozpatruje on listy wolnych stron danego typu
 migracji.
 
-Istotne jest, iż dla jądra zrealizowanie alokacji jest ważniejsze od
-trzymania stron o~tym samym typie migracji razem.  Dlatego dla każdego
-typu migracji istnieje list zapasowych typów migracji.  Jeżeli
+Należy pamiętać, iż dla jądra zrealizowanie alokacji jest ważniejsze
+od trzymania stron o~tym samym typie migracji razem.  Dlatego dla
+każdego typu migracji istnieje list zapasowych typów migracji.  Jeżeli
 alokacja dla żądanego typu migracji nie powiedzie się, alokator stron
 będzie próbował z~kolejnymi typami z~list, tak jak to pokazuje
 algorytm \ref{alg:buddy-fallback}
@@ -331,14 +329,17 @@ zmieniany na ten zgodny z~wywołąniem funkcji
 \label{alg:buddy-fallback}
 \begin{algorithmic}[1]
 \Function{AllocPageMigrateType}{$k$, $m$}
-    \State $l \gets$ lista zapasowych typów migracji dla typu $m$
-    \State dodaj $m$ na początek $l$
-    \ForAll{$m \in l$}
-        \State $p \gets$ \Call{AllocPage}{$k$} biorąc listy stron typu $m$
+    \State $f \gets$ lista zapasowych typów migracji dla typu $m$
+    \State dodaj $m$ na początek $f$
+    \ForAll{$m' \in f$}
+        \State $p \gets$ \Call{AllocPage}{$k$} biorąc pod uwagę listy stron typu $m'$
         \If {$p \neq \emptyset$}
-            \If {$k \geq \nicefrac{\mathrm{page\_order}}{2}$}
+            \If {$m \neq m' \wedge k \geq \nicefrac{\mathrm{page\_order}}{2}$}
                 \State $b \gets$ blok stron zawierający $p$
-                \State zmień typ migracjy stron z~$b$ na $m$
+                \State zmień typ migracji $b$ na $m$
+                \ForAll {wolnych stron $p' \in b$}
+                    \State przenieś $p'$ na listę wolnych stron typu $m$
+                \EndFor
             \EndIf
             \State \Return $p$
         \EndIf
@@ -348,9 +349,15 @@ zmieniany na ten zgodny z~wywołąniem funkcji
 \end{algorithmic}
 \end{algorithm}
 
-Istotne jest tutaj, iż bloki stron mogą zmieniać swój typ migracji,
-a~także, że nawet jeżeli blok ma dany typ migracji, strony o~innym
-typie migracji mogą być z~niego przydzielone.
+Podczas zwalniania, gdy strona jest dodawana do listy wolnych stron
+(wideczne w~linii \ref{alg:buddy-free:add} algorytmu
+\ref{alg:buddy-free}) typ migracji listy, na którą strona trafia
+determinowany jest poprzez typ migracji przypisany blokowi stron do
+którego dana strona należy.
+
+Istotne jest tutaj, aby zauważyć, iż bloki stron mogą zmieniać swój
+typ migracji, a~także, że nawet jeżeli blok ma dany typ migracji,
+strony o~innym typie migracji mogą być z~niego przydzielone.
 
 
 \section{Listy PCP}
@@ -390,6 +397,7 @@ aspekt pod uwagę, alokacja przyjmuje postać przedstawianą w~algorytmie
         \Else
             \State $p \gets$ pierwsza strona z $l$
             \State usuń pierwszą stronę z $l$
+            \State lista PCP dla typu migracji $m$ $\gets l$
         \EndIf
     \EndIf
     \State \Return $p$
