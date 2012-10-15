@@ -148,6 +148,14 @@ pamięcią.
 
 \section{Algorytm bliźniaków}
 
+\begin{wrapfigure}{p}{0.4\textwidth}
+\begin{center}
+\includegraphics[width=0.30\textwidth]{build/alloc-free-cycle.eps}
+\end{center}
+\caption{Graficzna reprezentacja cyklu alokacji i~zwalniania buforów
+  w~algorytmie bliźniaków.}
+\end{wrapfigure}
+
 Alokator stron implementuje algorytm bliźniaków (skąd też jego inna
 angielska nazwa: {\it buddy system} lub {\it buddy allocator}), który
 operuje na blakach o~rozmiarze $2^k$ jednostek.  W~przypadku Linuksa
@@ -204,25 +212,26 @@ bliźniaczymi.  Cały proces ilustruje algorytm \ref{alg:buddy-alloc}
 \caption{Alokacja strony rzędu $k$ w~algorytmie bliźniaków}
 \label{alg:buddy-alloc}
 \begin{algorithmic}[1]
-\REQUIRE $0 \leq k < \mathrm{MAX\_ORDER}$
+\Require $0 \leq k < \mathrm{MAX\_ORDER}$
+\Function{AllocatePage}{$k$}
+    \State $i \gets k$
+    \While {lista stron rzędu $i = \emptyset$}
+        \State $i \gets i + 1$
+        \If {$i = \mathrm{MAX\_ORDER}$}
+            \State \Return $\emptyset$
+        \EndIf
+    \EndWhile
 
-\STATE $i \gets k$
-\WHILE {lista stron rzędu $i = \emptyset$}
-    \STATE $i \gets i + 1$
-    \IF {$i = \mathrm{MAX\_ORDER}$}
-        \RETURN alokacja nie powiodła się
-    \ENDIF
-\ENDWHILE
-
-\STATE $p \gets$ strona z listy stron rzędu $i$
-\WHILE {$i \ne k$}
-    \STATE $i \gets i - 1$
-    \STATE podziel $p$ na pół na $p_1$ i $p_2$
-    \COMMENT{Strony $p_1$ i $p_2$ nazywamy stronami bliźniaczymi}
-    \STATE $p \gets p_1$
-    \STATE dodaj $p_2$ do listy stron rzędu $i$
-\ENDWHILE
-\RETURN $p$
+    \State $p \gets$ strona z listy stron rzędu $i$
+    \While {$i \neq k$}
+        \State $i \gets i - 1$
+        \State podziel $p$ na pół na $p_1$ i $p_2$
+        \Comment{Strony $p_1$ i $p_2$ nazywamy stronami bliźniaczymi}
+        \State $p \gets p_1$
+        \State dodaj $p_2$ do listy stron rzędu $i$
+    \EndWhile
+    \State \Return $p$
+\EndFunction
 \end{algorithmic}
 \end{algorithm}
 
@@ -235,15 +244,17 @@ stron o~dużym rzędzie.  Proces ten ilustruje algorytm
 \caption{Zwalnianie strony $p$ rzędu $k$ w algorytmie bliźniaków}
 \label{alg:buddy-free}
 \begin{algorithmic}[1]
-\WHILE {$k + 1 \ne \mathrm{MAX\_ORDER}$}
-    \STATE $p' \gets$ strona bliźniacza do $p$
-    \IF {$p'$ istnieje i~jest wolna}
-        \STATE $k \gets k + 1$
-        \STATE $p~\gets$ strona powstała w~wyniku połączenia $p$ i~$p'$
-    \ELSE
-        \STATE {\bf Zakończ}
-    \ENDIF
-\ENDWHILE
+\Procedure{FreePage}{$p$, $k$}
+    \While {$k + 1 \neq \mathrm{MAX\_ORDER}$}
+        \State $p' \gets$ strona bliźniacza do $p$
+        \If {$p'$ istnieje i~jest wolna}
+            \State $k \gets k + 1$
+            \State $p~\gets$ strona powstała w~wyniku połączenia $p$ i~$p'$
+        \Else
+            \State {\bf Zakończ}
+        \EndIf
+    \EndWhile
+\EndProcedure
 \end{algorithmic}
 \end{algorithm}
 
@@ -252,13 +263,14 @@ stron o~dużym rzędzie.  Proces ten ilustruje algorytm
 
 Powyższy opis pomija niektóre szczegóły alokatora stron.  Po pierwsze,
 nawet jeżeli w~danej chwili nie istnieje wolna strona o~żądanym
-rzędzie, aktywowane są mechanizmy odzyskiwania pamięci (np.\ poprzez
+rzędzie, aktywowana jest tzw.\ wolna ścieżka (\ang{slow path}), która
+wykorzystuje różne mechanizmy odzyskiwania pamięci (np.\ poprzez
 zwalnianie buforów dyskowych, czy w~najgorszym przypadku zabiciu
 jednego z~działających procesów).  Mechanizmy te nie są jednak istotne
 dla tematyki niniejszej pracy i~dlatego zostały pominięte.
 
-Jednak ważnym czynnikiem są typy migracji (\ang{migrate type}).
-W~dużym uproszczeniu, strony mogą one być ruchome (\ang{movable}) albo
+Ważnym czynnikiem są typy migracji (\ang{migrate type}).  W~dużym
+uproszczeniu, strony mogą one być ruchome (\ang{movable}) albo
 nie\footnote{W~rzeczywistości jest więcej typów migracji ({\it
     movable}, {\it reclaimable}, {\it movable}, {\it cma}, {\it
     reserve} oraz {\it isolate}), ale na potrzeby tej pracy można
@@ -307,7 +319,7 @@ trzymania stron o~tym samym typie migracji razem.  Dlatego dla każdego
 typu migracji istnieje list zapasowych typów migracji.  Jeżeli
 alokacja dla żądanego typu migracji nie powiedzie się, alokator stron
 będzie próbował z~kolejnymi typami z~list, tak jak to pokazuje
-alogrytm \ref{alg:buddy-fallback}
+algorytm \ref{alg:buddy-fallback}
 
 Co więcej, jeżęli rząd żądanej strony jest dostatecznie duży, typ
 migracji wszystkich wolnych stron w~danym bloku stron zostaje
@@ -318,23 +330,69 @@ zmieniany na ten zgodny z~wywołąniem funkcji
 \caption{Alokacja strony rzędu $k$ z~uwzględnieniem typu migracji $m$}
 \label{alg:buddy-fallback}
 \begin{algorithmic}[1]
-\STATE $l \gets$ lista zapasowych typów migracji dla typu $m$
-\STATE dodaj $m$ na początek $l$
-\FORALL{$m \in l$}
-    \STATE $p \gets$ alokuj stronę rzędu $k$ spośród stron typu
-    migracji $m$ zgodnie z~algorytmem \ref{alg:buddy-alloc}
-    \IF {alokacja powiodła się}
-        \IF {$k \geq \nicefrac{\mathrm{page\_order}}{2}$}
-            \STATE $b \gets$ blok stron zawierający $p$
-            \STATE zmień typ migracjy stron z~$b$ na $m$
-        \ENDIF
-        \RETURN $p$
-    \ENDIF
-\ENDFOR
-\RETURN alokacja nie powiodła się
+\Function{AllocPageMigrateType}{$k$, $m$}
+    \State $l \gets$ lista zapasowych typów migracji dla typu $m$
+    \State dodaj $m$ na początek $l$
+    \ForAll{$m \in l$}
+        \State $p \gets$ \Call{AllocPage}{$k$} biorąc listy stron typu $m$
+        \If {$p \neq \emptyset$}
+            \If {$k \geq \nicefrac{\mathrm{page\_order}}{2}$}
+                \State $b \gets$ blok stron zawierający $p$
+                \State zmień typ migracjy stron z~$b$ na $m$
+            \EndIf
+            \State \Return $p$
+        \EndIf
+    \EndFor
+    \State \Return $\emptyset$
+\EndFunction
 \end{algorithmic}
 \end{algorithm}
 
 Istotne jest tutaj, iż bloki stron mogą zmieniać swój typ migracji,
 a~także, że nawet jeżeli blok ma dany typ migracji, strony o~innym
 typie migracji mogą być z~niego przydzielone.
+
+
+\section{Listy PCP}
+
+Ostatnim istotnym, z~punktu widzenia CMA, aspektem alokatora stron są
+listy PCP.  Ponieważ listy wolnych stron są współdzielone w~obrębie
+całego systemu dostęp do nich musi być synchronizowany pomiędzy
+wszystkimi procesorami.  Aby uniknąć kosztów związanych
+z~synchronizacją, każdy procesor posiada swoje prywatne PCP listy, na
+których znajdują się wolne strony rzędu 0.  Biorąc również i~ten
+aspekt pod uwagę, alokacja przyjmuje postać przedstawianą w~algorytmie
+\ref{alg:buddy-pcp}
+
+\begin{algorithm}
+\caption{Alokacja strony rzędu $k$ z~typem migracji $m$
+  z~uwzględnieniem list PCP}
+\label{alg:buddy-pcp}
+\begin{algorithmic}[1]
+\Function{AllocPageUsePCP}{$k$, $m$}
+    \If {$k \neq 0$}
+        \State $p \gets$ \Call{AllocPageMigrateType}{$k$, $m$}
+    \Else
+        \State $l \gets$ lista PCP dla typu migracji $m$
+        \If {$l = \emptyset$}
+            \State $i \gets 0$
+            \Repeat
+                \State $p \gets$ \Call{AllocPageMigrateType}{$0$, $m$}
+                \If {$p \neq \emptyset$}
+                    \State dodaj $p$ do $l$
+                    \State $i \gets i + 1$
+                \EndIf
+            \Until {$i \geq n \vee p = \emptyset$} \Comment{Wartość
+              $n$ jest zależna od różnych czynników}
+        \EndIf
+        \If {$l = \emptyset$}
+            \State \Return $\emptyset$
+        \Else
+            \State $p \gets$ pierwsza strona z $l$
+            \State usuń pierwszą stronę z $l$
+        \EndIf
+    \EndIf
+    \State \Return $p$
+\EndFunction
+\end{algorithmic}
+\end{algorithm}

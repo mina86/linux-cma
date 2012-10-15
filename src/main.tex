@@ -13,6 +13,10 @@
 \usepackage{url}
 \usepackage{breakurl}
 
+\usepackage{wrapfig}
+\usepackage{graphicx}
+\usepackage{epstopdf}
+
 \usepackage{units}
 
 \usepackage{listings}
@@ -21,9 +25,16 @@
 \renewcommand*\lstlistlistingname{Spis wydruków}
 
 
-\usepackage{algorithm}
-\usepackage[noend]{algorithmic}
-\algsetup{indent=2em}
+\usepackage[chapter]{algorithm}
+\makeatletter
+\renewcommand{\ALG@name}{Algorytm}
+\renewcommand{\listalgorithmname}{Lista algorytmów}
+\renewcommand{\thealgorithm}{\arabic{chapter}.\arabic{algorithm}.}
+\makeatother
+
+%% \usepackage[noend]{algorithmic}
+\usepackage[noend]{algpseudocode}
+%\algsetup{indent=2em}
 \renewcommand{\algorithmicrequire}{\textbf{Wymaga:}}
 \renewcommand{\algorithmicensure}{\textbf{Zapewnia:}}
 \renewcommand{\algorithmiccomment}[1]{{\footnotesize \it \{ #1 \}}}
@@ -31,22 +42,18 @@
 %% \renewcommand{\algorithmicthen}{\textbf{wówczas}}
 \renewcommand{\algorithmicthen}{}
 \renewcommand{\algorithmicelse}{\textbf{wpp.}}
-\renewcommand{\algorithmicelsif}{\algorithmicelse jeżeli}
+%\renewcommand{\algorithmicelsif}{\algorithmicelse \textbf{jeżeli}}
 \renewcommand{\algorithmicfor}{\textbf{Dla}}
 \renewcommand{\algorithmicforall}{\textbf{Dla wszystkich}}
 %% \renewcommand{\algorithmicdo}{\textbf{wykonuj}}
 \renewcommand{\algorithmicdo}{\textbf{}}
 \renewcommand{\algorithmicwhile}{\textbf{Dopóki}}
 \renewcommand{\algorithmicloop}{\textbf{Wykonuj}}
-\renewcommand{\algorithmicrepeat}{\textbf{Powtarzaj}}
-\renewcommand{\algorithmicuntil}{\textbf{aż}}
-\renewcommand{\algorithmicprint}{\textbf{print}}
+\renewcommand{\algorithmicrepeat}{\textbf{Wykonuj}}
 \renewcommand{\algorithmicreturn}{\textbf{Zwróć}}
-\makeatletter
-\renewcommand{\ALG@name}{Algorytm}
-\renewcommand{\listalgorithmname}{Lista algorytmów}
-\renewcommand{\thealgorithm}{\arabic{algorithm}.}
-\makeatother
+\renewcommand{\algorithmicuntil}{\textbf{aż}}
+\renewcommand{\algorithmicfunction}{\textbf{Funkcja}}
+\renewcommand{\algorithmicprocedure}{\textbf{Procedura}}
 
 
 \usepackage{geometry}

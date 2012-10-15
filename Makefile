@@ -5,11 +5,18 @@ all: mnazarew_bsc.pdf
 mnazarew_bsc.pdf: build/mnazarew_bsc.dvi
 	exec dvipdf $< $@
 
-build/mnazarew_bsc.dvi: src/main.tex $(wildcard src/*.tex)
+build/mnazarew_bsc.dvi: src/main.tex
+build/mnazarew_bsc.dvi: $(wildcard src/*.tex)
+build/mnazarew_bsc.dvi: build/alloc-free-cycle.eps
+build/mnazarew_bsc.dvi:
 	@exec mkdir -p build
 	exec $(LATEX) $<
 	exec $(LATEX) $<
 	exec mv -- build/main.dvi $@
+
+build/%.eps: src/%.svg
+	@exec mkdir -p build
+	exec inkscape -z -D --file=$^ --export-eps=$@
 
 clean:
 	exec rm -fr -- build
