@@ -1,0 +1,67 @@
+\section[Solutions]{Solutions prior to CMA}
+
+\subsection{Lie to the kernel}
+\begin{frame}
+  \frametitle{Lie to the kernel}
+
+  \begin{itemize}
+  \item Lie to the kernel about amount of memory.
+    \begin{itemize}
+    \item Easily done with a~mem parameter.
+    \item Kernel won't touch memory hidden via mem.
+    \end{itemize}
+  \item Assign buffers to each device that might need it.
+  \item Platform dependent.
+  \item Requires fiddling with boot loader.
+  \item \ldots
+  \end{itemize}
+\end{frame}
+
+\subsection{Reserve and assign at boot time}
+\begin{frame}
+  \frametitle{Reserve and assign at boot time}
+
+  \begin{itemize}
+  \item Reserve memory during system boot time.
+  \item Assign buffers to each device that might need it.
+  \item Less platform dependent.
+  \item Boot loader is left alone.
+  \item While device is not being used, memory is wasted.
+  \end{itemize}
+\end{frame}
+
+\subsection{Reserve but allocate on demand}
+\begin{frame}
+  \frametitle{Reserve but allocate on demand}
+
+  \begin{itemize}
+  \item Reserve memory during system boot time.
+  \item Provide API for allocating from that reserved pool.
+  \item Less memory is reserved.
+  \item But it's still wasted.
+  \end{itemize}
+
+  \begin{itemize}
+  \item bigphysarea
+  \item Physical Memory Manager
+  \end{itemize}
+\end{frame}
+
+\subsection{Reserve but give back}
+\begin{frame}
+  \frametitle{Reserve but give back}
+
+  \begin{itemize}
+  \item Reserve memory during system boot time.
+  \item Give it back
+    \begin{itemize}
+    \item but set it up so only movable pages can be allocated.
+    \end{itemize}
+  \item Provide API for allocating from that reserved pool.
+  \item Migrate pages on allocation.
+  \end{itemize}
+
+  \begin{itemize}
+  \item Contiguous Memory Allocator
+  \end{itemize}
+\end{frame}

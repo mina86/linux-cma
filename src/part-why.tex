@@ -1,0 +1,90 @@
+\section[Introduction]{Why physically contiguous memory is needed}
+
+\subsection{The mighty MMU}
+\begin{frame}
+  \frametitle{The mighty MMU}
+
+  \begin{itemize}
+  \item Modern CPUs have MMU.
+    \begin{itemize}
+    \item Virtual $\rightarrow$ physical address.
+    \end{itemize}
+  \item Virtually contiguous does not require physically contiguous.
+  \item So why bother?
+  \end{itemize}
+\end{frame}
+
+\subsection{System devices}
+\begin{frame}
+  \frametitle{System devices}
+
+  \begin{itemize}
+  \item MMU stands behind CPU.
+  \item There are other chips in the system.
+  \item Some require large buffers.
+    \begin{itemize}
+    \item 5-megapixel camera anyone?
+    \end{itemize}
+  \item On embedded, there's plenty of those.
+  \end{itemize}
+\end{frame}
+
+\subsection{The mighty DMA}
+\begin{frame}
+  \frametitle{The mighty DMA}
+
+  \begin{itemize}
+  \item DMA can do vectored I/O.
+  \item Gathering buffer from scattered parts.
+  \item Contiguous for the device does not require physically contiguous.
+  \item So why bother?
+  \end{itemize}
+\end{frame}
+
+\subsection{The mighty system MMU}
+\begin{frame}
+  \frametitle{The mighty system MMU}
+
+  \begin{itemize}
+  \item What about a~system MMU?
+    \begin{itemize}
+    \item Address coming from the device $\rightarrow$ physical
+      address
+    \end{itemize}
+  \item Same deal as with CPU's MMU.
+  \item So why bother?
+  \end{itemize}
+\end{frame}
+
+\subsection{Cost, speed \& power}
+\begin{frame}
+  \frametitle{Cost, speed \& power}
+
+  \begin{itemize}
+  \item Every chip costs.
+    \begin{itemize}
+    \item Money and power.
+    \end{itemize}
+  \item More complex chips cost more.
+  \item Not all systems have DMA with SG or system MMU.
+  \item System MMU takes time.
+  \end{itemize}
+\end{frame}
+
+\subsection{The need for contiguous}
+\begin{frame}
+  \frametitle{The need for contiguous}
+
+  \begin{itemize}
+  \item Not all systems have DMA SG.
+  \item Not all systems have system MMU.
+  \item There are time penalties.
+  \item Yet chips need bigger and bigger buffers.
+    \begin{itemize}
+    \item 5-megapixel camera.
+    \item \unit[6]{MB} for a~full HD frame.
+    \item \unit[3]{MB} framebuffer window.
+    \end{itemize}
+  \item There is real need for physically contiguous allocations.
+  \end{itemize}
+\end{frame}

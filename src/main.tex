@@ -1,0 +1,66 @@
+\documentclass{beamer}
+\usepackage[utf8]{inputenc}
+% \usepackage[T1]{fontenc} % I've gotten "no %%Page comments generated" with this
+\usepackage[english]{babel}
+\usepackage{pgf}
+\usepackage{units}
+
+\usetheme{Frankfurt}
+
+% Provide \CC to typeset "C++" better.
+% http://www.parashift.com/c++-faq-lite/misc-environmental-issues.html#faq-40.2
+\newcommand{\CC}{C\nolinebreak\hspace{-.05em}\raisebox{.4ex}{\footnotesize\bf +}\nolinebreak\hspace{-.10em}\raisebox{.4ex}{\footnotesize\bf +}}
+
+% Define the Google colours.
+\definecolor{GoogleBlue}{RGB}{0,102,204}
+\definecolor{GoogleYellow}{RGB}{255,204,0}
+\definecolor{GoogleGreen}{RGB}{0,153,0}
+\definecolor{GoogleRed}{RGB}{255,0,0}
+\definecolor{GoogleGray}{RGB}{89,89,89}
+
+% Use GoogleBlue for all structural text (headers, bullets, etc.)
+\setbeamercolor{structure}{fg=GoogleBlue,bg=white}
+
+% Shrink the margins slightly.
+\setbeamersize{text margin left=5mm}
+\setbeamersize{text margin right=5mm}
+
+% Remove navigation symbols. They are never used anyway.
+\setbeamertemplate{navigation symbols}{}
+
+% Make more room on notes pages (when used).
+\setbeamertemplate{note page}[plain]
+\setbeamerfont{note page}{size=\scriptsize}
+
+% Gray footnotes, no rule.
+% FIXME: This is broken. The gray continues onto subsequent slides.
+% Note: footnotes are generally a bad idea in presentations.
+\setbeamercolor{footnote mark}{fg=GoogleGray}
+\renewcommand{\footnoterule}{}
+
+\newcommand\gheaderheight{1mm}
+\setbeamertemplate{footline}{%
+    \begin{pgfpicture}{0cm}{0cm}{\textwidth}{\gheaderheight}
+    \pgfsetcolor{GoogleBlue}
+    \pgfrect[fill]{\pgfpoint{0.0\textwidth}{0}}
+                  {\pgfpoint{0.25\textwidth}
+                  {\gheaderheight}}
+    \pgfsetcolor{GoogleRed}
+    \pgfrect[fill]{\pgfpoint{0.25\textwidth}{0}}
+                  {\pgfpoint{0.25\textwidth}
+                  {\gheaderheight}}
+    \pgfsetcolor{GoogleYellow}
+    \pgfrect[fill]{\pgfpoint{0.50\textwidth}{0}}
+                  {\pgfpoint{0.25\textwidth}
+                  {\gheaderheight}}
+    \pgfsetcolor{GoogleGreen}
+    \pgfrect[fill]{\pgfpoint{0.75\textwidth}{0}}
+                  {\pgfpoint{0.25\textwidth}
+                  {\gheaderheight}}
+    \end{pgfpicture}
+}
+
+
+\input{src/content.tex}
+
+\end{document}
