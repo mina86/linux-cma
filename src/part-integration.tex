@@ -1,0 +1,163 @@
+\Section{Integration}{Integration with the architecture}
+
+\begin{frame}
+  \frametitle{Integration with the architecture}
+
+  \begin{itemize}
+  \item CMA needs to be integrated with the architecture.
+  \item Memory needs to be reserved.
+  \item There are early fixups to be done. {\footnotesize Or not.}
+  \item The DMA API needs to be made aware of CMA.
+  \item And Kconfig needs to be instructed to allow CMA.
+  \end{itemize}
+\end{frame}
+
+\subsection{Memory reservation}
+
+\begin{frame}
+  \frametitle{Memory reservation}
+
+  \begin{itemize}
+  \item \lstinline|memblock| must be ready, page allocator must not.
+  \item On ARM, \lstinline|arm_memblock_init()| is a~good place.
+  \item All one needs to do, is to call
+    \lstinline|dma_contiguous_reserve()|.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Memory reservation, cont.}
+
+  \begin{block}{Reserving memory on ARM}
+\begin{lstlisting}[language=diff]
+ if (mdesc->reserve)
+     mdesc->reserve();
+
++/*
++ * reserve memory for DMA contigouos allocations,
++ * must come from DMA area inside low memory
++ */
++dma_contiguous_reserve(min(arm_dma_limit, arm_lowmem_limit));
++
+ arm_memblock_steal_permitted = false;
+ memblock_allow_resize();
+ memblock_dump_all();
+\end{lstlisting}
+  \end{block}
+\end{frame}
+
+\subsection{Early fixups}
+
+\begin{frame}
+  \frametitle{Early fixups}
+
+  \begin{itemize}
+  \item Kernel linear mapping uses huge pages.
+  \item On ARM cache is not coherent.
+  \item Having two mappings with different cache-ability gives
+    undefined behaviour.
+  \item So on ARM an “early fixup” is needed.
+    \begin{itemize}
+    \item This fixup alters the linear mapping so CMA regions use
+      \unit[4]{KiB} pages.
+    \end{itemize}
+  \item The fixup is defined in
+    \lstinline|dma_contiguous_early_fixup()| function
+    \begin{itemize}
+    \item which architecture needs to provide
+    \item with declaration in a~\lstinline|asm/dma-contiguous.h| header file.
+    \end{itemize}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Early fixups, cont.}
+
+  \begin{block}{No need for early fixups}
+\begin{lstlisting}
+#ifndef ASM_DMA_CONTIGUOUS_H
+#define ASM_DMA_CONTIGUOUS_H
+#ifdef __KERNEL__
+
+#include <linux/types.h>
+#include <asm-generic/dma-contiguous.h>
+
+static inline void
+dma_contiguous_early_fixup(phys_addr_t base, unsigned long size)
+{
+    /* nop, no need for early fixups */
+}
+
+#endif
+#endif
+\end{lstlisting}
+  \end{block}
+\end{frame}
+
+\subsection{Integration with the DMA API}
+
+\begin{frame}
+  \frametitle{Integration with DMA API}
+
+  \begin{itemize}
+  \item The DMA API needs to be modified to use CMA.
+  \item CMA most likely won't be the only one.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Integration with DMA API}
+
+  \begin{block}{Allocate}
+\begin{lstlisting}
+struct page *dma_alloc_from_contiguous(
+    struct device *dev,
+    int count,
+    unsigned int align);
+\end{lstlisting}
+  \end{block}
+
+  \begin{description}[count]
+  \item[dev] Device the allocation is performed on behalf of.
+  \item[count] \emph{Number of pages} to allocate. {\footnotesize Not
+    number of bytes nor order.}
+  \item[align] Order which to align to.  Limited by Kconfig option.
+  \item Returns page that is the first page of \lstinline|count|
+    allocated pages. {\footnotesize It's not a~compound page.}
+  \end{description}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Integration with DMA API}
+
+  \begin{block}{Release}
+\begin{lstlisting}
+bool dma_release_from_contiguous(
+    struct device *dev,
+    struct page *pages,
+    int count);
+\end{lstlisting}
+  \end{block}
+
+  \begin{description}[count]
+  \item[dev] Device the allocation was performed on behalf of.
+  \item[pages] The first of allocated pages. {\footnotesize As
+    returned on allocation.}
+  \item[count] Number of allocated pages to allocate.
+  \item Returns \lstinline|true| if memory was freed (ie.\ was managed
+    by CMA) or \lstinline|false| otherwise.
+  \end{description}
+\end{frame}
+
+\subsection{Let it compile!}
+
+\begin{frame}
+  \frametitle{Let it compile!}
+
+  \begin{itemize}
+  \item There's one think that needs to be done in \lstinline|Kconfig|.
+  \item Architecture needs to \lstinline|select HAVE_DMA_CONTIGUEUS|.
+  \item Without it, CMA won't show up under “Generic Driver Options”.
+  \item Architecture may also \lstinline|select CMA| to force CMA in.
+  \end{itemize}
+\end{frame}
