@@ -41,19 +41,19 @@ opis DMA API w~rozdziale 15 \cite{bib:ldd3}.
       DMA API.},label=lst:dma-alloc-example]
 static struct device *my_dev;
 
-void *my_dev_alloc_buffor(unsigned long size_in_bytes, dma_addr_t *dma_addrp)
+void *my_dev_alloc_buffer(unsigned long size_in_bytes, dma_addr_t *dma_addrp)
 {
 	void *virt_addr;
 
 	virt_addr = dma_alloc_coherent(my_dev, size_in_bytes,
-				       dma_addr, GFP_KERNEL);
+				       dma_addrp, GFP_KERNEL);
 	if (!virt_addr)
 		dev_err(my_dev, "Unable to allocate %lu-byte DMA %buffer",
 			size_in_bytes);
-		return virt_addr;
+	return virt_addr;
 }
 
-void *my_dev_free_buffor(unsigned long size_in_bytes,
+void *my_dev_free_buffer(unsigned long size_in_bytes,
 			 void *virt_addr, dma_addr_t dma_addr)
 {
 	dma_free_coherent(my_dev, size_in_bytes, virt_addr, dma_addr);
@@ -74,7 +74,7 @@ void dma_contiguous_reserve(phys_addr_t limit);
 \end{lstlisting}
 
 Wywołanie to musi nastąpić gdy podsystem alokacji pamięci czasu startu
-systemu (tj.\ {\it.\ memblock}) zostanie zainicjowany, ale przed
+systemu (tj.\ {\it. memblock}) zostanie zainicjowany, ale przed
 aktywowaniem alokatora stron.  Dla przykładu w~architekturze ARM
 dogodnym miejscem jest funkcja \lstinline|arm_memblock_init()|, a~x86
 -- \lstinline|setup_arch()| zaraz po aktywowaniu memblock.
