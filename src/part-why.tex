@@ -9,7 +9,7 @@
     \begin{itemize}
     \item Virtual $\rightarrow$ physical address.
     \end{itemize}
-  \item Virtually contiguous does not require physically contiguous.
+  \item Virtually contiguous $\notimplies$ physically contiguous.
   \item So why bother?
   \end{itemize}
 \end{frame}
@@ -36,7 +36,7 @@
   \begin{itemize}
   \item DMA can do vectored I/O.
   \item Gathering buffer from scattered parts.
-  \item Contiguous for the device does not require physically contiguous.
+  \item Contiguous for the device $\notimplies$ physically contiguous.
   \item So why bother?
   \end{itemize}
 \end{frame}
@@ -68,23 +68,5 @@
   \item More complex chips cost more.
   \item Not all systems have DMA with SG or system MMU.
   \item System MMU takes time.
-  \end{itemize}
-\end{frame}
-
-\subsection{The need for contiguous}
-\begin{frame}
-  \frametitle{The need for contiguous}
-
-  \begin{itemize}
-  \item Not all systems have DMA SG.
-  \item Not all systems have system MMU.
-  \item There are time penalties.
-  \item Yet chips need bigger and bigger buffers.
-    \begin{itemize}
-    \item 5-megapixel camera.
-    \item \unit[6]{MB} for a~full HD frame.
-    \item \unit[3]{MB} framebuffer window.
-    \end{itemize}
-  \item There is real need for physically contiguous allocations.
   \end{itemize}
 \end{frame}
