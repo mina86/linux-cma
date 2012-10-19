@@ -1,9 +1,42 @@
 \documentclass{beamer}
 \usepackage[utf8]{inputenc}
-% \usepackage[T1]{fontenc} % I've gotten "no %%Page comments generated" with this
+\usepackage[T1]{fontenc} % I've gotten "no %%Page comments generated" with this
 \usepackage[english]{babel}
 \usepackage{pgf}
 \usepackage{units}
+\usepackage{lmodern}
+\usepackage{color}
+\usepackage{listings}
+
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+\definecolor{darkgreen}{rgb}{0.0,0.5,0.0}
+\lstset{
+  language=C,
+  basicstyle=\small,
+  numbers=left,
+  numberstyle=\tiny\color{gray},
+  stepnumber=1,
+  numbersep=5pt,
+  showspaces=false,
+  showstringspaces=false,
+  showtabs=false,
+  tabsize=8,
+  captionpos=b,
+  breaklines=true,
+  breakautoindent,
+  columns=fullflexible,
+  morekeywords={inline},
+  keywordstyle=\color{blue}\bfseries,
+  commentstyle=\color{darkgreen}\itshape,
+  stringstyle=\color{magenta}\ttfamily
+}
+\lstdefinelanguage{diff}{
+  morecomment=[f][\color{blue}]{@@},     % group identifier
+  morecomment=[f][\color{red}]-,         % deleted lines
+  morecomment=[f][\color{darkgreen}]+,   % added lines
+  morecomment=[f][\color{magenta}]{---}, % Diff header lines (must appear after +,-)
+  morecomment=[f][\color{magenta}]{+++},
+}
 
 \usetheme{Frankfurt}
 
@@ -61,6 +94,56 @@
 }
 
 
-\input{src/content.tex}
+\newcommand\Section[2]{%
+\section[#1]{#2}%
+\begin{frame}%
+\frametitle{#2}%
+\tableofcontents[currentsection,sections=\thesection]%
+\end{frame}}
+
+\title{Continuous Memory Allocator}
+\author{Michał Nazarewicz}
+\institute{Google}
+\date{\today}
+
+\begin{document}
+\begin{frame}
+  \titlepage
+\end{frame}
+
+\begin{frame}
+  \frametitle{Who am I?}
+
+  \begin{itemize}
+  \item Just a~random FOSS enthusiast.
+  \item 2009--2010 at Samsung.
+    \begin{itemize}
+    \item USB gadgets.
+    \item Memory management.
+    \end{itemize}
+  \item 2011--now at Google.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Table of Contents}
+  \tableofcontents[hideallsubsections]
+\end{frame}
+
+\input{src/part-why}
+\input{src/part-existing}
+\input{src/part-howto}
+\input{src/part-regions}
+
+\appendix
+
+\section*{Q \& A}
+\begin{frame}
+  \frametitle{Q \& A}
+
+  \begin{center}
+  {\Huge ?}
+  \end{center}
+\end{frame}
 
 \end{document}
