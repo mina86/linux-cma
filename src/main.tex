@@ -50,6 +50,13 @@
 \definecolor{GoogleGreen}{RGB}{0,153,0}
 \definecolor{GoogleRed}{RGB}{255,0,0}
 \definecolor{GoogleGray}{RGB}{89,89,89}
+\newcommand\Google{\href{http://www.google.com/}{%
+{\color{GoogleBlue}G}%
+{\color{GoogleRed}o}%
+{\color{GoogleYellow}o}%
+{\color{GoogleBlue}g}%
+{\color{GoogleGreen}l}%
+{\color{GoogleRed}e}}}
 
 % Use GoogleBlue for all structural text (headers, bullets, etc.)
 \setbeamercolor{structure}{fg=GoogleBlue,bg=white}
@@ -97,16 +104,24 @@
 \newcommand\Section[2]{%
 \section[#1]{#2}%
 \begin{frame}%
-\frametitle{#2}%
 \tableofcontents[currentsection,sections=\thesection]%
 \end{frame}}
 
+
 \title{Continuous Memory Allocator}
-\author{Michał Nazarewicz}
-\institute{Google}
+\author[Michał Nazarewicz]{%
+  \texorpdfstring{Michał Nazarewicz\vskip 8pt%
+    \scriptsize\href{mailto:mina86@mina86.com}{mina86@mina86.com}}{%
+    Michał Nazarewicz}}
+\institute{\Google}
 \date{\today}
 
+\setbeamerfont{institute}{size={\fontsize{10pt}{12pt}}}
+\setbeamerfont{date}{size={\fontsize{8pt}{10pt}}}
+
+
 \begin{document}
+
 \begin{frame}
   \titlepage
 \end{frame}
