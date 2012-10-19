@@ -34,3 +34,86 @@
     \end{itemize}
   \end{itemize}
 \end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Declaring private regions}
+
+  \begin{block}{Declaring private regions}
+\begin{lstlisting}
+int dma_declare_contiguous(
+    struct device *dev,
+    unsigned long size,
+    phys_addr_t base,
+    phys_addr_t limit);
+\end{lstlisting}
+  \end{block}
+
+  \begin{description}[count]
+  \item[dev] Device that will use this region.
+  \item[size] \emph{Size in bytes pages} to allocate. {\footnotesize Not
+    pagas nor order.}
+  \item[base] Base address of the region (or zero to use anywhere).
+  \item[limit] Upper limit of the region (or zero for no limit).
+  \item Returns zero on success, negative error code on failure.
+  \end{description}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Declaring private regions}
+
+  \begin{block}{Declaring private regions}
+\begin{lstlisting}
+int dma_declare_contiguous(
+    struct device *dev,
+    unsigned long size,
+    phys_addr_t base,
+    phys_addr_t limit);
+\end{lstlisting}
+  \end{block}
+
+  \begin{description}[count]
+  \item[dev] Device that will use this region.
+  \item[size] \emph{Size in bytes pages} to allocate. {\footnotesize Not
+    pagas nor order.}
+  \item[base] Base address of the region (or zero to use anywhere).
+  \item[limit] Upper limit of the region (or zero for no limit).
+  \item Returns zero on success, negative error code on failure.
+  \end{description}
+\end{frame}
+
+\subsection{Region sharing \& multiple regions per device}
+
+\begin{frame}[fragile]
+  \frametitle{Region shared by several devices}
+
+  \begin{itemize}
+  \item The API allows to assign a~region to a~single device.
+  \item What if more than one device is to use the same region.
+  \item It can be easily done via “copying” the context pointer.
+  \end{itemize}
+
+  \begin{block}{Copying CMA context pointer between two devices}
+\begin{lstlisting}
+static int __init foo_set_up_cma_areas(void) {
+    struct cma *cma;
+    cma = dev_get_cma_area(device1);
+    dev_set_cma_area(device2, cma);
+    return 0;
+}
+postcore_initcall(foo_set_up_cma_areas);
+\end{lstlisting}
+  \end{block}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Several regions used by the same device}
+
+  \begin{itemize}
+  \item CMA uses one-to-many mapping from \lstinline|device| structure
+    to CMA region.
+  \item As such, one device can only use one CMA context\ldots
+  \item \ldots unless it uses more than one \lstinline|device|
+    structure.
+  \item That's exactly what S5PV110's MFC does.
+  \end{itemize}
+\end{frame}
