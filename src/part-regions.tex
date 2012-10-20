@@ -1,4 +1,4 @@
-\Section{CMA regions}{Private \& not so private CMA regions}
+\Section{Regions}{Private \& not so private CMA regions}
 
 \subsection{Default CMA regions}
 
@@ -50,30 +50,7 @@ int dma_declare_contiguous(
 
   \begin{description}[count]
   \item[dev] Device that will use this region.
-  \item[size] \emph{Size in bytes pages} to allocate. {\footnotesize Not
-    pagas nor order.}
-  \item[base] Base address of the region (or zero to use anywhere).
-  \item[limit] Upper limit of the region (or zero for no limit).
-  \item Returns zero on success, negative error code on failure.
-  \end{description}
-\end{frame}
-
-\begin{frame}[fragile]
-  \frametitle{Declaring private regions}
-
-  \begin{block}{Declaring private regions}
-\begin{lstlisting}
-int dma_declare_contiguous(
-    struct device *dev,
-    unsigned long size,
-    phys_addr_t base,
-    phys_addr_t limit);
-\end{lstlisting}
-  \end{block}
-
-  \begin{description}[count]
-  \item[dev] Device that will use this region.
-  \item[size] \emph{Size in bytes pages} to allocate. {\footnotesize Not
+  \item[size] \emph{Size in bytes} to allocate. {\footnotesize Not
     pagas nor order.}
   \item[base] Base address of the region (or zero to use anywhere).
   \item[limit] Upper limit of the region (or zero for no limit).
