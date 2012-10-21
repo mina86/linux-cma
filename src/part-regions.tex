@@ -1,6 +1,4 @@
-\Section{Regions}{Private \& not so private CMA regions}
-
-\subsection{Default CMA regions}
+\subsection{Private \& not so private CMA regions}
 
 \begin{frame}
   \frametitle{Default CMA region}
@@ -13,8 +11,6 @@
   \item There may also be per-device, private context.
   \end{itemize}
 \end{frame}
-
-\subsection{Private CMA regions}
 
 \begin{frame}
   \frametitle{What is private region for?}
@@ -57,8 +53,6 @@ int dma_declare_contiguous(
   \item Returns zero on success, negative error code on failure.
   \end{description}
 \end{frame}
-
-\subsection{Region sharing \& multiple regions per device}
 
 \begin{frame}[fragile]
   \frametitle{Region shared by several devices}

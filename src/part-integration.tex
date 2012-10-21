@@ -1,4 +1,4 @@
-\Section{Integration}{Integration with the architecture}
+\subsection{Integration with the architecture}
 
 \begin{frame}
   \frametitle{Integration with the architecture}
@@ -11,8 +11,6 @@
   \item And Kconfig needs to be instructed to allow CMA.
   \end{itemize}
 \end{frame}
-
-\subsection{Memory reservation}
 
 \begin{frame}
   \frametitle{Memory reservation}
@@ -45,8 +43,6 @@
 \end{lstlisting}
   \end{block}
 \end{frame}
-
-\subsection{Early fixups}
 
 \begin{frame}
   \frametitle{Early fixups}
@@ -93,8 +89,6 @@ dma_contiguous_early_fixup(phys_addr_t base, unsigned long size)
 \end{lstlisting}
   \end{block}
 \end{frame}
-
-\subsection{Integration with the DMA API}
 
 \begin{frame}
   \frametitle{Integration with DMA API}
@@ -148,8 +142,6 @@ bool dma_release_from_contiguous(
     by CMA) or \lstinline|false| otherwise.
   \end{description}
 \end{frame}
-
-\subsection{Let it compile!}
 
 \begin{frame}
   \frametitle{Let it compile!}

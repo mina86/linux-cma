@@ -1,6 +1,4 @@
-\Section{Usage}{Using from device drivers}
-
-\subsection{Overview}
+\subsection{Using CMA from a~device drivers}
 
 \begin{frame}
   \frametitle{Overview}
@@ -12,8 +10,6 @@
     call CMA directly.
   \end{itemize}
 \end{frame}
-
-\subsection{Allocating}
 
 \begin{frame}[fragile]
   \frametitle{Allocating memory from device driver}
@@ -34,8 +30,6 @@ void *my_dev_alloc_buffer(
 
 \end{frame}
 
-\subsection{Releasing}
-
 \begin{frame}[fragile]
   \frametitle{Releasing memory from device driver}
 
@@ -49,8 +43,6 @@ void *my_dev_free_buffer(
 \end{lstlisting}
   \end{block}
 \end{frame}
-
-\subsection{Documentation}
 
 \begin{frame}
   \frametitle{Documentation}

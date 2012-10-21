@@ -106,10 +106,11 @@
 }
 
 
-\newcommand\Section[2]{%
-\section[#1]{#2}%
+\newcommand\Section[1]{%
+\section{#1}%
 \begin{frame}%
-\tableofcontents[currentsection,sections=\thesection]%
+\frametitle{Outline}
+\tableofcontents[currentsection]%,sections=\thesection]%
 \end{frame}}
 
 
@@ -147,15 +148,18 @@
 \end{frame}
 
 \begin{frame}
-  \frametitle{Table of Contents}
-  \tableofcontents[hideallsubsections]
+  \frametitle{Outline}
+  \tableofcontents
 \end{frame}
 
+\Section{Introduction}
 \input{src/part-the-problem}
 \input{src/part-solutions}
+\Section{Usage}
 \input{src/part-usage}
 \input{src/part-integration}
 \input{src/part-regions}
+\Section{Implementation}
 \input{src/part-implementation}
 
 \appendix

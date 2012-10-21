@@ -1,6 +1,4 @@
-\Section{Implementation}{How does CMA work?}
-
-\subsection{Page allocator quick overview}
+\subsection{How does CMA work?}
 
 \begin{frame}[fragile]
   \frametitle{Pages and page blocks}
@@ -10,11 +8,11 @@
     \begin{itemize}
     \item Typically \unit[4]{KiB} in size.
     \end{itemize}
-  \item Page allocator uses buddy allocation algorithm.
   \item Page can have order ranging from 0 to 10.\footnote{Strictly
     speaking, from zero to one less than \lstinline|MAX_ORDER| which is
     usually 11.}
     \begin{itemize}
+    \item $n$-order page consists of $2^n$ \unit[4]{KiB} pages.
     \item 10-order page is called max-order page.
     \end{itemize}
   \item Pages are grouped into page blocks.
@@ -28,17 +26,30 @@
   \frametitle{Migrate types}
 
   \begin{itemize}
-  \item Each free page and page block has a~migration type assigned to
-    it.
+  \item Each free page and each page block has a~migration type
+    assigned to it.
   \item It does not change any properties of the page.
-  \item Users request given page with migrate type.
-  \item Page allocator tries to fulfil the requirements from give
-    type.
-  \item If there are no free pages with given type, fallbacks are used.
+  \item Users specify migrate type on allocations.
+  \item Page allocator tries to fulfil the requirements from pages of
+    give type.
+  \item If there are no free pages with given type, fallback types are
+    used.
   \item For our purpose, let's say there are two possible types:
     \begin{description}[unmovable]
     \item[unmovable] Page cannot be migrated.
     \item[movable]   Page can be migrated.
     \end{description}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Buddy allocator}
+
+  \begin{itemize}
+  \item Page allocator uses buddy allocation algorithm.
+    \begin{itemize}
+    \item Hence different names: buddy system or buddy allocator.
+    \end{itemize}
+  \item
   \end{itemize}
 \end{frame}
