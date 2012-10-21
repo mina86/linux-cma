@@ -114,12 +114,14 @@
 \end{frame}}
 
 
+\newcommand\theauthor{Michał Nazarewicz}
+\newcommand\theemail{mina86@mina86.com}
 \title{Continuous Memory Allocator}
-\subtitle{Alocating big chunks of physically contiguous memory}
-\author[Michał Nazarewicz]{%
-  \texorpdfstring{Michał Nazarewicz\vskip 8pt%
-    \scriptsize\href{mailto:mina86@mina86.com}{mina86@mina86.com}}{%
-    Michał Nazarewicz}}
+\subtitle{Allocating big chunks of physically contiguous memory}
+\author[\theauthor]{%
+  \texorpdfstring{\theauthor\vskip 8pt%
+    \scriptsize\href{mailto:\theemail}{\theemail}}{%
+    \theauthor}}
 \institute{\Google}
 \date{\today}
 
@@ -171,6 +173,14 @@
   \begin{center}
   {\Huge ?}
   \end{center}
+
+  \vskip 30pt
+
+  \begin{itemize}
+  \item \theauthor
+  \item \href{mailto:\theemail}{\theemail}
+  \item \url{http://mina86.com/cma/}
+  \end{itemize}
 \end{frame}
 
 \end{document}
