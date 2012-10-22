@@ -1,17 +1,60 @@
 \subsection{CMA implementation}
 
 \begin{frame}
-  \frametitle{CMA implementation overwiev}
+  \frametitle{CMA implementation overview}
 
   \begin{itemize}
   \item CMA is build on the idea of migrating non-free pages.
   \item CMA needs guarantees that large number of contiguous pages can
     be migrated.
     \begin{itemize}
-    \item 100\% guarantee is of course not possible.
+    \item 100\% guarantee is of course never possible.
     \end{itemize}
-  \item Easy, right? Mark some region of free memory as contaiting
-    movable pages.
-  \item Alas, no\ldots
   \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{CMA migrate type}
+
+  \begin{itemize}
+  \item CMA had to introduce a~new migrate type.
+    \begin{itemize}
+    \item \lstinline|MIGRATE_CMA|
+    \end{itemize}
+  \item This migrate type has the following two important properties:
+    \begin{itemize}
+    \item CMA pageblocks never change migrate type.\footnote{Other
+      than while CMA is allocating memory from them.}
+    \item Only movable pages can be allocated from CMA pageblocks.
+    \end{itemize}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Preparing CMA region}
+
+  \begin{itemize}
+  \item At the boot time, some of the memory is reserved.
+  \item When page allocator initialises, that memory is released with
+    CMA's migrate type.
+  \item This way, it can be used for movable pages.
+    \begin{itemize}
+    \item Unless the memory is allocated to a~device driver.
+    \end{itemize}
+  \item Each CMA region has a~bitmap of “CMA free” pages.
+    \begin{itemize}
+    \item “CMA free” page is one that is not allocated for device
+      driver.
+    \item It may still be allocated as a~movable page.
+    \end{itemize}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Allocation}
+
+  \begin{center}
+    \includegraphics[width=\textwidth]{build/cma-alloc-algo.eps}
+  \end{center}
+
 \end{frame}

@@ -14,6 +14,7 @@ build/cma-lce.dvi: build/iommu-vs-mmu.eps
 build/cma-lce.dvi: build/pages.eps
 build/cma-lce.dvi: build/alloc-free-cycle.eps
 build/cma-lce.dvi: build/question.eps
+build/cma-lce.dvi: build/cma-alloc-algo.eps
 build/cma-lce.dvi:
 	@exec mkdir -p build
 	exec $(LATEX) $<
@@ -24,6 +25,10 @@ build/cma-lce.dvi:
 build/%.eps: src/%.svg
 	@exec mkdir -p build
 	exec inkscape -z -C --file=$^ --export-eps=$@
+
+build/%.eps: src/%.dia
+	@exec mkdir -p build
+	exec dia -l -t eps -e $@ $<
 
 build/%.eps: src/%.eps
 	@exec mkdir -p build
