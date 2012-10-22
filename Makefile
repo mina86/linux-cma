@@ -1,4 +1,5 @@
-LATEX := latex -halt-on-error -file-line-error -output-directory=build
+LATEX	:= latex -halt-on-error -file-line-error -output-directory=build
+FAST	?= false
 
 all: cma-lce.pdf
 
@@ -16,7 +17,7 @@ build/cma-lce.dvi: build/question.eps
 build/cma-lce.dvi:
 	@exec mkdir -p build
 	exec $(LATEX) $<
-	exec $(LATEX) $<
+	$FAST || exec $(LATEX) $<
 	exec mv -- build/main.dvi $@
 
 
