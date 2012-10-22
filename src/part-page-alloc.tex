@@ -1,0 +1,89 @@
+\subsection{Page allocator}
+
+\begin{frame}[fragile]
+  \frametitle{Pages and page blocks}
+
+  \begin{itemize}
+  \item Linux manages memory in units of pages.
+    \begin{itemize}
+    \item Typically \unit[4]{KiB} in size.
+    \end{itemize}
+  \item Page can have order ranging from 0 to 10.\footnote{Strictly
+    speaking, from zero to one less than \lstinline|MAX_ORDER| which is
+    usually 11.}
+    \begin{itemize}
+    \item $n$-order page consists of $2^n$ \unit[4]{KiB} pages.
+    \item 10-order page is called max-order page.
+    \end{itemize}
+  \item Pages are grouped into page blocks.
+  \item Page block consists of 1024 pages, same size as max-order
+    page.\footnote{This actually depends, but it's the case for ARM
+      and x86.}
+  \item {\footnotesize Let's forget about zones or NUMA.}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Pages and page blocks, cont}
+  \begin{center}
+  \includegraphics[width=0.9\textwidth]{build/pages.eps}
+  \end{center}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Buddy allocator}
+  \begin{columns}[c]
+
+    \column{0.6\textwidth}
+    \begin{itemize}
+    \item Page allocator uses buddy allocation algorithm.
+      \begin{itemize}
+      \item Hence different names: buddy system or buddy allocator.
+      \end{itemize}
+    \item Allocations are done in terms of orders.
+    \item User can request order from 0 to 10.
+    \item If best matching page is too large, it's recursively split
+      in half (into two buddies).
+    \item When releasing, page is merged with its buddy (if free).
+    \end{itemize}
+
+    \column{0.4\textwidth}
+    \begin{center}
+    \includegraphics[width=0.9\textwidth]{build/alloc-free-cycle.eps}
+    \end{center}
+  \end{columns}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Migrate types}
+
+  \begin{itemize}
+  \item On allocation, user requests an unmovable, a~reclaimable or
+    a~movable page.
+    \begin{itemize}
+    \item For our purposes, we treat reclaimable as unmovable.
+    \end{itemize}
+  \item To try keep pages of the same type together, each free page
+    and each page block has a~migrate type assigned.
+  \item But allocator will use fallback types.
+  \item And migrate type of a~free page and page blocks can change.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Migration}
+
+  \begin{itemize}
+  \item Pages allocated as movable are set up so that they can be
+    migrated.
+    \begin{itemize}
+    \item Such pages are only references indirectly.
+    \item Examples are anonymous process pages and disk cache.
+    \end{itemize}
+  \item Roughly speaking, migration is copying content of the page
+    somewhere else and updating references.
+  \item In some cases, content of movable page can simply be
+    discarded.
+  \end{itemize}
+
+\end{frame}

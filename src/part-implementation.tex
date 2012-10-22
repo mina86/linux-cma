@@ -1,75 +1,17 @@
-\subsection{Page allocator}
-
-\begin{frame}[fragile]
-  \frametitle{Pages and page blocks}
-
-  \begin{itemize}
-  \item Linux manages memory in units of pages.
-    \begin{itemize}
-    \item Typically \unit[4]{KiB} in size.
-    \end{itemize}
-  \item Page can have order ranging from 0 to 10.\footnote{Strictly
-    speaking, from zero to one less than \lstinline|MAX_ORDER| which is
-    usually 11.}
-    \begin{itemize}
-    \item $n$-order page consists of $2^n$ \unit[4]{KiB} pages.
-    \item 10-order page is called max-order page.
-    \end{itemize}
-  \item Pages are grouped into page blocks.
-  \item Page block consists of 1024 pages, same size as max-order
-    page.\footnote{This actually depends, but it's the case for ARM
-      and x86.}
-  \item {\footnotesize Let's forget about zones or NUMA.}
-  \end{itemize}
-\end{frame}
+\subsection{CMA implementation}
 
 \begin{frame}
-  \frametitle{Pages and page blocks, cont}
-  \begin{center}
-  \includegraphics[width=0.9\textwidth]{build/pages.eps}
-  \end{center}
-\end{frame}
-
-\begin{frame}
-  \frametitle{Buddy allocator}
-  \begin{columns}[c]
-
-    \column{0.6\textwidth}
-    \begin{itemize}
-    \item Page allocator uses buddy allocation algorithm.
-      \begin{itemize}
-      \item Hence different names: buddy system or buddy allocator.
-      \end{itemize}
-    \item Allocations are done in terms of orders.
-    \item User can request order from 0 to 10.
-    \item If best matching page is too large, it's recursively split
-      in half (into two buddies).
-    \item When releasing, page is merged with buddy (if free).
-    \end{itemize}
-
-    \column{0.4\textwidth}
-    \begin{center}
-    \includegraphics[width=0.9\textwidth]{build/alloc-free-cycle.eps}
-    \end{center}
-  \end{columns}
-\end{frame}
-
-\begin{frame}[fragile]
-  \frametitle{Migrate types}
+  \frametitle{CMA implementation overwiev}
 
   \begin{itemize}
-  \item On allocation, user requests an unmovable, a~reclaimable or
-    a~movable page.
+  \item CMA is build on the idea of migrating non-free pages.
+  \item CMA needs guarantees that large number of contiguous pages can
+    be migrated.
     \begin{itemize}
-    \item For our purposes, we treat reclaimable as unmovable.
+    \item 100\% guarantee is of course not possible.
     \end{itemize}
-  \item Movable pages will be set up so that they can be migrated.
-  \end{itemize}
-
-  \begin{itemize}
-  \item To try keep pages of the same type together, each free page
-    and each page block has a~migrate type assigned.
-  \item But allocator will use fallback types.
-  \item And migrate type of a~free page and page blocks can change.
+  \item Easy, right? Mark some region of free memory as contaiting
+    movable pages.
+  \item Alas, no\ldots
   \end{itemize}
 \end{frame}
