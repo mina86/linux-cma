@@ -1,4 +1,4 @@
-\subsection{How does CMA work?}
+\subsection{Page allocator}
 
 \begin{frame}[fragile]
   \frametitle{Pages and page blocks}
@@ -19,26 +19,35 @@
   \item Page block consists of 1024 pages, same size as max-order
     page.\footnote{This actually depends, but it's the case for ARM
       and x86.}
+  \item {\footnotesize Let's forget about zones or NUMA.}
   \end{itemize}
 \end{frame}
+
+\begin{frame}
+  \frametitle{Pages and page blocks, cont}
+  \begin{centering}
+  \includegraphics[width=0.9\textwidth]{build/pages.eps}
+  \end{centering}
+\end{frame}
+
 
 \begin{frame}[fragile]
   \frametitle{Migrate types}
 
   \begin{itemize}
-  \item Each free page and each page block has a~migration type
-    assigned to it.
-  \item It does not change any properties of the page.
-  \item Users specify migrate type on allocations.
-  \item Page allocator tries to fulfil the requirements from pages of
-    give type.
-  \item If there are no free pages with given type, fallback types are
-    used.
-  \item For our purpose, let's say there are two possible types:
-    \begin{description}[unmovable]
-    \item[unmovable] Page cannot be migrated.
-    \item[movable]   Page can be migrated.
-    \end{description}
+  \item On allocation, user requests an unmovable, a~reclaimable or
+    a~movable page.
+    \begin{itemize}
+    \item For our purposes, we treat reclaimable as unmovable.
+    \end{itemize}
+  \item Movable pages will be set up so that they can be migrated.
+  \end{itemize}
+
+  \begin{itemize}
+  \item To try keep pages of the same type together, each free page
+    and each page block has a~migrate type assigned.
+  \item But allocator will use fallback types.
+  \item And migrate type of a~free page and page blocks can change.
   \end{itemize}
 \end{frame}
 
