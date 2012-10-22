@@ -13,12 +13,17 @@
       stroke-opacity: 1;
     }
     text {
-      fill: #000;
-      font-family: Verdana;
+      font-family: DejaVu Sans;
       font-size: 12px;
+      font-style: normal;
+      font-variant: normal;
+      font-weight: normal;
+      font-stretch: normal;
+      fill: #000;
+      stroke: none;
     }
     text.pb {
-      font-size: 20;
+      font-size: 20px;
       fill: #090;
     }
   </style>
