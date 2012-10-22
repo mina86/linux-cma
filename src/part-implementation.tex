@@ -25,11 +25,34 @@
 
 \begin{frame}
   \frametitle{Pages and page blocks, cont}
-  \begin{centering}
+  \begin{center}
   \includegraphics[width=0.9\textwidth]{build/pages.eps}
-  \end{centering}
+  \end{center}
 \end{frame}
 
+\begin{frame}
+  \frametitle{Buddy allocator}
+  \begin{columns}[c]
+
+    \column{0.6\textwidth}
+    \begin{itemize}
+    \item Page allocator uses buddy allocation algorithm.
+      \begin{itemize}
+      \item Hence different names: buddy system or buddy allocator.
+      \end{itemize}
+    \item Allocations are done in terms of orders.
+    \item User can request order from 0 to 10.
+    \item If best matching page is too large, it's recursively split
+      in half (into two buddies).
+    \item When releasing, page is merged with buddy (if free).
+    \end{itemize}
+
+    \column{0.4\textwidth}
+    \begin{center}
+    \includegraphics[width=0.9\textwidth]{build/alloc-free-cycle.eps}
+    \end{center}
+  \end{columns}
+\end{frame}
 
 \begin{frame}[fragile]
   \frametitle{Migrate types}
@@ -48,17 +71,5 @@
     and each page block has a~migrate type assigned.
   \item But allocator will use fallback types.
   \item And migrate type of a~free page and page blocks can change.
-  \end{itemize}
-\end{frame}
-
-\begin{frame}
-  \frametitle{Buddy allocator}
-
-  \begin{itemize}
-  \item Page allocator uses buddy allocation algorithm.
-    \begin{itemize}
-    \item Hence different names: buddy system or buddy allocator.
-    \end{itemize}
-  \item
   \end{itemize}
 \end{frame}

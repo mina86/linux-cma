@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg xmlns="http://www.w3.org/2000/svg"
+     xmlns:xlink="http://www.w3.org/1999/xlink"
+     width="205" height="265" version="1.1">
+  <style>
+    rect {
+      stroke: none
+    }
+    .shadow {
+      opacity: 0.25
+    }
+    .shadow rect {
+      fill: #000;
+    }
+    path {
+      fill: none;
+      stroke: #000;
+      stroke-width: 1;
+    }
+    circle {
+      stroke: none;
+      fill: #000;
+      opacity: 0.75;
+    }
+    text {
+      font-family: DejaVu Sans;
+      font-size: 15px;
+      font-style: normal;
+      font-variant: normal;
+      font-weight: normal;
+      font-stretch: normal;
+      fill: #000;
+      stroke: none;
+    }
+  </style>
+
+  <g class="shadow">
+    <rect x="5" y="  5" width="200" height="20" />
+    <rect x="5" y=" 45" width="200" height="20" />
+    <rect x="5" y=" 85" width="200" height="20" />
+    <rect x="5" y=" 85" width="200" height="20" />
+    <rect x="5" y="125" width="200" height="20" />
+    <rect x="5" y="165" width="200" height="20" />
+    <rect x="5" y="205" width="200" height="20" />
+    <rect x="5" y="245" width="200" height="20" />
+  </g>
+
+  <rect x="  0" y="  0" width="200" height="20" fill="#CFF" />
+  <rect x="  0" y=" 40" width="200" height="20" fill="#FFC" />
+  <rect x="  0" y=" 80" width="100" height="20" fill="#CFC" />
+  <rect x="100" y=" 80" width="100" height="20" fill="#FFC" />
+  <rect x="  0" y="120" width=" 50" height="20" fill="#F33" />
+  <rect x=" 50" y="120" width=" 50" height="20" fill="#CFC" />
+  <rect x="100" y="120" width="100" height="20" fill="#FFC" />
+  <rect x="  0" y="160" width="100" height="20" fill="#CFC" />
+  <rect x="100" y="160" width="100" height="20" fill="#FFC" />
+  <rect x="  0" y="200" width="200" height="20" fill="#FFC" />
+  <rect x="  0" y="240" width="200" height="20" fill="#CFF" />
+
+  <circle cx="100" cy=" 10" r="4" />
+  <circle cx=" 50" cy=" 50" r="4" />
+  <circle cx="150" cy=" 50" r="4" />
+  <circle cx=" 25" cy=" 90" r="4" />
+  <circle cx=" 75" cy=" 90" r="4" />
+  <circle cx=" 25" cy="130" r="4" />
+  <circle cx=" 25" cy="170" r="4" />
+  <circle cx=" 75" cy="170" r="4" />
+  <circle cx=" 50" cy="210" r="4" />
+  <circle cx="150" cy="210" r="4" />
+  <circle cx="100" cy="250" r="4" />
+
+  <path d="M  0,  0 h200 v20 h-200 z
+           M  0, 40 h200 v20 h-200 z
+           M  0, 80 h200 v20 h-200 z
+           M  0,120 h200 v20 h-200 z
+           M  0,160 h200 v20 h-200 z
+           M  0,200 h200 v20 h-200 z
+           M  0,240 h200 v20 h-200 z
+
+                       M100, 40v20
+           M 50, 80v20 M100, 80v20
+           M 50,120v20 M100,120v20
+           M 50,160v20 M100,160v20
+                       M100,200v20
+
+           M100, 10 L 50, 50 M100, 10 L150, 50
+           M 50, 50 L 25, 90 M 50, 50 L 75, 90
+           M 25, 90 v 80
+           M 50,210 L 25,170 M 50,210 L 75,170
+           M100,250 L 50,210 M100,250 L150,210
+           " />
+
+  <text>
+    <tspan x="174" y=" 35">split</tspan>
+    <tspan x="174" y=" 75">split</tspan>
+    <tspan x="147" y="115">allocate</tspan>
+    <tspan x="151" y="155">release</tspan>
+    <tspan x="157" y="195">merge</tspan>
+    <tspan x="157" y="235">merge</tspan>
+  </text>
+</svg>
