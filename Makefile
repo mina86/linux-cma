@@ -9,6 +9,7 @@ all: cma-lce.pdf
 
 build/cma-lce.dvi: src/main.tex
 build/cma-lce.dvi: $(wildcard src/*.tex)
+build/cma-lce.dvi: build/iommu-vs-mmu.eps
 build/cma-lce.dvi: build/pages.eps
 build/cma-lce.dvi: build/alloc-free-cycle.eps
 build/cma-lce.dvi:

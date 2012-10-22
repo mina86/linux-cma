@@ -41,15 +41,25 @@
 \begin{frame}
   \frametitle{The mighty system MMU}
 
-  \begin{itemize}
-  \item What about a~system MMU?
+  \begin{columns}[c]
+
+    \column{.5\textwidth}
     \begin{itemize}
-    \item Address coming from the device $\rightarrow$ physical
-      address
+    \item What about a~system MMU?
+      \begin{itemize}
+      \item Address coming from the device $\rightarrow$ physical
+        address
+      \end{itemize}
+    \item Same deal as with CPU's MMU.
+    \item So why bother?
     \end{itemize}
-  \item Same deal as with CPU's MMU.
-  \item So why bother?
-  \end{itemize}
+
+    \column{.5\textwidth}
+    \begin{center}
+      \includegraphics[width=\textwidth]{build/iommu-vs-mmu.eps}
+    \end{center}
+
+  \end{columns}
 \end{frame}
 
 \begin{frame}
