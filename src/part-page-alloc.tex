@@ -55,6 +55,22 @@
 \end{frame}
 
 \begin{frame}[fragile]
+  \frametitle{Other allocators}
+
+  \begin{itemize}
+  \item Page allocator is used for allocations of $2^n$ pages.
+  \item For more granular allocations other mechanisms are provided as
+    well:
+    \begin{itemize}
+    \item \lstinline|kmalloc()|,
+    \item \lstinline|vmalloc()|,
+    \item Memory pools.
+    \end{itemize}
+  \item They fall outside of the scope of this presentation.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
   \frametitle{Migrate types}
 
   \begin{itemize}
@@ -70,7 +86,7 @@
   \end{itemize}
 \end{frame}
 
-\begin{frame}[fragile]
+\begin{frame}
   \frametitle{Migration}
 
   \begin{itemize}
