@@ -36,7 +36,7 @@ build/%.eps: img/%.dia
 
 build/%.eps: img/%.eps
 	@exec mkdir -p build
-	exec cp $< $@
+	exec ln -sf -- ../$< $@
 
 
 clean:
