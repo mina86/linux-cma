@@ -1,7 +1,46 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Copyright (c) 2012 by Michal Nazarewicz (mina86@mina86.com) -->
+<!-- Distributed under the terms of the Creative Commons
+     Attribution-ShareAlike 3.0 Unported (CC BY-SA 3.0) license. -->
+<!-- RAM image taken from Open Clip Art Library
+     http://openclipart.org/detail/18474/ram-by-stamps -->
 <svg xmlns="http://www.w3.org/2000/svg"
      xmlns:xlink="http://www.w3.org/1999/xlink"
+     xmlns:dc="http://purl.org/dc/elements/1.1/"
+     xmlns:cc="http://creativecommons.org/ns#"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
      width="500" height="360" version="1.1">
+  <metadata>
+    <rdf:RDF>
+      <cc:Work dc:format="image/svg+xml"
+               dc:title="Memory structure in Linux"
+               dc:description="Visualisation of the division of memory into pages in Linux."
+               dc:language="en"
+               cc:attributionName="Michał Nazarewicz"
+               cc:attributionURL="http://mina86.com/">
+        <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:creator>
+          <dc:Agent>
+            <dc:title>Michał Nazarewicz</dc:title>
+          </dc:Agent>
+        </dc:creator>
+        <dc:rights>
+          <dc:Agent>
+            <dc:title>CC-BY-SA</dc:title>
+          </dc:Agent>
+        </dc:rights>
+        <cc:license rdf:resource="http://creativecommons.org/licenses/by-sa/3.0/" />
+      </cc:Work>
+      <cc:License rdf:about="http://creativecommons.org/licenses/by-sa/3.0/">
+        <cc:permits rdf:resource="http://creativecommons.org/ns#Reproduction" />
+        <cc:permits rdf:resource="http://creativecommons.org/ns#Distribution" />
+        <cc:requires rdf:resource="http://creativecommons.org/ns#Notice" />
+        <cc:requires rdf:resource="http://creativecommons.org/ns#Attribution" />
+        <cc:permits rdf:resource="http://creativecommons.org/ns#DerivativeWorks" />
+        <cc:requires rdf:resource="http://creativecommons.org/ns#ShareAlike" />
+      </cc:License>
+    </rdf:RDF>
+  </metadata>
   <style>
     rect {
       stroke: none;
@@ -29,8 +68,6 @@
   </style>
   <defs>
     <!-- Definitions for RAM image -->
-    <!-- RAM image taken from Open Clip Art Library
-         http://openclipart.org/detail/18474/ram-by-stamps -->
 
     <linearGradient
        id="linearGradient8924">
