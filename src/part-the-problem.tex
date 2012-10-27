@@ -3,39 +3,69 @@
 \begin{frame}
   \frametitle{The mighty MMU}
 
-  \begin{itemize}
-  \item Modern CPUs have MMU.
+  \begin{columns}[c]
+
+    \column{.5\textwidth}
     \begin{itemize}
-    \item Virtual $\rightarrow$ physical address.
+    \item Modern CPUs have MMU.
+      \begin{itemize}
+      \item Virtual $\rightarrow$ physical address.
+      \end{itemize}
+    \item Virtually contiguous $\notimplies$ physically contiguous.
+    \item So why bother?
     \end{itemize}
-  \item Virtually contiguous $\notimplies$ physically contiguous.
-  \item So why bother?
-  \end{itemize}
+
+    \column{.5\textwidth}
+    \begin{center}
+      \includegraphics[width=\textwidth]{build/mmu-iommu-images--img-mmu.eps}
+    \end{center}
+
+  \end{columns}
 \end{frame}
 
 \begin{frame}
   \frametitle{System devices}
 
-  \begin{itemize}
-  \item MMU stands behind CPU.
-  \item There are other chips in the system.
-  \item Some require large buffers.
+  \begin{columns}[c]
+
+    \column{.5\textwidth}
     \begin{itemize}
-    \item 5-megapixel camera anyone?
+    \item MMU stands behind CPU.
+    \item There are other chips in the system.
+    \item Some require large buffers.
+      \begin{itemize}
+      \item 5-megapixel camera anyone?
+      \end{itemize}
+    \item On embedded, there's plenty of those.
     \end{itemize}
-  \item On embedded, there's plenty of those.
-  \end{itemize}
+
+    \column{.5\textwidth}
+    \begin{center}
+      \includegraphics[width=\textwidth]{build/mmu-iommu-images--img-nommu.eps}
+    \end{center}
+
+  \end{columns}
 \end{frame}
 
 \begin{frame}
   \frametitle{The mighty DMA}
 
-  \begin{itemize}
-  \item DMA can do vectored I/O.
-  \item Gathering buffer from scattered parts.
-  \item Contiguous for the device $\notimplies$ physically contiguous.
-  \item So why bother?
-  \end{itemize}
+  \begin{columns}[c]
+
+    \column{.5\textwidth}
+    \begin{itemize}
+    \item DMA can do vectored I/O.
+    \item Gathering buffer from scattered parts.
+    \item Contiguous for the device $\notimplies$ physically contiguous.
+    \item So why bother?
+    \end{itemize}
+
+    \column{.5\textwidth}
+    \begin{center}
+      \includegraphics[width=\textwidth]{build/mmu-iommu-images--img-dma.eps}
+    \end{center}
+
+  \end{columns}
 \end{frame}
 
 \begin{frame}
@@ -56,7 +86,7 @@
 
     \column{.5\textwidth}
     \begin{center}
-      \includegraphics[width=\textwidth]{build/iommu-vs-mmu.eps}
+      \includegraphics[width=\textwidth]{build/mmu-iommu-images--img-iommu.eps}
     \end{center}
 
   \end{columns}
