@@ -12,15 +12,27 @@
   \end{itemize}
 \end{frame}
 
-\begin{frame}
+\begin{frame}[fragile]
   \frametitle{Memory reservation}
 
   \begin{itemize}
   \item \lstinline|memblock| must be ready, page allocator must not.
   \item On ARM, \lstinline|arm_memblock_init()| is a~good place.
-  \item All one needs to do, is to call
+  \item All one needs to do, is call
     \lstinline|dma_contiguous_reserve()|.
   \end{itemize}
+
+  \begin{block}{Memory reservation}
+\begin{lstlisting}
+void __init dma_contiguous_reserve(
+    phys_addr_t limit);
+\end{lstlisting}
+  \end{block}
+
+  \begin{description}[limit]
+  \item[limit] Upper limit of the region (or zero for no limit).
+  \end{description}
+
 \end{frame}
 
 \begin{frame}[fragile]
