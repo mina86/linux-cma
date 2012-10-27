@@ -1,6 +1,6 @@
 #!/bin/sh
 
-sed -ne 's/.*\\includegraphics.*{\(build\/.*\)}.*/\1/p' "$@" /dev/null |
+sed -ne 's/.*\\includegraphics.*{\(build\/[^}]*\)}.*/\1/p' "$@" /dev/null |
 	sort -u |
 	while read img; do
 		echo "images: $img"
