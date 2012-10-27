@@ -1,6 +1,7 @@
 \documentclass{beamer}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
+\usepackage{lmodern}
 \usepackage[english]{babel}
 \usepackage{pgf}
 \usepackage{units}
@@ -17,7 +18,7 @@
 \definecolor{darkgreen}{rgb}{0.0,0.5,0.0}
 \lstset{
   language=C,
-  basicstyle=\small,
+  basicstyle=\small\rmfamily,
   numbers=left,
   numberstyle=\tiny\color{gray},
   stepnumber=1,
@@ -30,7 +31,7 @@
   breaklines=true,
   breakautoindent,
   columns=fullflexible,
-  morekeywords={inline},
+  morekeywords={inline,bool},
   keywordstyle=\color{blue}\bfseries,
   commentstyle=\color{darkgreen}\itshape,
   stringstyle=\color{magenta}\ttfamily
@@ -42,6 +43,7 @@
   morecomment=[f][\color{magenta}]{---}, % Diff header lines (must appear after +,-)
   morecomment=[f][\color{magenta}]{+++},
 }
+\def\code{\lstinline[basicstyle=\rmfamily]}
 
 \usetheme{Frankfurt}
 

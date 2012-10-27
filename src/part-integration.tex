@@ -16,10 +16,10 @@
   \frametitle{Memory reservation}
 
   \begin{itemize}
-  \item \lstinline|memblock| must be ready, page allocator must not.
-  \item On ARM, \lstinline|arm_memblock_init()| is a~good place.
+  \item \code{memblock} must be ready, page allocator must not.
+  \item On ARM, \code{arm_memblock_init()} is a~good place.
   \item All one needs to do, is call
-    \lstinline|dma_contiguous_reserve()|.
+    \code{dma_contiguous_reserve()}.
   \end{itemize}
 
   \begin{block}{Memory reservation}
@@ -29,8 +29,9 @@ void __init dma_contiguous_reserve(
 \end{lstlisting}
   \end{block}
 
-  \begin{description}[limit]
-  \item[limit] Upper limit of the region (or zero for no limit).
+  \begin{description}[limitAA]
+  \item[{\ttfamily limit}] Upper limit of the region (or zero for no
+    limit).
   \end{description}
 
 \end{frame}
@@ -70,10 +71,10 @@ void __init dma_contiguous_reserve(
       \unit[4]{KiB} pages.
     \end{itemize}
   \item The fixup is defined in
-    \lstinline|dma_contiguous_early_fixup()| function
+    \code{dma_contiguous_early_fixup()} function
     \begin{itemize}
     \item which architecture needs to provide
-    \item with declaration in a~\lstinline|asm/dma-contiguous.h| header file.
+    \item with declaration in a~\code{asm/dma-contiguous.h} header file.
     \end{itemize}
   \end{itemize}
 \end{frame}
@@ -85,6 +86,7 @@ void __init dma_contiguous_reserve(
 \begin{lstlisting}
 #ifndef ASM_DMA_CONTIGUOUS_H
 #define ASM_DMA_CONTIGUOUS_H
+
 #ifdef __KERNEL__
 
 #include <linux/types.h>
@@ -92,9 +94,7 @@ void __init dma_contiguous_reserve(
 
 static inline void
 dma_contiguous_early_fixup(phys_addr_t base, unsigned long size)
-{
-    /* nop, no need for early fixups */
-}
+{ /* nop, no need for early fixups */ }
 
 #endif
 #endif
@@ -123,13 +123,15 @@ struct page *dma_alloc_from_contiguous(
 \end{lstlisting}
   \end{block}
 
-  \begin{description}[count]
-  \item[dev] Device the allocation is performed on behalf of.
-  \item[count] \emph{Number of pages} to allocate. {\footnotesize Not
-    number of bytes nor order.}
-  \item[align] Order which to align to.  Limited by Kconfig option.
-  \item Returns page that is the first page of \lstinline|count|
-    allocated pages. {\footnotesize It's not a~compound page.}
+  \begin{description}[countAA]
+  \item[{\ttfamily dev}] Device the allocation is performed on behalf
+    of.
+  \item[{\ttfamily count}] \emph{Number of pages} to
+    allocate. {\footnotesize Not number of bytes nor order.}
+  \item[{\ttfamily align}] Order which to align to.  Limited by
+    Kconfig option.
+  \item Returns page that is the first page of \code{count} allocated
+    pages. {\footnotesize It's not a~compound page.}
   \end{description}
 \end{frame}
 
@@ -145,13 +147,14 @@ bool dma_release_from_contiguous(
 \end{lstlisting}
   \end{block}
 
-  \begin{description}[count]
-  \item[dev] Device the allocation was performed on behalf of.
-  \item[pages] The first of allocated pages. {\footnotesize As
-    returned on allocation.}
-  \item[count] Number of allocated pages to allocate.
-  \item Returns \lstinline|true| if memory was freed (ie.\ was managed
-    by CMA) or \lstinline|false| otherwise.
+  \begin{description}[countAA]
+  \item[{\ttfamily dev}] Device the allocation was performed on behalf
+    of.
+  \item[{\ttfamily pages}] The first of allocated
+    pages. {\footnotesize As returned on allocation.}
+  \item[{\ttfamily count}] Number of allocated pages.
+  \item Returns \code{true} if memory was freed (ie.\ was managed by
+    CMA) or \code{false} otherwise.
   \end{description}
 \end{frame}
 
@@ -159,9 +162,9 @@ bool dma_release_from_contiguous(
   \frametitle{Let it compile!}
 
   \begin{itemize}
-  \item There's one think that needs to be done in \lstinline|Kconfig|.
-  \item Architecture needs to \lstinline|select HAVE_DMA_CONTIGUEUS|.
+  \item There's one think that needs to be done in \code{Kconfig}.
+  \item Architecture needs to \code{select HAVE_DMA_CONTIGUOUS}.
   \item Without it, CMA won't show up under “Generic Driver Options”.
-  \item Architecture may also \lstinline|select CMA| to force CMA in.
+  \item Architecture may also \code{select CMA} to force CMA in.
   \end{itemize}
 \end{frame}

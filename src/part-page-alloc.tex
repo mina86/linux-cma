@@ -9,7 +9,7 @@
     \item Typically \unit[4]{KiB} in size.
     \end{itemize}
   \item Page can have order ranging from 0 to 10.\footnote{Strictly
-    speaking, from zero to one less than \lstinline|MAX_ORDER| which is
+    speaking, from zero to one less than \code{MAX_ORDER} which is
     usually 11.}
     \begin{itemize}
     \item $n$-order page consists of $2^n$ \unit[4]{KiB} pages.
@@ -62,8 +62,8 @@
   \item For more granular allocations other mechanisms are provided as
     well:
     \begin{itemize}
-    \item \lstinline|kmalloc()|,
-    \item \lstinline|vmalloc()|,
+    \item \code{kmalloc()},
+    \item \code{vmalloc()},
     \item Memory pools.
     \end{itemize}
   \item They fall outside of the scope of this presentation.
