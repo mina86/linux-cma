@@ -81,25 +81,11 @@
     \end{itemize}
   \item To try keep pages of the same type together, each free page
     and each page block has a~migrate type assigned.
-  \item But allocator will use fallback types.
-  \item And migrate type of a~free page and page blocks can change.
-  \end{itemize}
-\end{frame}
-
-\begin{frame}
-  \frametitle{Migration}
-
-  \begin{itemize}
-  \item Pages allocated as movable are set up so that they can be
-    migrated.
     \begin{itemize}
-    \item Such pages are only references indirectly.
-    \item Examples are anonymous process pages and disk cache.
+    \item But allocator will use fallback types.
+    \item And migrate type of a~free page and page blocks can change.
     \end{itemize}
-  \item Roughly speaking, migration is copying content of the page
-    somewhere else and updating references.
-  \item In some cases, content of movable page can simply be
-    discarded.
+  \item When released, page takes migrate type of pageblock it belongs
+    to.
   \end{itemize}
-
 \end{frame}

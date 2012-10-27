@@ -50,11 +50,45 @@
   \end{itemize}
 \end{frame}
 
-\begin{frame}[fragile]
+\begin{frame}
   \frametitle{Allocation}
 
   \begin{center}
     \includegraphics[width=\textwidth]{build/cma-alloc-algo.eps}
   \end{center}
 
+\end{frame}
+
+\begin{frame}
+  \frametitle{Migration}
+
+  \begin{itemize}
+  \item Pages allocated as movable are set up so that they can be
+    migrated.
+    \begin{itemize}
+    \item Such pages are only references indirectly.
+    \item Examples are anonymous process pages and disk cache.
+    \end{itemize}
+  \item Roughly speaking, migration consists of:
+    \begin{enumerate}
+    \item allocating a~new page,
+    \item copying contents of the old page to the new page,
+    \item updating all places where old page was referred, and
+    \item freeing the old page.
+    \end{enumerate}
+  \item In some cases, content of movable page can simply be
+    discarded.
+  \end{itemize}
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Isolation}
+
+  \begin{itemize}
+  \item Isolation is a~process of marking pageblocks and pages with an
+    isolate migrate type.
+  \item Free pages with that type, are never allocated.
+  \item This makes sure that page remains free after migration.
+  \end{itemize}
 \end{frame}
