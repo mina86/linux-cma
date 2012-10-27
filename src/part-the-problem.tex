@@ -5,43 +5,28 @@
 
   \begin{columns}[c]
 
-    \column{.5\textwidth}
+    \column{.6\textwidth}
     \begin{itemize}
     \item Modern CPUs have MMU.
       \begin{itemize}
       \item Virtual $\rightarrow$ physical address.
       \end{itemize}
     \item Virtually contiguous $\notimplies$ physically contiguous.
-    \item So why bother?
-    \end{itemize}
+    \item<1> So why bother?
 
-    \column{.5\textwidth}
-    \begin{center}
-      \includegraphics[width=\textwidth]{build/mmu-iommu-images--img-mmu.eps}
-    \end{center}
-
-  \end{columns}
-\end{frame}
-
-\begin{frame}
-  \frametitle{System devices}
-
-  \begin{columns}[c]
-
-    \column{.5\textwidth}
-    \begin{itemize}
-    \item MMU stands behind CPU.
-    \item There are other chips in the system.
-    \item Some require large buffers.
+    \item<2> MMU stands behind CPU.
+    \item<2> There are other chips in the system.
+    \item<2> Some require large buffers.
       \begin{itemize}
-      \item 5-megapixel camera anyone?
+      \item<2> 5-megapixel camera anyone?
       \end{itemize}
-    \item On embedded, there's plenty of those.
+    \item<2> On embedded, there's plenty of those.
     \end{itemize}
 
-    \column{.5\textwidth}
+    \column{.4\textwidth}
     \begin{center}
-      \includegraphics[width=\textwidth]{build/mmu-iommu-images--img-nommu.eps}
+      \includegraphics<1>[width=\textwidth]{build/mmu-iommu-images--img-mmu.eps}
+      \includegraphics<2>[width=\textwidth]{build/mmu-iommu-images--img-nommu.eps}
     \end{center}
 
   \end{columns}
@@ -52,15 +37,20 @@
 
   \begin{columns}[c]
 
-    \column{.5\textwidth}
+    \column{.6\textwidth}
     \begin{itemize}
     \item DMA can do vectored I/O.
     \item Gathering buffer from scattered parts.
+      \begin{itemize}
+        \item {\footnotesize Hence also another name: DMA scatter-gather.}
+      \end{itemize}
     \item Contiguous for the device $\notimplies$ physically contiguous.
-    \item So why bother?
+    \item<1> So why bother?
+    \item<2> DMA can do linear access only.
+    \item<2> DMA may lack vectored I/O~support.
     \end{itemize}
 
-    \column{.5\textwidth}
+    \column{.4\textwidth}
     \begin{center}
       \includegraphics[width=\textwidth]{build/mmu-iommu-images--img-dma.eps}
     \end{center}
@@ -69,39 +59,27 @@
 \end{frame}
 
 \begin{frame}
-  \frametitle{The mighty system MMU}
+  \frametitle{The mighty I/O~MMU}
 
   \begin{columns}[c]
 
-    \column{.5\textwidth}
+    \column{.6\textwidth}
     \begin{itemize}
-    \item What about a~system MMU?
+    \item What about an I/O~MMU?
       \begin{itemize}
-      \item Address coming from the device $\rightarrow$ physical
-        address
+      \item Device $\rightarrow$ physical address.
       \end{itemize}
     \item Same deal as with CPU's MMU.
-    \item So why bother?
+    \item<1> So why bother?
+    \item<2> I/O~MMU is not so common.
+    \item<2> I/O~MMU takes time.
+    \item<2> I/O~MMU takes power.
     \end{itemize}
 
-    \column{.5\textwidth}
+    \column{.4\textwidth}
     \begin{center}
       \includegraphics[width=\textwidth]{build/mmu-iommu-images--img-iommu.eps}
     \end{center}
 
   \end{columns}
-\end{frame}
-
-\begin{frame}
-  \frametitle{Cost, speed \& power}
-
-  \begin{itemize}
-  \item Every chip costs.
-    \begin{itemize}
-    \item Money and power.
-    \end{itemize}
-  \item More complex chips cost more.
-  \item Not all systems have DMA with SG or system MMU.
-  \item System MMU takes time.
-  \end{itemize}
 \end{frame}
