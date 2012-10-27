@@ -26,15 +26,15 @@ build/cma-lce.dvi:
 
 images:
 
-build/%.eps: src/%.svg
+build/%.eps: img/%.svg
 	@exec mkdir -p build
 	exec inkscape -z -C --file=$^ --export-eps=$@
 
-build/%.eps: src/%.dia
+build/%.eps: img/%.dia
 	@exec mkdir -p build
 	exec dia -l -t eps -e $@ $<
 
-build/%.eps: src/%.eps
+build/%.eps: img/%.eps
 	@exec mkdir -p build
 	exec cp $< $@
 
