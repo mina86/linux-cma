@@ -17,8 +17,21 @@
 \newcommand{\notimplies}{%
   \mathrel{{\ooalign{\hidewidth$\not\phantom{=}$\hidewidth\cr$\implies$}}}}
 
-\definecolor{gray}{rgb}{0.5,0.5,0.5}
-\definecolor{darkgreen}{rgb}{0.0,0.5,0.0}
+% Define the Google colours.
+\definecolor{GoogleBlue}{RGB}{0,102,204}
+\definecolor{GoogleYellow}{RGB}{255,204,0}
+\definecolor{GoogleGreen}{RGB}{0,153,0}
+\definecolor{GoogleRed}{RGB}{255,0,0}
+\newcommand\Google{\href{http://www.google.com/}{%
+{\color{GoogleBlue}G}%
+{\color{GoogleRed}o}%
+{\color{GoogleYellow}o}%
+{\color{GoogleBlue}g}%
+{\color{GoogleGreen}l}%
+{\color{GoogleRed}e}}}
+
+\definecolor{gray}{RGB}{89,89,89}
+
 \lstset{
   language=C,
   basicstyle=\small\rmfamily,
@@ -35,34 +48,20 @@
   breakautoindent,
   columns=fullflexible,
   morekeywords={inline,bool},
-  keywordstyle=\color{blue}\bfseries,
-  commentstyle=\color{darkgreen}\itshape,
-  stringstyle=\color{magenta}\ttfamily
+  keywordstyle=\color{GoogleBlue}\bfseries,
+  commentstyle=\color{GoogleGreen}\itshape,
+  stringstyle=\color{GoogleRed}\ttfamily
 }
 \lstdefinelanguage{diff}{
-  morecomment=[f][\color{blue}]{@@},     % group identifier
-  morecomment=[f][\color{red}]-,         % deleted lines
-  morecomment=[f][\color{darkgreen}]+,   % added lines
-  morecomment=[f][\color{magenta}]{---}, % Diff header lines (must appear after +,-)
-  morecomment=[f][\color{magenta}]{+++},
+  morecomment=[f][\color{GoogleBlue}]{@@},     % group identifier
+  morecomment=[f][\color{GoogleRed}]-,         % deleted lines
+  morecomment=[f][\color{GoogleGreen}]+,       % added lines
+  morecomment=[f][\color{gray}]{---},  % Diff header lines (must appear after +,-)
+  morecomment=[f][\color{gray}]{+++},
 }
 \def\code{\lstinline[basicstyle=\rmfamily]}
 
 \usetheme{Frankfurt}
-
-% Define the Google colours.
-\definecolor{GoogleBlue}{RGB}{0,102,204}
-\definecolor{GoogleYellow}{RGB}{255,204,0}
-\definecolor{GoogleGreen}{RGB}{0,153,0}
-\definecolor{GoogleRed}{RGB}{255,0,0}
-\definecolor{GoogleGray}{RGB}{89,89,89}
-\newcommand\Google{\href{http://www.google.com/}{%
-{\color{GoogleBlue}G}%
-{\color{GoogleRed}o}%
-{\color{GoogleYellow}o}%
-{\color{GoogleBlue}g}%
-{\color{GoogleGreen}l}%
-{\color{GoogleRed}e}}}
 
 % Use GoogleBlue for all structural text (headers, bullets, etc.)
 \setbeamercolor{structure}{fg=GoogleBlue,bg=white}
@@ -78,10 +77,10 @@
 \setbeamertemplate{note page}[plain]
 \setbeamerfont{note page}{size=\scriptsize}
 
-% Gray footnotes, no rule.
+% gray footnotes, no rule.
 % FIXME: This is broken. The gray continues onto subsequent slides.
 % Note: footnotes are generally a bad idea in presentations.
-\setbeamercolor{footnote mark}{fg=GoogleGray}
+\setbeamercolor{footnote mark}{fg=gray}
 \renewcommand{\footnoterule}{}
 
 \newcommand\gheaderheight{1mm}
