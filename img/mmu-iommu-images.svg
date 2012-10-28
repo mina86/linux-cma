@@ -66,16 +66,19 @@
       stroke-dasharray: 4, 8;
     }
     #g-top, #g-top-big {
-      fill: #CFC;
-      stroke: #0C0;
+      /* blue */
+      fill: #99CCFF;
+      stroke: #06C;
     }
     #g-btm-rght, #g-btm-big {
-      fill: #CCF;
-      stroke: #00C;
+      /* green */
+      fill: #7FCC7F;
+      stroke: #090;
     }
     #g-btm-left {
-      fill: #FFC;
-      stroke: #CC0;
+      /* red */
+      fill: #FFB2B2;
+      stroke: #F00;
     }
 
     .arrow {
