@@ -69,10 +69,10 @@
       fill: #000;
       stroke: none;
     }
-    .o2 { fill: #99CCFF; /* blue */ }
-    .o1 { fill: #FFFFB2; /* yellow */ }
-    .o0 { fill: #7FCC7F; /* green */ }
-    .al { fill: #FF0000; /* red */ }
+    .o2 { fill: #CCE7FF; /* blue */ }
+    .o1 { fill: #FFFFBB; /* yellow */ }
+    .o0 { fill: #B3FFC5; /* green */ }
+    .al { fill: #D50F25; /* red */ }
   </style>
 
   <g class="shadow">

@@ -67,18 +67,18 @@
     }
     #g-top, #g-top-big {
       /* blue */
-      fill: #99CCFF;
-      stroke: #06C;
+      fill: #85A5F1;
+      stroke: #3369E8;
     }
     #g-btm-rght, #g-btm-big {
       /* green */
-      fill: #7FCC7F;
-      stroke: #090;
+      fill: #66C27C;
+      stroke: #009925;
     }
     #g-btm-left {
       /* red */
-      fill: #FFB2B2;
-      stroke: #F00;
+      fill: #E66F7C;
+      stroke: #D50F25;
     }
 
     .arrow {
