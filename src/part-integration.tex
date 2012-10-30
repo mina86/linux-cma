@@ -20,7 +20,7 @@
   \frametitle{Memory reservation}
 
   \begin{itemize}
-  \item \code{memblock} must be ready, page allocator must not.
+  \item Memblock must be ready, page allocator must not.
   \item On ARM, \code{arm_memblock_init()} is a~good place.
   \item All one needs to do, is call
     \code{dma_contiguous_reserve()}.
