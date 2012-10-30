@@ -7,7 +7,7 @@
      xmlns:dc="http://purl.org/dc/elements/1.1/"
      xmlns:cc="http://creativecommons.org/ns#"
      xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-     width="1200" height="390" version="1.1">
+     width="1200px" height="390px" viewBox="0 0 1200 390" version="1.1">
   <metadata>
     <rdf:RDF>
       <cc:Work dc:format="image/svg+xml"
@@ -42,7 +42,7 @@
   <style>
     text {
       font-family: DejaVu Sans;
-      font-size: 20;
+      font-size: 20px;
       font-style: normal;
       font-variant: normal;
       font-weight: normal;
@@ -53,11 +53,11 @@
       text-anchor: middle;
     }
     text.mmu {
-      font-size: 25;
+      font-size: 25px;
     }
     text.component {
       font-family: DejaVu Serif;
-      font-size: 30;
+      font-size: 30px;
       font-weight: bold;
     }
 
@@ -132,7 +132,7 @@
     <text id="t-main"      x="150" y=" 50" class="component">Main Memory</text>
     <text id="t-cpu-cntr"  x="150" y="360" class="component">CPU</text>
     <text id="t-cpu-rght"  x="225" y="360" class="component">CPU</text>
-    <text id="t-dev-left"  x=" 75" y="360" class="component" style="font-size:25">Devices</text>
+    <text id="t-dev-left"  x=" 75" y="360" class="component" style="font-size:25px">Devices</text>
     <text id="t-mmu-cntr"  x="150" y="205" class="mmu">MMU</text>
     <text id="t-mmu-rght"  x="225" y="205" class="mmu">MMU</text>
     <text id="t-dma-left"  x=" 75" y="205" class="mmu">DMA</text>
