@@ -13,36 +13,6 @@
   \end{center}
 \end{frame}
 
-\begin{frame}[fragile]
-  \frametitle{Pages and page blocks}
-
-  \begin{itemize}
-  \item Linux manages memory in units of pages.
-    \begin{itemize}
-    \item Typically \unit[4]{KiB} in size.
-    \end{itemize}
-  \item Page can have order ranging from 0 to 10.\footnote{Strictly
-    speaking, from zero to one less than \code{MAX_ORDER} which is
-    usually 11.}
-    \begin{itemize}
-    \item $n$-order page consists of $2^n$ \unit[4]{KiB} pages.
-    \item 10-order page is called max-order page.
-    \end{itemize}
-  \item Pages are grouped into page blocks.
-  \item Page block consists of 1024 pages, same size as max-order
-    page.\footnote{This actually depends, but it's the case for ARM
-      and x86.}
-  \item {\footnotesize Let's forget about zones or NUMA.}
-  \end{itemize}
-\end{frame}
-
-\begin{frame}
-  \frametitle{Pages and page blocks, cont}
-  \begin{center}
-  \includegraphics[width=0.9\textwidth]{build/pages.eps}
-  \end{center}
-\end{frame}
-
 \begin{frame}
   \frametitle{Buddy allocator}
   \begin{columns}[c]
@@ -65,6 +35,13 @@
     \includegraphics[width=0.9\textwidth]{build/alloc-free-cycle.eps}
     \end{center}
   \end{columns}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Pages and page blocks, cont}
+  \begin{center}
+  \includegraphics[width=0.9\textwidth]{build/pages.eps}
+  \end{center}
 \end{frame}
 
 \begin{frame}[fragile]
