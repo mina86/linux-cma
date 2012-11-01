@@ -82,6 +82,7 @@
 
   <defs>
     <path id="arrow-give"  d="M0,0 l-5,-20 h10 z" style="fill: #FFF" />
+    <path id="arrow-cma"   d="M0,0 l-5,-20 h10 z" />
     <path id="arrow-take"  d="M-5,0 h10 l-5,-20 z" style="fill: #FFF" />
     <path id="arrow-use"   d="m0,0 l-5,-20 5,5 5,-5 z" />
     <path id="arrow-maybe" d="m0,0 l-5,-20 5,5 5,-5 z" />
@@ -112,40 +113,40 @@
     <g class="links" id="links-important">
       <path d="M 127.14286,  40.00000 L 252.85714,  80.00000" id="p0" class="give" pathLength=" 131.92453"/>
       <use transform="translate( 252.85714   80.00000) rotate( -72.35)" xlink:href="#arrow-give"/>
-      <text class="atEnd" dy="-5"><textPath startOffset=" 106.92453" xlink:href="#p0">gives memory to</textPath></text>
+      <text class="atStart" dy="-5"><textPath startOffset="  25.00000" xlink:href="#p0">gives memory to</textPath></text>
       <path d="M 347.14286,  80.00000 L 472.85714,  40.00000" id="p1" class="maybe" pathLength=" 131.92453"/>
       <use transform="translate( 347.14286   80.00000) rotate(  72.35)" xlink:href="#arrow-maybe"/>
-      <text class="atStart" dy="-5"><textPath startOffset="  25.00000" xlink:href="#p1">may use</textPath></text>
+      <text class="atEnd" dy="-5"><textPath startOffset=" 106.92453" xlink:href="#p1">may use</textPath></text>
     </g>
     <g class="links" id="links-rest">
       <path d="M 243.12500, 160.00000 L 286.87500, 110.00000" id="p2" class="use" pathLength="  66.43841"/>
       <use transform="translate( 286.87500  110.00000) rotate(-138.81)" xlink:href="#arrow-use"/>
-      <text class="atEnd" dy="-5"><textPath startOffset="  41.43841" xlink:href="#p2">uses</textPath></text>
+      <text class="atStart" dy="-5"><textPath startOffset="  16.60960" xlink:href="#p2">uses</textPath></text>
       <path d="M 331.87500, 110.00000 L 438.12500, 160.00000" id="p3" class="use" pathLength=" 117.42684"/>
       <use transform="translate( 331.87500  110.00000) rotate( 115.20)" xlink:href="#arrow-use"/>
-      <text class="atStart" dy="-5"><textPath startOffset="  25.00000" xlink:href="#p3">uses</textPath></text>
+      <text class="atEnd" dy="-5"><textPath startOffset="  92.42684" xlink:href="#p3">uses</textPath></text>
       <path d="M 181.25000, 240.00000 L 218.75000, 190.00000" id="p4" class="use" pathLength="  62.50000"/>
       <use transform="translate( 218.75000  190.00000) rotate(-143.13)" xlink:href="#arrow-use"/>
-      <text class="atEnd" dy="-5"><textPath startOffset="  37.50000" xlink:href="#p4">uses</textPath></text>
+      <text class="atStart" dy="-5"><textPath startOffset="  15.62500" xlink:href="#p4">uses</textPath></text>
       <path d="M 240.00000, 260.83333 L 340.00000, 269.16667" id="p5" class="maybe" pathLength=" 100.34662"/>
       <use transform="translate( 240.00000  260.83333) rotate(  94.76)" xlink:href="#arrow-maybe"/>
-      <text class="atStart" dy="-5"><textPath startOffset="  25.00000" xlink:href="#p5">may use</textPath></text>
+      <text class="atEnd" dy="-5"><textPath startOffset="  75.34662" xlink:href="#p5">may use</textPath></text>
       <path d="M 257.00000, 190.00000 L 383.00000, 260.00000" id="p6" class="maybe" pathLength=" 144.13882"/>
       <use transform="translate( 257.00000  190.00000) rotate( 119.05)" xlink:href="#arrow-maybe"/>
-      <text class="atStart" dy="-5"><textPath startOffset="  25.00000" xlink:href="#p6">may use</textPath></text>
+      <text class="atEnd" dy="-5"><textPath startOffset=" 119.13882" xlink:href="#p6">may use</textPath></text>
     </g>
     <g class="links" id="links-cma">
-      <path d="M 313.20000, 260.00000 L 506.80000,  40.00000" id="p7" class="use" pathLength=" 293.05453"/>
-      <use transform="translate( 313.20000  260.00000) rotate(  41.35)" xlink:href="#arrow-use"/>
-      <text class="atStart" dy="-5"><textPath startOffset="  25.00000" xlink:href="#p7">uses</textPath></text>
-      <path d="M  93.20000,  40.00000 L 286.80000, 260.00000" id="p8" class="take" pathLength=" 293.05453"/>
-      <use transform="translate(  93.20000   40.00000) rotate( 138.65)" xlink:href="#arrow-take"/>
-      <text class="atStart" dy="-5"><textPath startOffset="  25.00000" xlink:href="#p8">takes memory from</textPath></text>
-      <path d="M 310.00000, 110.00000 v 150.00000" id="p9" class="use" pathLength=" 150.00000"/>
-      <use transform="translate( 310.00000  110.00000) rotate(-180.00)" xlink:href="#arrow-use"/>
-      <text class="atStart" dy="-5"><textPath startOffset="  25.00000" xlink:href="#p9">uses</textPath></text>
-      <path d="M 290.00000, 110.00000 v 150.00000" id="p10" class="give" pathLength=" 150.00000"/>
-      <use transform="translate( 290.00000  110.00000) rotate(-180.00)" xlink:href="#arrow-give"/>
+      <path d="M 350.80000, 260.00000 L 509.20000,  40.00000" id="p7" class="use" pathLength=" 271.09142"/>
+      <use transform="translate( 350.80000  260.00000) rotate(  35.75)" xlink:href="#arrow-use"/>
+      <text class="atEnd" dy="-5"><textPath startOffset=" 246.09142" xlink:href="#p7">uses</textPath></text>
+      <path d="M  90.80000,  40.00000 L 249.20000, 260.00000" id="p8" class="take" pathLength=" 271.09142"/>
+      <use transform="translate(  90.80000   40.00000) rotate( 144.25)" xlink:href="#arrow-take"/>
+      <text class="atEnd" dy="-5"><textPath startOffset=" 246.09142" xlink:href="#p8">takes memory from</textPath></text>
+      <path d="M 330.00000, 260.00000 v-150.00000" id="p9" class="cma" pathLength=" 150.00000"/>
+      <use transform="translate( 330.00000  110.00000) rotate(-180.00)" xlink:href="#arrow-cma"/>
+      <text class="atStart" dy="-5"><textPath startOffset="  25.00000" xlink:href="#p9">integrates with</textPath></text>
+      <path d="M 270.00000, 260.00000 v-150.00000" id="p10" class="give" pathLength=" 150.00000"/>
+      <use transform="translate( 270.00000  110.00000) rotate(-180.00)" xlink:href="#arrow-give"/>
       <text class="atStart" dy="-5"><textPath startOffset="  25.00000" xlink:href="#p10">gives memory to</textPath></text>
     </g>
   </defs>
@@ -180,8 +181,8 @@ Generated with help of the following:
 static const int width = 140;
 static const int height = 30;
 static const int text_y_offset = 20;
-static const int verb_y_offset = 5;
-static const int arrow_length = 25;
+static const int verb_y_offset =  5;
+static const int verb_x_offset = 25;
 
 static const struct rect {
 	int x, y;
@@ -212,9 +213,9 @@ static double line(double fx, double fy, double tx, double ty, const char *type,
 }
 
 static double vertical(double x, double fy, double ty, const char *type, unsigned id) {
-	double l = fy - ty;
+	double l = ty - fy;
 	printf("      <path d=\"M%10.5f,%10.5f v%10.5f\" id=\"p%u\" class=\"%s\" pathLength=\"%10.5f\"/>\n",
-	       x, ty, l, id, type, fabs(l));
+	       x, fy, l, id, type, fabs(l));
 	return fabs(l);
 }
 
@@ -232,8 +233,8 @@ static void newXY(double a, double b, double &x, double &y, int dx, int dy) {
 	}
 }
 
-static void atAngle(double fx, double fy, double tx, double ty,
-		   const char *type) {
+static void connection(double fx, double fy, double tx, double ty,
+		       const char *type) {
 	static unsigned id = 0;
 
 	fx += width / 2; fy += height / 2;
@@ -253,37 +254,30 @@ static void atAngle(double fx, double fy, double tx, double ty,
 		l = line(tx, ty, fx, fy, type, id);
 	}
 
+	double k = l / 4 < verb_x_offset ? l / 4 : verb_x_offset;
 	arrow(tx, ty, atan2(dx, dy) * -180.0 / 3.1415926535, type);
 	printf("      <text class=\"%s\" dy=\"%d\"><textPath startOffset=\"%10.5f\" xlink:href=\"#p%u\">%s</textPath></text>\n",
-	       fx < tx ? "atEnd" : "atStart", -verb_y_offset,
-	       fx < tx ? l - arrow_length : (double)arrow_length,
+	       fx > tx ? "atEnd" : "atStart", -verb_y_offset,
+	       fx > tx ? l - k : k,
 	       id, type + strlen(type) + 1);
 	++id;
 }
 
-static void horizontal(int x1, int x2, int y, const char *type) {
-	y += height / 2;
-	printf("      <path d=\"M%4d.00000,%4d.00000 h%4d.00000\" class=\"%s\"/>\n",
-	       x1 < x2 ? x1 + width : x1, y,
-	       x2 - x1 - (x1 < x2 ? width : -width),
-	       type);
-	arrow(x1 > x2 ? x2 + width : x2, y, x1 < x2 ? -90 : 90, type);
-	printf("      <text x=\"%4d.00000\" y=\"%4d.00000\" class=\"%s\">%s</text>\n",
-	       x2 + (x1 > x2 ? width + arrow_length : -arrow_length),
-	       y - verb_y_offset,
-	       x1 > x2 ? "atStart" : "atEnd", type + strlen(type) + 1);
+static void connection(int fidx, int tidx, const char *type) {
+	connection(rects[fidx].x, rects[fidx].y, rects[tidx].x, rects[tidx].y, type);
 }
 
-static void connection(const struct rect *f, const struct rect *t,
-		       const char *type) {
-	int fx = f->x, fy = f->y, tx = t->x, ty = t->y;
-	if (fy == ty) {
-		horizontal(fx, tx, fy, type);
-	} else {
-		atAngle(fx, fy, tx, ty, type);
-	}
+static void connection_offsetx(int fidx, int tidx, const char *type,
+			       double fxd, double txd) {
+	connection(rects[fidx].x + fxd, rects[fidx].y,
+		   rects[tidx].x + txd, rects[tidx].y, type);
 }
 
+static void connection_offsetx(int fidx, int tidx, const char *type,
+			       double xd) {
+	connection(rects[fidx].x + xd, rects[fidx].y,
+		   rects[tidx].x + xd, rects[tidx].y, type);
+}
 
 static void group(const char *name, const char *cls, bool &opened) {
 	if (name) {
@@ -314,20 +308,19 @@ int main(void) {
 
 	puts("");
 	group("important", "links", group_opened);
-#define CONN(f, t, type) connection(rects + (f), rects + (t), type)
-	CONN(0, 1, "give\0gives memory to");
-	CONN(2, 1, "maybe\0may use");
+	connection(0, 1, "give\0gives memory to");
+	connection(2, 1, "maybe\0may use");
 	group("rest", "links", group_opened);
-	CONN(3, 1, "use\0uses");
-	CONN(4, 1, "use\0uses");
-	CONN(5, 3, "use\0uses");
-	CONN(6, 5, "maybe\0may use");
-	CONN(6, 3, "maybe\0may use");
+	connection(3, 1, "use\0uses");
+	connection(4, 1, "use\0uses");
+	connection(5, 3, "use\0uses");
+	connection(6, 5, "maybe\0may use");
+	connection(6, 3, "maybe\0may use");
 	group("cma", "links", group_opened);
-	CONN(2, 7, "use\0uses");
-	CONN(7, 0, "take\0takes memory from");
-	CONN(7, 1, "use\0uses");
-	CONN(7, 1, "give\0gives memory to");
+	connection_offsetx(2, 7, "use\0uses", 0.0, 40.0);
+	connection_offsetx(7, 0, "take\0takes memory from", -40.0, 0.0);
+	connection_offsetx(7, 1, "cma\0integrates with", 30.0);
+	connection_offsetx(7, 1, "give\0gives memory to", -30.0);
 	group("", NULL, group_opened);
 
 	return 0;
