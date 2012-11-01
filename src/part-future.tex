@@ -1,0 +1,24 @@
+% Copyright (c) 2012 by Michał Nazarewicz <mina86@mina86.com>
+% Distributed under the terms of the Creative Commons
+% Attribution-ShareAlike 3.0 Unported (CC BY-SA 3.0) license.
+
+\subsection{CMA problems and future work}
+
+\begin{frame}
+  \frametitle{Problems}
+
+  \begin{itemize}
+  \item \code{get_user_pages()} makes migration impossible.
+  \item ext4 does not support migration of journal pages.
+  \item Some filesystems are not good on migration.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Future work}
+  \begin{itemize}
+  \item Only swap.
+  \item \href{http://lwn.net/Articles/340080/}{Transcendent memory}.
+  \item \href{http://lwn.net/Articles/468896/}{\code{POSIX_FADV_VOLATILE}}.
+  \end{itemize}
+\end{frame}
