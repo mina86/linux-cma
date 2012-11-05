@@ -31,6 +31,7 @@
 {\color{GoogleRed}e}}}
 
 \definecolor{gray}{RGB}{102,102,102}
+\definecolor{darkgreen}{RGB}{0,128,0}
 
 \lstset{
   language=C,
@@ -48,23 +49,20 @@
   breakautoindent,
   columns=fullflexible,
   morekeywords={inline,bool},
-  keywordstyle=\color{GoogleBlue}\bfseries,
-  commentstyle=\color{GoogleGreen}\itshape,
-  stringstyle=\color{GoogleRed}\ttfamily
+  keywordstyle=\color{blue}\bfseries,
+  commentstyle=\color{darkgreen}\itshape,
+  stringstyle=\color{red}\ttfamily
 }
 \lstdefinelanguage{diff}{
-  morecomment=[f][\color{GoogleBlue}]{@@},     % group identifier
-  morecomment=[f][\color{GoogleRed}]-,         % deleted lines
-  morecomment=[f][\color{GoogleGreen}]+,       % added lines
-  morecomment=[f][\color{gray}]{---},  % Diff header lines (must appear after +,-)
+  morecomment=[f][\color{blue}]{@@},     % group identifier
+  morecomment=[f][\color{red}]-,         % deleted lines
+  morecomment=[f][\color{darkgreen}]+,   % added lines
+  morecomment=[f][\color{gray}]{---},    % Diff header lines (must appear after +,-)
   morecomment=[f][\color{gray}]{+++},
 }
 \def\code{\lstinline[basicstyle=\rmfamily]}
 
 \usetheme{Frankfurt}
-
-% Use GoogleBlue for all structural text (headers, bullets, etc.)
-\setbeamercolor{structure}{fg=GoogleBlue,bg=white}
 
 % Shrink the margins slightly.
 \setbeamersize{text margin left=5mm}
@@ -83,28 +81,7 @@
 \setbeamercolor{footnote mark}{fg=gray}
 \renewcommand{\footnoterule}{}
 
-\newcommand\gheaderheight{1mm}
-\setbeamertemplate{footline}{%
-    \begin{pgfpicture}{0cm}{0cm}{\textwidth}{\gheaderheight}
-    \pgfsetcolor{GoogleBlue}
-    \pgfrect[fill]{\pgfpoint{0.0\textwidth}{0}}
-                  {\pgfpoint{0.25\textwidth}
-                  {\gheaderheight}}
-    \pgfsetcolor{GoogleRed}
-    \pgfrect[fill]{\pgfpoint{0.25\textwidth}{0}}
-                  {\pgfpoint{0.25\textwidth}
-                  {\gheaderheight}}
-    \pgfsetcolor{GoogleYellow}
-    \pgfrect[fill]{\pgfpoint{0.50\textwidth}{0}}
-                  {\pgfpoint{0.25\textwidth}
-                  {\gheaderheight}}
-    \pgfsetcolor{GoogleGreen}
-    \pgfrect[fill]{\pgfpoint{0.75\textwidth}{0}}
-                  {\pgfpoint{0.25\textwidth}
-                  {\gheaderheight}}
-    \end{pgfpicture}
-}
-
+\setbeamertemplate{footline}{}
 
 \newcommand\Section[1]{%
 \section{#1}%
