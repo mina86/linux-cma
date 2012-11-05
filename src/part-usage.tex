@@ -24,7 +24,10 @@ void *my_dev_alloc_buffer(
     unsigned long size_in_bytes, dma_addr_t *dma_addrp)
 {
     void *virt_addr = dma_alloc_coherent(
-        my_dev, size_in_bytes, dma_addrp, GFP_KERNEL);
+        my_dev,
+        size_in_bytes,
+        dma_addrp,
+        GFP_KERNEL);
     if (!virt_addr)
         dev_err(my_dev, "Allocation failed.");
     return virt_addr;

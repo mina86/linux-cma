@@ -65,10 +65,13 @@ void __init dma_contiguous_reserve(
   \frametitle{Early fixups}
 
   \begin{itemize}
+  \item On ARM
+    \begin{itemize}
+    \item cache is not coherent, and
+    \item having two mappings with different cache-ability gives
+      undefined behaviour.
+    \end{itemize}
   \item Kernel linear mapping uses huge pages.
-  \item On ARM cache is not coherent.
-  \item Having two mappings with different cache-ability gives
-    undefined behaviour.
   \item So on ARM an “early fixup” is needed.
     \begin{itemize}
     \item This fixup alters the linear mapping so CMA regions use
@@ -116,7 +119,7 @@ dma_contiguous_early_fixup(phys_addr_t base, unsigned long size)
 \end{frame}
 
 \begin{frame}[fragile]
-  \frametitle{Integration with DMA API}
+  \frametitle{Allocating CMA memory}
 
   \begin{block}{Allocate}
 \begin{lstlisting}
@@ -140,7 +143,7 @@ struct page *dma_alloc_from_contiguous(
 \end{frame}
 
 \begin{frame}[fragile]
-  \frametitle{Integration with DMA API}
+  \frametitle{Releasing CMA memory}
 
   \begin{block}{Release}
 \begin{lstlisting}

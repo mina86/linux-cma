@@ -5,35 +5,21 @@
 \subsection{Solutions to the problem}
 
 \begin{frame}
-  \frametitle{Lie to the kernel}
-
-  \begin{itemize}
-  \item Lie to the kernel about amount of memory.
-    \begin{itemize}
-    \item Easily done with a~\code{mem} parameter.
-    \item Kernel won't touch memory hidden via \code{mem}.
-    \end{itemize}
-  \item Assign buffers to each device that might need it.
-  \item Platform dependent.
-  \item Requires fiddling with boot loader.
-  \item \ldots
-  \end{itemize}
-\end{frame}
-
-\begin{frame}
   \frametitle{Reserve and assign at boot time}
 
   \begin{itemize}
   \item Reserve memory during system boot time.
+    \begin{itemize}
+    \item \code{mem} parameter.
+    \item Memblock / bootmem.
+    \end{itemize}
   \item Assign buffers to each device that might need it.
-  \item Less platform dependent.
-  \item Boot loader is left alone.
   \item While device is not being used, memory is wasted.
   \end{itemize}
 \end{frame}
 
 \begin{frame}
-  \frametitle{Reserve but allocate on demand}
+  \frametitle{Reserve and allocate on demand}
 
   \begin{itemize}
   \item Reserve memory during system boot time.
