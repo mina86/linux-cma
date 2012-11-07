@@ -11,9 +11,9 @@
   <metadata>
     <rdf:RDF>
       <cc:Work dc:format="image/svg+xml"
-               dc:title="Buddy allocation-release cycle"
-               dc:description="Buddy allocation algorithm allocation and release visualisation."
-               dc:language="en"
+               dc:title="Alokacji i zwalnianie w algorytmie bliźniaków."
+               dc:description="Wizualizacja cyklu alokacji i zwalniania obszaru pamięci w algorytmie alokacji bliźniaków."
+               dc:language="pl"
                cc:attributionName="Michał Nazarewicz"
                cc:attributionURL="http://mina86.com/">
         <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
@@ -68,6 +68,7 @@
       font-stretch: normal;
       fill: #000;
       stroke: none;
+      text-anchor: end;
     }
     .o2 { fill: #CCE7FF; /* blue */ }
     .o1 { fill: #FFFFBB; /* yellow */ }
@@ -132,11 +133,11 @@
            " />
 
   <text>
-    <tspan x="174" y=" 35">split</tspan>
-    <tspan x="174" y=" 75">split</tspan>
-    <tspan x="147" y="115">allocate</tspan>
-    <tspan x="151" y="155">release</tspan>
-    <tspan x="157" y="195">merge</tspan>
-    <tspan x="157" y="235">merge</tspan>
+    <tspan x="200" y=" 35">podział</tspan>
+    <tspan x="200" y=" 75">podział</tspan>
+    <tspan x="200" y="115">alokacja</tspan>
+    <tspan x="200" y="155">zwalnianie</tspan>
+    <tspan x="200" y="195">łączenie</tspan>
+    <tspan x="200" y="235">łączenie</tspan>
   </text>
 </svg>

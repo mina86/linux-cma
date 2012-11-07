@@ -5743,15 +5743,14 @@
 
   <use x="50" y="0" xlink:href="#pages" />
 
-  <text x="320" y=" 16">32 × 0-order pages</text>
-  <text x="320" y=" 36">16 × 1-order pages</text>
-  <text x="320" y=" 56">8 × 2-order pages</text>
-  <text x="320" y=" 76">4 × 3-order pages</text>
-  <text x="320" y=" 96">2 × 4-order pages</text>
-  <text x="320" y="116">1 × 5-order pages</text>
-  <text x="320" y="196">32 × 5-order pages</text>
-  <text x="320" y="216">1 × 10-order pages</text>
+  <text x="320" y=" 16">32 strony rzędu 0</text>
+  <text x="320" y=" 36">16 strony rzędu 1</text>
+  <text x="320" y=" 56">8 strony rzędu 2</text>
+  <text x="320" y=" 76">4 strony rzędu 3</text>
+  <text x="320" y=" 96">2 strony rzędu 4</text>
+  <text x="320" y="116">1 strona rzędu 5</text>
+  <text x="320" y="196">32 strony rzędu 5</text>
+  <text x="320" y="216">1 strona rzędu 10</text>
 
   <text x="176" y="250" class="pb">pageblock</text>
-  <text x="176" y="280" class="pb">max-order page</text>
 </svg>

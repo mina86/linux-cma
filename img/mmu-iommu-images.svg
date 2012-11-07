@@ -11,8 +11,8 @@
   <metadata>
     <rdf:RDF>
       <cc:Work dc:format="image/svg+xml"
-               dc:title="MMU and I/O MMU configurations"
-               dc:description="Configurations of devices and CPU with MMU, I/O MMU and DMA."
+               dc:title="Konfiguracje MMU i I/O MMU"
+               dc:description="Diagram przedstawiający konfigurację systemu z MMU, DMA oraz I/O MMU."
                dc:language="en"
                cc:attributionName="Michał Nazarewicz"
                cc:attributionURL="http://mina86.com/">
@@ -129,27 +129,27 @@
     <rect id="b-btm-rght"  x="175" y="260" width=" 95" height="40" rx="10" ry="10" class="b"/>
     <rect id="b-btm-left"  x=" 30" y="260" width=" 95" height="40" rx="10" ry="10" class="b"/>
 
-    <text id="t-main"      x="150" y=" 50" class="component">Main Memory</text>
+    <text id="t-main"      x="150" y=" 50" class="component">Pamięć</text>
     <text id="t-cpu-cntr"  x="150" y="360" class="component">CPU</text>
     <text id="t-cpu-rght"  x="225" y="360" class="component">CPU</text>
-    <text id="t-dev-left"  x=" 75" y="360" class="component" style="font-size:25px">Devices</text>
+    <text id="t-dev-left"  x=" 75" y="360" class="component">Devs</text>
     <text id="t-mmu-cntr"  x="150" y="205" class="mmu">MMU</text>
     <text id="t-mmu-rght"  x="225" y="205" class="mmu">MMU</text>
     <text id="t-dma-left"  x=" 75" y="205" class="mmu">DMA</text>
     <text id="t-iom-left"  x=" 75" y="205" class="mmu">IOMMU</text>
-    <text id="t-phys-cntr" x="150" y="127" class="addr">Physical address</text>
-    <text id="t-virt-cntr" x="150" y="277" class="addr">Virtual address</text>
+    <text id="t-phys-cntr" x="150" y="127" class="addr">Adres fizyczny</text>
+    <text id="t-virt-cntr" x="150" y="277" class="addr">Adres wirtualny</text>
     <text id="t-virt" class="addr">
-      <tspan x="225" y="277">Virtual</tspan>
-      <tspan x="225" y="297">address</tspan>
+      <tspan x="225" y="277">Adres</tspan>
+      <tspan x="225" y="297" style="font-size:90%">wirtualny</tspan>
     </text>
     <text id="t-data" class="addr">
-      <tspan x="75" y="277">Data</tspan>
-      <tspan x="75" y="297">transfer</tspan>
+      <tspan x="75" y="277" style="font-size:90%">Transfer</tspan>
+      <tspan x="75" y="297">danych</tspan>
     </text>
     <text id="t-bus" class="addr">
-      <tspan x="75" y="277">Device</tspan>
-      <tspan x="75" y="297">address</tspan>
+      <tspan x="75" y="277">Adres</tspan>
+      <tspan x="75" y="297">szyny</tspan>
     </text>
 
     <g id="ct-mmu">

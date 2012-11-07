@@ -11,9 +11,9 @@
   <metadata>
     <rdf:RDF>
       <cc:Work dc:format="image/svg+xml"
-               dc:title="Linux allocators"
-               dc:description="Presentation of Linux memory allocators."
-               dc:language="en"
+               dc:title="Alokatory Linuksa"
+               dc:description="Przedstawienie alokatorów pamięci dostępnych w jądrze Linux."
+               dc:language="pl"
                cc:attributionName="Michał Nazarewicz"
                cc:attributionURL="http://mina86.com/">
         <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
@@ -93,7 +93,7 @@
       <rect x="230" y=" 80" width="140" height=" 30" />
       <text x="300" y="100">page allocator</text>
       <rect x="450" y=" 10" width="140" height=" 30" />
-      <text x="520" y=" 30">the DMA API</text>
+      <text x="520" y=" 30">DMA API</text>
     </g>
     <g class="boxes" id="boxes-rest">
       <rect x="160" y="160" width="140" height=" 30" />
@@ -113,41 +113,41 @@
     <g class="links" id="links-important">
       <path d="M 127.14286,  40.00000 L 252.85714,  80.00000" id="p0" class="give" pathLength=" 131.92453"/>
       <use transform="translate( 252.85714   80.00000) rotate( -72.35)" xlink:href="#arrow-give"/>
-      <text class="atStart" dy="-5"><textPath startOffset="  25.00000" xlink:href="#p0">gives memory to</textPath></text>
+      <text class="atStart" dy="-5"><textPath startOffset="  25.00000" xlink:href="#p0">oddaje pamięć do</textPath></text>
       <path d="M 347.14286,  80.00000 L 472.85714,  40.00000" id="p1" class="maybe" pathLength=" 131.92453"/>
       <use transform="translate( 347.14286   80.00000) rotate(  72.35)" xlink:href="#arrow-maybe"/>
-      <text class="atEnd" dy="-5"><textPath startOffset=" 106.92453" xlink:href="#p1">may use</textPath></text>
+      <text class="atEnd" dy="-5"><textPath startOffset=" 106.92453" xlink:href="#p1">może używać</textPath></text>
     </g>
     <g class="links" id="links-rest">
       <path d="M 243.12500, 160.00000 L 286.87500, 110.00000" id="p2" class="use" pathLength="  66.43841"/>
       <use transform="translate( 286.87500  110.00000) rotate(-138.81)" xlink:href="#arrow-use"/>
-      <text class="atStart" dy="-5"><textPath startOffset="  16.60960" xlink:href="#p2">uses</textPath></text>
+      <text class="atStart" dy="-5"><textPath startOffset="  16.60960" xlink:href="#p2">używa</textPath></text>
       <path d="M 331.87500, 110.00000 L 438.12500, 160.00000" id="p3" class="use" pathLength=" 117.42684"/>
       <use transform="translate( 331.87500  110.00000) rotate( 115.20)" xlink:href="#arrow-use"/>
-      <text class="atEnd" dy="-5"><textPath startOffset="  92.42684" xlink:href="#p3">uses</textPath></text>
+      <text class="atEnd" dy="-5"><textPath startOffset="  92.42684" xlink:href="#p3">używa</textPath></text>
       <path d="M 181.25000, 240.00000 L 218.75000, 190.00000" id="p4" class="use" pathLength="  62.50000"/>
       <use transform="translate( 218.75000  190.00000) rotate(-143.13)" xlink:href="#arrow-use"/>
-      <text class="atStart" dy="-5"><textPath startOffset="  15.62500" xlink:href="#p4">uses</textPath></text>
+      <text class="atStart" dy="-5"><textPath startOffset="  15.62500" xlink:href="#p4">używa</textPath></text>
       <path d="M 240.00000, 260.83333 L 340.00000, 269.16667" id="p5" class="maybe" pathLength=" 100.34662"/>
       <use transform="translate( 240.00000  260.83333) rotate(  94.76)" xlink:href="#arrow-maybe"/>
-      <text class="atEnd" dy="-5"><textPath startOffset="  75.34662" xlink:href="#p5">may use</textPath></text>
+      <text class="atEnd" dy="-5"><textPath startOffset="  75.34662" xlink:href="#p5">może używać</textPath></text>
       <path d="M 257.00000, 190.00000 L 383.00000, 260.00000" id="p6" class="maybe" pathLength=" 144.13882"/>
       <use transform="translate( 257.00000  190.00000) rotate( 119.05)" xlink:href="#arrow-maybe"/>
-      <text class="atEnd" dy="-5"><textPath startOffset=" 119.13882" xlink:href="#p6">may use</textPath></text>
+      <text class="atEnd" dy="-5"><textPath startOffset=" 119.13882" xlink:href="#p6">może używać</textPath></text>
     </g>
     <g class="links" id="links-cma">
       <path d="M 350.80000, 260.00000 L 509.20000,  40.00000" id="p7" class="use" pathLength=" 271.09142"/>
       <use transform="translate( 350.80000  260.00000) rotate(  35.75)" xlink:href="#arrow-use"/>
-      <text class="atEnd" dy="-5"><textPath startOffset=" 246.09142" xlink:href="#p7">uses</textPath></text>
+      <text class="atEnd" dy="-5"><textPath startOffset=" 246.09142" xlink:href="#p7">używa</textPath></text>
       <path d="M  90.80000,  40.00000 L 249.20000, 260.00000" id="p8" class="take" pathLength=" 271.09142"/>
       <use transform="translate(  90.80000   40.00000) rotate( 144.25)" xlink:href="#arrow-take"/>
-      <text class="atEnd" dy="-5"><textPath startOffset=" 246.09142" xlink:href="#p8">takes memory from</textPath></text>
+      <text class="atEnd" dy="-5"><textPath startOffset=" 246.09142" xlink:href="#p8">bierze pamięć z</textPath></text>
       <path d="M 330.00000, 260.00000 v-150.00000" id="p9" class="cma" pathLength=" 150.00000"/>
       <use transform="translate( 330.00000  110.00000) rotate(-180.00)" xlink:href="#arrow-cma"/>
-      <text class="atStart" dy="-5"><textPath startOffset="  25.00000" xlink:href="#p9">integrates with</textPath></text>
+      <text class="atStart" dy="-5"><textPath startOffset="  25.00000" xlink:href="#p9">integruje się z</textPath></text>
       <path d="M 270.00000, 260.00000 v-150.00000" id="p10" class="give" pathLength=" 150.00000"/>
       <use transform="translate( 270.00000  110.00000) rotate(-180.00)" xlink:href="#arrow-give"/>
-      <text class="atStart" dy="-5"><textPath startOffset="  25.00000" xlink:href="#p10">gives memory to</textPath></text>
+      <text class="atStart" dy="-5"><textPath startOffset="  25.00000" xlink:href="#p10">oddaje pamięć do</textPath></text>
     </g>
   </defs>
 
