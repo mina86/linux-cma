@@ -106,20 +106,6 @@
 \setbeamerfont{date}{size={\fontsize{8pt}{10pt}}}
 
 
-\makeatletter
-\let\beamer@writeslidentry@miniframeson=\beamer@writeslidentry
-\def\beamer@writeslidentry@miniframesoff{%
-  \expandafter\beamer@ifempty\expandafter{\beamer@framestartpage}{}% does not happen normally
-  {%else
-    % removed \addtocontents commands
-    \clearpage\beamer@notesactions%
-  }
-}
-\newcommand*{\miniframeson}{\let\beamer@writeslidentry=\beamer@writeslidentry@miniframeson}
-\newcommand*{\miniframesoff}{\let\beamer@writeslidentry=\beamer@writeslidentry@miniframesoff}
-\makeatother
-
-
 \begin{document}
 
 \begin{frame}
@@ -138,18 +124,6 @@
 \input{src/part-usage}
 \input{src/part-integration}
 \input{src/part-regions}
-
-\subsection{Q \& A}
-\miniframesoff
-\begin{frame}
-  \frametitle{Mini Q \& A}
-
-  \begin{center}
-  \includegraphics[width=0.3\textwidth]{build/interrogation.eps}
-  \end{center}
-\end{frame}
-\miniframeson
-
 \Section{Implementation}
 \input{src/part-page-alloc}
 \input{src/part-implementation}
