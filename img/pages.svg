@@ -5748,9 +5748,9 @@
   <text x="320" y=" 56">8 × 2-order pages</text>
   <text x="320" y=" 76">4 × 3-order pages</text>
   <text x="320" y=" 96">2 × 4-order pages</text>
-  <text x="320" y="116">1 × 5-order pages</text>
+  <text x="320" y="116">1 × 5-order page</text>
   <text x="320" y="196">32 × 5-order pages</text>
-  <text x="320" y="216">1 × 10-order pages</text>
+  <text x="320" y="216">1 × 10-order page</text>
 
   <text x="176" y="250" class="pb">pageblock</text>
   <text x="176" y="280" class="pb">max-order page</text>
