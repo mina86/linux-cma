@@ -46,6 +46,8 @@ z~wieloma ograniczeniami.
   \label{fig:mmu-iommu}
 \end{figure}
 
+\subsection{Jednostka translacji adresów}
+
 Nowoczesne architektury przeznaczone do serwerów i~komputerów
 osobistych posiadają jednostkę zarządzania pamięcią (\ang{memory
   management unit}, MMU), która tłumaczy adresy logiczne na fizyczne.
@@ -59,6 +61,8 @@ wielomegabajtowy obszar\footnote{Aby uniknąć wieloznaczności, stosuję
   z~tzw.\ przedrostkami ICE).}, system może zrealizować żądanie
 alokując wiele czterokibibajtowych stron i~nie przejmować się
 fragmentacją pamięci.
+
+\subsection{Bezpośredni dostęp do pamięci}
 
 Niemniej, MMU nie jest zazwyczaj dostępny dla pozostałych układów
 znajdujących się w~urządzeniu, takich jak np.\ karta dźwiękowa, czy
@@ -75,26 +79,40 @@ umożliwia wykorzystania tej techniki, procesor może ją symulować
 poprzez sekwencyjne wywoływanie wielu mniejszych transferów,
 aczkolwiek jest to rozwiązanie mniej efektywne.
 
-Niestety, niezależnie czy technika wektorowego wejścia/wyjścia jest
-wspierana, czy nie, mechanizm bezpośredni dostępu do pomięci działa
-tylko dla danych odczytywanych lub zapisywanych sekwencyjnie.
-Przykładowo, sprawdza się bardzo dobrze dla operacji dyskowych, ale
-nie nadaje się dla sprzętowego dekodera wideo, który potrzebuje
-dostępu do wielu dekodowanych ramek jednocześnie.\footnote{Wynika to
-  z~faktu, iż jednym z~rodzai ramki stosowanej do kodowania klatki ze
-  strumienia wideo jest b-ramka, która już nawet w~starszych
+Jednakże mechanizm bezpośredniego dostępu do pomięci (niezależnie czy
+technika wektorowego wejścia/wyjścia jest wspierana, czy nie) jest
+ograniczony do transferów sekwencyjnych.  Sprawdza się bardzo dobrze
+dla operacji dyskowych, ale nie nadaje się dla sprzętowego dekodera
+wideo, który potrzebuje dostępu do wielu dekodowanych ramek
+jednocześnie.\footnote{Jednym z~rodzai ramek stosowanych do kodowania
+  klatki ze strumienia wideo jest b-ramka, która już nawet w~starszych
   standardach takich jak MPEG-2 może odwoływać się do jednej
   poprzedzającej i~jednej następującej klatki, a w~przypadku nowszego
   standardu H.264, może zależeć od więcej niż dwóch innych ramek.}
 
-Co więcej, zarówno MMU jak i~DMA nie są pozbawione kosztów zarówno
-związanych z~koniecznością fizycznego wyprodukowania odpowiedniego
-układu, jak i związanych z~szybkością dostępu do pamięci.  Z~tego
-powodu, w~systemach wbudowanych, takich jak np.\ telefony komórkowe,
-takie mechanizmy są często niedostępne dla zewnętrznych (z~punktu
-widzenia procesora) układów.  Jednocześnie, właśnie takie urządzenia
-posiadają dużo takich podzespołów, jak chociażby aparat fotograficzny,
-czy układ do szybkiego dekodowania obrazów JPEG.
+\subsection{IOMMU}
+
+Oczywiście nie ma żadnych technologicznych przeszkód przed
+zastosowaniem jednostki translacji adresów również dla podzespołów
+innych niż procesor.  Istotnie istnieją platformy sprzętowe
+z~tzw.\ MMU wejścia/wyjścia (ang.\ IOMMU), który pozwala na budowanie
+dużych ciągłych buforów przeznaczonych ze stosunkowo małych stron.
+W~takich systemach, w~zasadzie nie ma (lub nie powinno być)
+konieczności alokowania wielomegabajtowych buforów.
+
+Niestety, nawet jeżeli IOMMU jest dostępne na danej platformie,
+dodatkowy kosz związany z~translacją adresów może być tak duży, iż
+architekt platformy zdecyduje się go wyłączyć i~rozwiązać problem
+„w~oprogramowaniu”.
+
+\subsection{Podsumowanie}
+
+Z~uwagi na koszty i~ograniczenia zarówno kontrolerów DMA jak i~układów
+MMU, wiele systemów wbudowanych, takich jak np.\ telefony komórkowe,
+takie mechanizmy są często niedostępne.  Jednocześnie, właśnie takie
+urządzenia posiadają dużo wyspecjalizowanych podzespołów, jak
+chociażby aparat fotograficzny, czy układ do szybkiego dekodowania
+obrazów JPEG.
 
 Powoduje to, że tego typu układy muszą operować bezpośrednio na
 adresach fizycznych i~w~konsekwencji, wszelkie stosowane przez nie
@@ -107,13 +125,15 @@ obszarów.\footnote{W~szczególności, Linux nie jest nawet w~stanie (bez
     full HD} (tj.\ $1920 \times 1080$) zajmuje ponad sześć megabajtów.}
 
 
-\section{Istniejące rozwiązania}
+\section{Możliwe rozwiązania}
 
 Najprostszym, i~stosunkowo często stosowanym, rozwiązaniem tego
 problemu jest zarezerwowanie przy starcie systemu pewnego regionu
 pamięci na potrzeby danego sterownika.
 
-Najprostszym, acz niezbyt eleganckim sposobem dokonania tego jest
+\subsection{Przypisywanie pamięci na stałe}
+
+Najłatwiejszym, acz niezbyt eleganckim sposobem dokonania tego jest
 wykorzystanie argumentu \code|mem| jądra.  Przekazany przez
 bootloader powoduje, że Linux nie stara się automatycznie wykryć
 dostępnej w~systemie pamięci RAM i~zamiast tego interpretuje
@@ -134,7 +154,7 @@ skalować przy współczesnych systemach, gdyż wymaga rezerwacji wielu
 megabajtów pamięci, która przez większość czasu nie jest do niczego
 wykorzystywana.
 
-\subsection{Physical Memory Manager}\label{sec:pmm}
+\subsection{Pula pamięci fizycznej}
 
 Bardziej skomplikowanym rozwiązaniem jest mechanizm, który rezerwuje
 pewną przestrzeń pamięci, ale zamiast na stałe przypisywać obszary do
@@ -176,7 +196,7 @@ buła zupełnie nieużywana, a~więc marnowana.  Z~tego powodu, PMM
 w~formie zaprezentowanej na początku nie został przyjęty przez
 społeczność programistów Linuksa i~musiałem rozwijać inne rozwiązanie.
 
-\subsection{Contiguous Memory Allocator}
+\subsection{Zarys Contiguous Memory Allocator}
 
 Aby rozwiązać i~ten problem, {\it Contiguous Memory Allocator}
 umożliwia systemowi używanie zarezerwowanej pamięci o~ile żadne
@@ -209,7 +229,7 @@ w~formie w~jakiej znalazł się on w~Linuksie 3.5\footnote{Należy
   jest ona ciągle rozwijana i~im dalej w~przyszłość, tym bardziej opis
   w~niniejszej pracy będzie się różnił od stanu faktycznego.}.
 
-\subsection{Wielkie strony}
+\section{Wielkie strony}
 
 Zagadnieniem związanym z~CMA są wielkie strony (\ang{huge pages}).
 O~ile zwyczajne strony pamięci mają przeważnie cztery kibibajty,
