@@ -1,4 +1,4 @@
-\chapter{Implementacja i~sposób działańia CMA}
+\chapter{Implementacja i~sposób działania CMA}
 
 Podstawowym założeniem CMA jest umożliwienie alokowania dużych
 obszarów ciągłych fizycznie bez konieczneści rezerwacji na wyłączność
@@ -23,26 +23,26 @@ stworzenie nowego typu migracji, nazwanym po prostu typem migracji CMA
 
 \begin{itemize}
 \item Z~bloków stron oznaczonych typem CMA mogą być alokowane tylko
-  strony ruchome.  Innymi słowy, typ migracji CMA istnieje w~lista
-  zaposowych typów migracji jedynie dla typu ruchomego.
+  strony ruchome.  Innymi słowy, typ migracji CMA istnieje w~liście
+  zapasowych typów migracji jedynie dla typu ruchomego.
 \item Blok oznaczony typem CMA nie zmienia swojego typu (na skutek
   działania alokatora stron).
 \end{itemize}
 
 O~ile pierwsza właściwość jest stosunkowo prosta do osiągnięcia,
 zagwarantowania niezmienności typu bloku stron wymagało
-zidentyfikowaniem wszystkich sytuacji, w~których blok może zmienić
-swój typ (a~także sytuacji, w~których strony mogą trafić na listy
-wolnych stron dla typu niezgodnego z~typem bloku, do którego należą)
-i~dodanie odpowiednich warunków zapewniających, że nieporządana zmiana
-nie nastąpi.
+zidentyfikowania wszystkich sytuacji, w~których blok może zmienić swój
+typ (a~także sytuacji, w~których strony mogą trafić na listy wolnych
+stron dla typu niezgodnego z~typem bloku, do którego należą) i~dodanie
+odpowiednich warunków zapewniających, że niepożądana zmiana nie
+nastąpi.
 
 \section{Alokowanie wybranego obszaru pamięci}\label{sec:alloc-contig-range}
 
 W~sytuacji, gdy istnieje gwarancja, że dany zakres stron posiada
 jedynie strony wolne i~ruchome, można przystąpić do jej alokacji.
 Drugim krokiem implementowania CMA było zatem stworzenie funkcji,
-które dostaje jako argument zakres stron, a~następnie migruje
+która dostaje jako argument zakres stron, a~następnie migruje
 wszystkie zajęte strony, a~wolne usuwa z~listy wolnych stron.
 
 Wydruk \ref{lst:alloc-contig-range} przedstawia skrócony (bo
@@ -94,8 +94,8 @@ wszystkich wolnych stron należących do tych bloków na listy tego typu.
 Pomimo, że izolowane strony są przechowywane na liście wolnych stron,
 i~formalnie są pod kontrolą alokatora stron, nie są one nigdy
 alokowane.  W~związku z~tym, strony z~podanego zakresu nie zostaną
-zaalokowane dla innych wątków jądro, które mogą żadać alokacji
-w~trakcie działa nia funkcji \lstinline|alloc_contig_range()|.
+zaalokowane dla innych wątków jądra, które mogą żądać alokacji
+w~trakcie działania funkcji \lstinline|alloc_contig_range()|.
 
 Kolejnym krokiem jest wywołanie w~11 linii funkcji
 \lstinline|__alloc_contig_migrate_range()|.  Jej zadaniem jest
@@ -107,15 +107,15 @@ Po tych dwóch krokach w~zasadzie wszystkie strony z~interesującego nas
 zakresu powinny być wolne.  Jednak, zgodnie z~opisem w~podrozdziale
 \ref{sec:pcp-lists}, strona może być wolna, ale nie znajdować się na
 liście wolnych stron.  Dlatego, w~dalszej części, w~liniach 13--14
-wszystkie strony usuwane są z~list PCP z~powrotem na listy wolnych
-stron.
+wszystkie strony przenoszone są z~list PCP i~wstawiane z~powrotem na
+listy wolnych stron.
 
 Po tych operacjach wszystkie strony w~zakresie $\left<\mathrm{start},
 \mathrm{end}\right)$ są wolne, jednak z~uwagi na sposób działania
 algorytmu bliźniaków, strona identyfikowana przez \lstinline|start|
 nie musi wcale być poprawną wolną stroną.  Wynika to z~faktu, że
 w~procesie zwalniania stron (linia \ref{alg:buddy-free:join} algorytmu
-\ref{alg:buddy-free}) mogła ona zostać połączona z~jej bliźniacza
+\ref{alg:buddy-free}) mogła ona zostać połączona ze swoją bliźniaczą
 stroną tworząc wolną stronę o~wyższym rzędzie.  Z~tego powodu,
 w~liniach 16--20 funkcja \lstinline|alloc_contig_range()| wyszukuje tę
 początkową stronę -- „zewnętrzny początek” zakresu.
@@ -210,9 +210,9 @@ przeniesieniu wszystkich zajętych stron do innego obszaru.
 
 \subsection{Migracja pojedynczej strony}
 
-W~tym miejscu należałoby umieścić pewne krótki opis jak ten mechanizm
-działa.  Składa się on zasadniczo z~czterech kroków przedstawionych
-w~algorytmie \ref{alg:migrate}.
+\TODO{Zredagować ten akapit} W~tym miejscu należałoby umieścić pewne
+krótki opis jak ten mechanizm działa.  Składa się on zasadniczo
+z~czterech kroków przedstawionych w~algorytmie \ref{alg:migrate}.
 
 \begin{algorithm}\label{alg:migrate}
 \caption{Migracja strony $p$}
@@ -226,13 +226,14 @@ w~algorytmie \ref{alg:migrate}.
 \end{algorithmic}
 \end{algorithm}
 
-W~zasadzie najbardziej skomplikowanym krokiem jest uaktualnienie
-odwołań do strony tak aby wskazywały na nową stronę $p'$.  Ponieważ
-istnieje wiele rodzai stron ruchomych (strony anonimowe, bufory
-dyskowe itp.), jest to krok specyficzny dla danej strony.
+\TODO{Za duża „strony”.} W~zasadzie najbardziej skomplikowanym krokiem
+jest uaktualnienie odwołań do strony tak, aby wskazywały na nową
+stronę $p'$.  Ponieważ istnieje wiele rodzajów stron ruchomych (strony
+anonimowe, bufory dyskowe itp.), jest to krok specyficzny dla danej
+strony.
 
 Przykładowo dla stron anonimowych wiązałoby się to z~uaktualnieniem
-tablicy transakcji stron MMU tak aby wskazywały w~nowe miejsce,
+tablicy translacji stron MMU tak, aby wskazywały w~nowe miejsce,
 a~także wyczyszczeniem pamięci TLB (\ang{Translate Lookaside Buffer}),
 aby nie posiadała, żadnych nieaktualnych wpisów.
 
@@ -240,7 +241,7 @@ aby nie posiadała, żadnych nieaktualnych wpisów.
 \section{Wybór zakresu stron}
 
 Funkcja \lstinline|alloc_contig_range()| potrafi zaalokawać zakres
-stron (wykonując przy tym migrajcę stron w~tym zakresie, które są
+stron (wykonując przy tym migrację stron w~tym zakresie, które są
 zajęte), ale w~jaki sposób CMA wybiera zakres do wykonania alokacji?
 Odpowiedzi na to pytanie należy szukać w~funkcji
 \lstinline|dma_alloc_from_contiguous()|, której skróconą wersję
@@ -273,22 +274,21 @@ struct page *dma_alloc_from_contiguous(struct device *dev, int count,
 
 Funkcja używa metody „pierwszy pasujący” do wyszukania pasującego
 obszaru w~bitmapie (linie 9--10).  Po wybraniu obszaru, wołana jest
-funkcja \lstinline|alloc_contig_range()|, aby dany obszar zaalokawać
-(linia 14) i~jeżeli się to powdiezie, oznacza obszar w~bitmapie jako
+funkcja \lstinline|alloc_contig_range()|, aby dany obszar zaalokować
+(linia 14) i~jeżeli się to powiedzie, oznacza obszar w~bitmapie jako
 zajęty i~zwraca wynik (linie 15--16).
 
 Aby nie załączać zbyt wielu szczegółów, podrozdział
 \ref{sec:alloc-contig-range} nie opisuje sytuacji, w~których alokacja
-może się niepowieść, ale takie istnieją\footnote{W~istocie, jest ich
-  dość sporo i~obecnie wśród deweloperów Linuksa trwają pracę nad
-  wyszukaniem i~wyeliminowaniem tych wszystkich sytuacji.  Linux,
-  a~szczególnie zarządzanie pamięcią w~Linuksie, jest
-  jednak skomplikowany i~czasem trudno prześledzić wszystkie
-  zależności i~interakcje pomiędzy komponentami, które mogą prowadzić
-  do błędu alokacji.} i~z~tego powodu, funkcja
-\lstinline|dma_alloc_from_contiguous()| działa w~pętli w~ten sposób,
-że jeżeli alokacja jednego obszaru się nie powdiezie, w~następnej
-iteracji funkcja próbuje zaalokować kolejny obszar.
+może się nie powieść, ale takie istnieją\footnote{W~istocie, jest ich
+  dość sporo i~obecnie wraz z~innymi deweloperami Linuksa staram się
+  wyszukać i~wyeliminowaniem takie sytuacji.  Linux, a~szczególnie
+  zarządzanie pamięcią w~Linuksie, jest jednak skomplikowany i~czasem
+  trudno prześledzić wszystkie zależności i~interakcje pomiędzy
+  komponentami, które mogą prowadzić do błędu alokacji.} i~z~tego
+powodu, funkcja \lstinline|dma_alloc_from_contiguous()| działa w~pętli
+w~ten sposób, że jeżeli alokacja jednego obszaru się nie powiedzie,
+w~następnej iteracji funkcja próbuje zaalokować kolejny obszar.
 
 \section{Regiony CMA}
 

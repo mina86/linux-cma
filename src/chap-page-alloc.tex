@@ -70,7 +70,7 @@ dla stron o~konkretnym rzędzie.
 Gdy sterownik chce zaalokować stronę rzędu $n$, alokator sprawdza
 odpowiednią listę.  Jeżeli jest ona pusta, przechodzi do listy ze
 stronami rzędu $n+1$, aż znajdzie wolną stronę (lub dojdzie do
-maksymalnego rzędu, co sygnalizuje nieudaną alokacji.  Jeżeli uzyskana
+maksymalnego rzędu, co sygnalizuje nieudaną alokację.  Jeżeli uzyskana
 w~ten sposób strona ma rząd większy niż żądany, jest ona dzielona na
 pół, aż do osiągnięcia żądanego rozmiaru.  Strony, które powstały na
 skutek podziału większej strony na pół, nazywamy stronami
@@ -103,7 +103,7 @@ bliźniaczymi.  Cały proces ilustruje algorytm \ref{alg:buddy-alloc}
 \end{algorithm}
 
 Przy zwalnianiu, dopóki to możliwe, strona jest łączona ze swoją
-bliźniaczą stroną, dzięki czemu strony są dodawane do lista wolnych
+bliźniaczą stroną, dzięki czemu strony są dodawane do listy wolnych
 stron o~dużym rzędzie.  Proces ten ilustruje algorytm
 \ref{alg:buddy-free}
 
@@ -169,7 +169,7 @@ dostępnych stron o~wysokich rzędach.
 Wołając funkcję \lstinline|alloc_pages()|, typ migracji strony jest
 przekazywany jako argument, co pozwala alokatorowi stron grupować
 strony tego samego typu.  Jest to istotne, gdyż mechanizm zagęszczania
-nie działa zbyt dobrze jeżeli strony ruchomy przelatywały się
+nie działa zbyt dobrze jeżeli ruchome strony przelatają się
 z~pozostałymi stronami, które nie podlegają migracji.
 
 \section{Grupy stron}
@@ -201,15 +201,14 @@ migracji.
 
 Należy pamiętać, iż dla jądra zrealizowanie alokacji jest ważniejsze
 od trzymania stron o~tym samym typie migracji razem.  Dlatego dla
-każdego typu migracji istnieje list zapasowych (\ang{fallback}) typów
+każdego typu migracji istnieje lista zapasowych (\ang{fallback}) typów
 migracji.  Jeżeli alokacja dla żądanego typu migracji nie powiedzie
 się, alokator stron będzie próbował z~kolejnymi typami z~list, tak jak
 to pokazuje algorytm \ref{alg:buddy-fallback}
 
-Co więcej, jeżęli rząd żądanej strony jest dostatecznie duży, typ
-migracji wszystkich wolnych stron w~danym bloku stron zostaje
-zmieniany na ten zgodny z~wywołąniem funkcji
-\lstinline|alloc_pages()|.
+Co więcej, jeżeli rząd żądanej strony jest dostatecznie duży, typ
+migracji wszystkich wolnych stron w~danym bloku zostaje zmieniano na
+ten zgodny z~wywołaniem funkcji \lstinline|alloc_pages()|.
 
 \begin{algorithm}\label{alg:buddy-fallback}
 \caption{Alokacja strony rzędu $k$ z~uwzględnieniem typu migracji $m$}

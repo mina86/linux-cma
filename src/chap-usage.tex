@@ -1,16 +1,16 @@
 \chapter{Sposób użycia CMA}\label{sec:cma-usage}
 
-Pomimo, że idea CMA jest dość prosta, mechanizm ten urósł do dość
-skomplikowanego systemu, który integruje się dość głęboko z~systemem
-zarządzania pamięci jądra Linuksa.  Pomimo tego, jego użycie nie jest
-szczególnie skomplikowane, a~w~wielu przypadkach może się okazać, że
-autor sterownika, który chciałby korzystać z~CMA nie musi niczego
-zmieniać w~swoim kodzie.
+Pomimo, że idea CMA jest stosunkowo prosta, mechanizm ten urósł do
+raczej skomplikowanego interfejsu, który integruje się dość głęboko
+z~systemem zarządzania pamięci jądra Linuksa.  Pomimo tego, jego
+użycie nie jest szczególnie trudne, a~w~wielu przypadkach autor
+sterownika, który chciałby korzystać z~CMA nie musi niczego zmieniać
+w~swoim kodzie.
 
 \section{Wykorzystanie w~sterownikach}\label{sec:usage-drivers}
 
 CMA integruje się z~interfejsem programowania DMA (DMA API), co
-oznacza, że jeżeli CMA jest włączane i~zintegrowane z~daną
+oznacza, że jeżeli CMA jest włączone i~zintegrowane z~daną
 architekturą, poprawnie napisany sterownik (tzn.\ taki, który korzysta
 z~DMA API) będzie korzystał z~CMA bez konieczności dokonywania
 jakichkolwiek zmian.
@@ -18,24 +18,27 @@ jakichkolwiek zmian.
 Tak naprawdę, sterowniki nie powinny odwoływać się bezpośrednio do
 funkcji CMA, gdyż są one zbyt nisko poziomowe i~operują na stronach,
 gdy tymczasem sterowniki urządzeń są raczej zainteresowane adresami
-szyny.  Co więcej, CMA nie posiada żadnych mechanizmów gwarantujących
-spójność pamięci podręcznej -- zadanie to leży w~kwestii DMA API.
+szyny.\footnote{W~ogólności, adres szyny strony może być inny niż jej
+  adres fizyczny i~DMA API zostało zaprojektowane tak, aby brać to pod
+  uwagę.}  Co więcej, CMA nie posiada żadnych mechanizmów
+gwarantujących spójność pamięci podręcznej -- zadanie to leży
+w~kwestii DMA API.
 
-Najprostszym interfejsem z~DMA API są funkcje
+Najprostszym mechanizmem z~tego interfejsu są funkcje
 \lstinline|dma_alloc_coherent()| i~\lstinline|dma_free_coherent()|.
 Służą one odpowiednio do alokacji i~zwalniania buforów DMA, których
-zawartość jest zawsze spójny z~tym co widzi
+zawartość jest zawsze spójna z~tym co widzi
 procesor\footnote{W~różnych architekturach efekt ten jest uzyskiwany
   w~różny sposób.  W~architekturze Intel istnieje gwarancja spójność
-  zawartość kości RAM oraz pamięci podręcznej procesora, gdy tymczasem
+  zawartości kości RAM oraz pamięci podręcznej procesora, gdy tymczasem
   architektura ARM nie daje takich gwarancji.  Z~tego powodu,
   w~systemach opartych o~Linuksa działających na platformie ARM,
   bufory alokowane przy pomocy \lstinline|dma_alloc_coherent()| nie
-  podlegają cacheowaniu po stronie procesora.}. Wydruk
-\ref{lst:dma-alloc-example} pokazuje sposób wykorzystania tych
-dwóch funkcji.  Prosty sterownik, który można wykorzystać do
-testowania CMA można znaleźć w~\cite{patch:cma-test}, a~dokładniejszy
-opis DMA API w~rozdziale 15 \cite{bib:ldd3}.
+  podlegają cacheowaniu \TODO{przetłumaczyć} po stronie procesora.}.  Wydruk
+\ref{lst:dma-alloc-example} pokazuje sposób wykorzystania tych dwóch
+funkcji.  Prosty sterownik, który można wykorzystać do testowania CMA
+można znaleźć w~\cite{patch:cma-test}, a~dokładniejszy opis DMA API
+w~rozdziale 15 \cite{bib:ldd3}.
 
 \begin{lstlisting}[float=tbhp,caption={Alokacja bufora DMA z~użyciem
       DMA API.},label=lst:dma-alloc-example]
@@ -294,7 +297,7 @@ przepustowość pamięci).  Ponadto, zależnie od istniejących na
 platformie urządzeń, wskazane może być izolowanie pewnych grup
 urządzeń.  Dla przykładu mieszanie alokacji dla stosunkowo małych
 tekstur dla koprocesora graficznego z~alokacjami dużych buforów
-przeinaczonych dla kamery, może przyczynić się do zwiększenia
+przeznaczonych dla kamery, może przyczynić się do zwiększenia
 fragmentacji regionu CMA.
 
 Funkcja \lstinline|dma_declare_contiguous()| tworzy domyślny region
@@ -302,7 +305,7 @@ CMA, ale istnieje możliwość przypisania różnych regionów CMA do
 poszczególnych urządzeń.  Istnieje mapowanie wiele-do-jednego pomiędzy
 strukturą \lstinline|device|, a~regionem CMA.  Oznacza to, że
 pojedynczy region CMA może zostać przypisany do danego urządzenia, ale
-jeżeli urządzenie ma korzystać z~wielu regionów CMA koniczne jest
+jeżeli urządzenie ma korzystać z~wielu regionów CMA konieczne jest
 stworzenie kilku struktur \lstinline|device|.
 
 \paragraph{Przypisywanie regionu CMA do pojedynczego urządzenia} \hspace{0pt} \\
