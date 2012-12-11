@@ -87,11 +87,28 @@ obszarów.\footnote{W~szczególności, Linux nie jest nawet w~stanie (bez
 
 Najprostszym, i~stosunkowo często stosowanym, rozwiązaniem tego
 problemu jest zarezerwowanie przy starcie systemu pewnego regionu
-pamięci na potrzeby danego sterownika.  Niestety, o~ile taki mechanizm
-może być wystarczający, jeżeli podzespoły wymagają stosunkowo małych
-buforów, przestaje się on skalować przy współczesnych systemach, gdyż
-wymaga rezerwacji wielu megabajtów pamięci, która przez większość
-czasu nie jest do niczego wykorzystywana.
+pamięci na potrzeby danego sterownika.
+
+Najprostszym, acz niezbyt eleganckim sposobem dokonania tego jest
+wykorzystanie argumentu \lstinline|mem| jądra.  Przekazany przez
+bootloader powoduje, że Linux nie stara się automatycznie wykryć
+dostępnej w~systemie pamięci RAM i~zamiast tego interpretuje
+przekazane informacje.  W~ten sposób, możliwe jest ograniczenie
+widzianej przez system pamięci, tak że ukryte regiony mogą być
+wykorzystywane przez konkretne sterowniki.
+
+Bardziej eleganckim rozwiązaniem jest skorzystanie z~alokatora
+memblock, który jest aktywny zanim jądro zainicjuje wszystkie swoje
+podsystemu.  Jego zadaniem jest śledzenie wolnej pamięci zanim jeszcze
+bardziej zaawansowany alokator stron będzie dostępny w~systemie.
+Wołając go dostatecznie wcześnie, możliwe jest zaalokowanie dużych
+obszarów pamięci, które potem można wykarzystać w~dowolny sposób.
+
+Niestety, o~ile tego typu rozwiązania mogą być wystarczające, jeżeli
+podzespoły wymagają stosunkowo małych buforów, przestaje się on
+skalować przy współczesnych systemach, gdyż wymaga rezerwacji wielu
+megabajtów pamięci, która przez większość czasu nie jest do niczego
+wykorzystywana.
 
 \subsection{Physical Memory Manager}\label{sec:pmm}
 
