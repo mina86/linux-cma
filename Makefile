@@ -15,11 +15,11 @@ build/mnazarew_bsc.dvi:
 	exec $(LATEX) $<
 	exec mv -- build/main.dvi $@
 
-build/%.eps: src/%.svg
+build/%.eps: img/%.svg
 	@exec mkdir -p build
 	exec inkscape -z -D --file=$^ --export-eps=$@
 
-build/%.eps: src/%.eps
+build/%.eps: img/%.eps
 	@exec mkdir -p build
 	exec cp $< $@
 
