@@ -22,6 +22,30 @@ komunikuje się z~nimi za pośrednictwem pamięci operacyjnej.  Odczyt
 lub zapis buforów poprzez takie podzespoły może się jednak wiązać
 z~wieloma ograniczeniami.
 
+\begin{figure}[tbp]
+  \centering
+  \subfloat[System z~układem MMU pomiędzy procesorem a~pamięcią oraz
+    urządzeniami podłączonymi bezpośrednie do szyny pamięci.]{
+
+    \label{fig:sys-with-mmu}
+    \includegraphics[width=.25\textwidth]{build/mmu-iommu-images--img-nommu.eps}
+  } \qquad
+  \subfloat[Systemu z~kontrolerem DMA, który pośredniczy w~transferach
+    danych pomiędzy pamięcią i~urządzeniami.]{
+    \label{fig:sys-with-dma}
+    \includegraphics[width=.25\textwidth]{build/mmu-iommu-images--img-dma.eps}
+  }\qquad
+  \subfloat[Systemu z~zarówno układem MMU jak i~IOMMU, które tłumaczą
+    adresy widziane przez odpowiednio procesor oraz urządzenia.]{
+    \label{fig:sys-with-iommu}
+    \includegraphics[width=.25\textwidth]{build/mmu-iommu-images--img-iommu.eps}
+  }
+  \caption{Reprezentacja systemów z~różnymi podzespołami
+    uczestniczącymi w~translacji adresów lub transferach danych do
+    pamięci operacyjnej.}
+  \label{fig:mmu-iommu}
+\end{figure}
+
 Nowoczesne architektury przeznaczone do serwerów i~komputerów
 osobistych posiadają jednostkę zarządzania pamięcią (\ang{memory
   management unit}, MMU), która tłumaczy adresy logiczne na fizyczne.
