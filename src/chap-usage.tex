@@ -236,13 +236,13 @@ integruje CMA z~podsystemem DMA architektury x86.
 \begin{lstlisting}[float=tbhp,caption={Integracja CMA z~podsystemem DMA
       architektury x86.},label=lst:dma-integration]
 diff --git a/arch/x86/kernel/pci-dma.c b/arch/x86/kernel/pci-dma.c
-@@ -99,14 +99,18 @@ void *dma_generic_alloc_coherent(struct device *dev, size_t size,
+@@ -99,14 +99,18 @@ void *dma_generic_alloc_coherent(
  				 dma_addr_t *dma_addr, gfp_t flag)
  {
 	(*{\it [ \ldots ]}*)
  again:
 -	page = alloc_pages_node(dev_to_node(dev), flag, get_order(size));
-+	if (!(flag &amp; GFP_ATOMIC))
++	if (!(flag & GFP_ATOMIC))
 +		page = dma_alloc_from_contiguous(dev, count, get_order(size));
 +	if (!page)
 +		page = alloc_pages_node(dev_to_node(dev), flag, get_order(size));
@@ -333,6 +333,9 @@ Jeżeli limit ten zostanie przekroczony, funkcja
 stoi na przeszkodzie aby ten limit zwiększyć w~trakcie kompilacji
 jądra.
 
+% For some reason, breaklines=true does not work, so I'm breaking the
+% line manually...
+% XXX TODO: add some indicator that the line has been broken.
 \begin{lstlisting}[float=tbhp,caption={Przypisanie prywatnych regionów
       CMA do dwóch urządzeń.},label=lst:s5p-priv-region]
 diff --git a/arch/arm/plat-s5p/dev-mfc.c b/arch/arm/plat-s5p/dev-mfc.c
@@ -341,12 +344,16 @@ diff --git a/arch/arm/plat-s5p/dev-mfc.c b/arch/arm/plat-s5p/dev-mfc.c
  				phys_addr_t lbase, unsigned int lsize)
  {
 	(*{\it [ \ldots ]}*)
-+	if (dma_declare_contiguous(&amp;s5p_device_mfc_r.dev, rsize, rbase, 0))
-+		printk(KERN_ERR "Failed to reserve memory for MFC device (\%u bytes at 0x\%08lx)\n",
++	if (dma_declare_contiguous(&amp;s5p_device_mfc_r.dev,
+		rsize, rbase, 0))
++		printk(KERN_ERR "Failed to reserve memory for MFC device
+			(\%u bytes at 0x\%08lx)\n",
 +		       rsize, (unsigned long) rbase);
 	(*{\it [ \ldots ]}*)
-+	if (dma_declare_contiguous(&amp;s5p_device_mfc_l.dev, lsize, lbase, 0))
-+		printk(KERN_ERR "Failed to reserve memory for MFC device (\%u bytes at 0x\%08lx)\n",
++	if (dma_declare_contiguous(&amp;s5p_device_mfc_l.dev,
+		lsize, lbase, 0))
++		printk(KERN_ERR "Failed to reserve memory for MFC device
+			(\%u bytes at 0x\%08lx)\n",
 +		       rsize, (unsigned long) rbase);
  }
 \end{lstlisting}
