@@ -1,622 +1,143 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!-- Created with Inkscape (http://www.inkscape.org/) -->
-
-<svg
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="744.09448819"
-   height="1052.3622047"
-   id="svg2"
-   version="1.1"
-   inkscape:version="0.47 r22583"
-   sodipodi:docname="alloc-free-cycle.svg">
-  <defs
-     id="defs4">
-    <marker
-       inkscape:stockid="Arrow1Mend"
-       orient="auto"
-       refY="0.0"
-       refX="0.0"
-       id="Arrow1Mend"
-       style="overflow:visible;">
-      <path
-         id="path3830"
-         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
-         style="fill-rule:evenodd;stroke:#000000;stroke-width:1.0pt;marker-start:none;"
-         transform="scale(0.4) rotate(180) translate(10,0)" />
-    </marker>
-    <marker
-       inkscape:stockid="Arrow2Mend"
-       orient="auto"
-       refY="0.0"
-       refX="0.0"
-       id="Arrow2Mend"
-       style="overflow:visible;">
-      <path
-         id="path3848"
-         style="font-size:12.0;fill-rule:evenodd;stroke-width:0.62500000;stroke-linejoin:round;"
-         d="M 8.7185878,4.0337352 L -2.2072895,0.016013256 L 8.7185884,-4.0017078 C 6.9730900,-1.6296469 6.9831476,1.6157441 8.7185878,4.0337352 z "
-         transform="scale(0.6) rotate(180) translate(0,0)" />
-    </marker>
-    <marker
-       inkscape:stockid="Arrow1Lend"
-       orient="auto"
-       refY="0.0"
-       refX="0.0"
-       id="Arrow1Lend"
-       style="overflow:visible;">
-      <path
-         id="path3824"
-         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
-         style="fill-rule:evenodd;stroke:#000000;stroke-width:1.0pt;marker-start:none;"
-         transform="scale(0.8) rotate(180) translate(12.5,0)" />
-    </marker>
-    <inkscape:perspective
-       sodipodi:type="inkscape:persp3d"
-       inkscape:vp_x="0 : 526.18109 : 1"
-       inkscape:vp_y="0 : 1000 : 0"
-       inkscape:vp_z="744.09448 : 526.18109 : 1"
-       inkscape:persp3d-origin="372.04724 : 350.78739 : 1"
-       id="perspective10" />
-    <inkscape:perspective
-       id="perspective2841"
-       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
-       inkscape:vp_z="1 : 0.5 : 1"
-       inkscape:vp_y="0 : 1000 : 0"
-       inkscape:vp_x="0 : 0.5 : 1"
-       sodipodi:type="inkscape:persp3d" />
-    <inkscape:perspective
-       id="perspective2872"
-       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
-       inkscape:vp_z="1 : 0.5 : 1"
-       inkscape:vp_y="0 : 1000 : 0"
-       inkscape:vp_x="0 : 0.5 : 1"
-       sodipodi:type="inkscape:persp3d" />
-    <inkscape:perspective
-       id="perspective2897"
-       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
-       inkscape:vp_z="1 : 0.5 : 1"
-       inkscape:vp_y="0 : 1000 : 0"
-       inkscape:vp_x="0 : 0.5 : 1"
-       sodipodi:type="inkscape:persp3d" />
-    <inkscape:perspective
-       id="perspective2922"
-       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
-       inkscape:vp_z="1 : 0.5 : 1"
-       inkscape:vp_y="0 : 1000 : 0"
-       inkscape:vp_x="0 : 0.5 : 1"
-       sodipodi:type="inkscape:persp3d" />
-    <inkscape:perspective
-       id="perspective2953"
-       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
-       inkscape:vp_z="1 : 0.5 : 1"
-       inkscape:vp_y="0 : 1000 : 0"
-       inkscape:vp_x="0 : 0.5 : 1"
-       sodipodi:type="inkscape:persp3d" />
-    <inkscape:perspective
-       id="perspective3756"
-       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
-       inkscape:vp_z="1 : 0.5 : 1"
-       inkscape:vp_y="0 : 1000 : 0"
-       inkscape:vp_x="0 : 0.5 : 1"
-       sodipodi:type="inkscape:persp3d" />
-    <inkscape:perspective
-       id="perspective4850"
-       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
-       inkscape:vp_z="1 : 0.5 : 1"
-       inkscape:vp_y="0 : 1000 : 0"
-       inkscape:vp_x="0 : 0.5 : 1"
-       sodipodi:type="inkscape:persp3d" />
-    <marker
-       inkscape:stockid="Arrow2Mend"
-       orient="auto"
-       refY="0"
-       refX="0"
-       id="Arrow2Mend-1"
-       style="overflow:visible">
-      <path
-         id="path3848-4"
-         style="font-size:12px;fill-rule:evenodd;stroke-width:0.625;stroke-linejoin:round"
-         d="M 8.7185878,4.0337352 -2.2072895,0.01601326 8.7185884,-4.0017078 c -1.7454984,2.3720609 -1.7354408,5.6174519 -6e-7,8.035443 z"
-         transform="scale(-0.6,-0.6)" />
-    </marker>
-    <inkscape:perspective
-       id="perspective5072"
-       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
-       inkscape:vp_z="1 : 0.5 : 1"
-       inkscape:vp_y="0 : 1000 : 0"
-       inkscape:vp_x="0 : 0.5 : 1"
-       sodipodi:type="inkscape:persp3d" />
-    <inkscape:perspective
-       id="perspective5125"
-       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
-       inkscape:vp_z="1 : 0.5 : 1"
-       inkscape:vp_y="0 : 1000 : 0"
-       inkscape:vp_x="0 : 0.5 : 1"
-       sodipodi:type="inkscape:persp3d" />
-    <filter
-       inkscape:collect="always"
-       id="filter5863"
-       x="-0.068147255"
-       width="1.1362945"
-       y="-0.14258661"
-       height="1.2851732">
-      <feGaussianBlur
-         inkscape:collect="always"
-         stdDeviation="0.68995769"
-         id="feGaussianBlur5865" />
-    </filter>
-    <filter
-       inkscape:collect="always"
-       id="filter5867"
-       x="-0.068147255"
-       width="1.1362945"
-       y="-0.14258661"
-       height="1.2851732">
-      <feGaussianBlur
-         inkscape:collect="always"
-         stdDeviation="0.68995769"
-         id="feGaussianBlur5869" />
-    </filter>
-    <filter
-       inkscape:collect="always"
-       id="filter5871"
-       x="-0.039376713"
-       width="1.0787534"
-       y="-0.17830074"
-       height="1.3566015">
-      <feGaussianBlur
-         inkscape:collect="always"
-         stdDeviation="0.68995769"
-         id="feGaussianBlur5873" />
-    </filter>
-    <filter
-       inkscape:collect="always"
-       id="filter5875"
-       x="-0.079629943"
-       width="1.1592599"
-       y="-0.14258661"
-       height="1.2851732">
-      <feGaussianBlur
-         inkscape:collect="always"
-         stdDeviation="0.68995769"
-         id="feGaussianBlur5877" />
-    </filter>
-    <filter
-       inkscape:collect="always"
-       id="filter5879"
-       x="-0.079629943"
-       width="1.1592599"
-       y="-0.14258661"
-       height="1.2851732">
-      <feGaussianBlur
-         inkscape:collect="always"
-         stdDeviation="0.68995769"
-         id="feGaussianBlur5881" />
-    </filter>
-    <filter
-       inkscape:collect="always"
-       id="filter5883"
-       x="-0.035955047"
-       width="1.0719101"
-       y="-0.17830074"
-       height="1.3566015">
-      <feGaussianBlur
-         inkscape:collect="always"
-         stdDeviation="0.68995769"
-         id="feGaussianBlur5885" />
-    </filter>
-  </defs>
-  <sodipodi:namedview
-     id="base"
-     pagecolor="#ffffff"
-     bordercolor="#666666"
-     borderopacity="1.0"
-     inkscape:pageopacity="0.0"
-     inkscape:pageshadow="2"
-     inkscape:zoom="1.979899"
-     inkscape:cx="184.78816"
-     inkscape:cy="921.00169"
-     inkscape:document-units="px"
-     inkscape:current-layer="layer1"
-     showgrid="false"
-     inkscape:snap-grids="true"
-     inkscape:snap-object-midpoints="false"
-     inkscape:window-width="1201"
-     inkscape:window-height="900"
-     inkscape:window-x="0"
-     inkscape:window-y="0"
-     inkscape:window-maximized="0" />
-  <metadata
-     id="metadata7">
+<!-- Copyright (c) 2012 by Michal Nazarewicz (mina86@mina86.com) -->
+<!-- Distributed under the terms of the Creative Commons
+     Attribution-ShareAlike 3.0 Unported (CC BY-SA 3.0) license. -->
+<svg xmlns="http://www.w3.org/2000/svg"
+     xmlns:xlink="http://www.w3.org/1999/xlink"
+     xmlns:dc="http://purl.org/dc/elements/1.1/"
+     xmlns:cc="http://creativecommons.org/ns#"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     width="205px" height="265px" viewBox="-1 -1 206 266" version="1.1">
+  <metadata>
     <rdf:RDF>
-      <cc:Work
-         rdf:about="">
-        <dc:format>image/svg+xml</dc:format>
-        <dc:type
-           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+      <cc:Work dc:format="image/svg+xml"
+               dc:title="Alokacji i zwalnianie w algorytmie bliźniaków."
+               dc:description="Wizualizacja cyklu alokacji i zwalniania obszaru pamięci w algorytmie alokacji bliźniaków."
+               dc:language="pl"
+               cc:attributionName="Michał Nazarewicz"
+               cc:attributionURL="http://mina86.com/">
+        <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:creator>
+          <dc:Agent>
+            <dc:title>Michał Nazarewicz</dc:title>
+          </dc:Agent>
+        </dc:creator>
+        <dc:rights>
+          <dc:Agent>
+            <dc:title>CC-BY-SA</dc:title>
+          </dc:Agent>
+        </dc:rights>
+        <cc:license rdf:resource="http://creativecommons.org/licenses/by-sa/3.0/" />
       </cc:Work>
+      <cc:License rdf:about="http://creativecommons.org/licenses/by-sa/3.0/">
+        <cc:permits rdf:resource="http://creativecommons.org/ns#Reproduction" />
+        <cc:permits rdf:resource="http://creativecommons.org/ns#Distribution" />
+        <cc:requires rdf:resource="http://creativecommons.org/ns#Notice" />
+        <cc:requires rdf:resource="http://creativecommons.org/ns#Attribution" />
+        <cc:permits rdf:resource="http://creativecommons.org/ns#DerivativeWorks" />
+        <cc:requires rdf:resource="http://creativecommons.org/ns#ShareAlike" />
+      </cc:License>
     </rdf:RDF>
   </metadata>
-  <g
-     inkscape:label="Layer 1"
-     inkscape:groupmode="layer"
-     id="layer1">
-    <text
-       xml:space="preserve"
-       style="font-size:40px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:DejaVu Sans;-inkscape-font-specification:DejaVu Sans;font-stretch:normal;font-variant:normal"
-       x="50.002552"
-       y="239.18938"
-       id="text5391"><tspan
-         sodipodi:role="line"
-         id="tspan5393"
-         x="50.002552"
-         y="239.18938" /></text>
-    <rect
-       style="fill:#9cfeff;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.99921149;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       id="rect2831"
-       width="159.00079"
-       height="19.000788"
-       x="0.49961066"
-       y="0.86178535"
-       inkscape:export-filename="/home/mpn/priv/cma/alloc-free-cycle.png"
-       inkscape:export-xdpi="90"
-       inkscape:export-ydpi="90" />
-    <rect
-       style="fill:#fffd9c;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.99036747;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       id="rect2831-2"
-       width="79.009636"
-       height="19.009632"
-       x="0.49518561"
-       y="40.857357"
-       inkscape:export-filename="/home/mpn/priv/cma/alloc-free-cycle.png"
-       inkscape:export-xdpi="90"
-       inkscape:export-ydpi="90" />
-    <rect
-       style="fill:#fffd9c;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.99036747;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       id="rect2831-2-4"
-       width="79.009636"
-       height="19.009632"
-       x="80.495193"
-       y="40.857357"
-       inkscape:export-filename="/home/mpn/priv/cma/alloc-free-cycle.png"
-       inkscape:export-xdpi="90"
-       inkscape:export-ydpi="90" />
-    <rect
-       style="fill:#a5ff9c;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.98120421;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       id="rect2831-2-5"
-       width="39.018795"
-       height="19.018795"
-       x="0.49060798"
-       y="80.852768"
-       inkscape:export-filename="/home/mpn/priv/cma/alloc-free-cycle.png"
-       inkscape:export-xdpi="90"
-       inkscape:export-ydpi="90" />
-    <rect
-       style="fill:#a5ff9c;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.98120421;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       id="rect2831-2-5-3"
-       width="39.018795"
-       height="19.018795"
-       x="40.490608"
-       y="80.852768"
-       inkscape:export-filename="/home/mpn/priv/cma/alloc-free-cycle.png"
-       inkscape:export-xdpi="90"
-       inkscape:export-ydpi="90" />
-    <rect
-       style="fill:#fffd9c;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.99036735;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       id="rect2831-2-4-2"
-       width="79.009636"
-       height="19.009632"
-       x="80.495193"
-       y="80.857346"
-       inkscape:export-filename="/home/mpn/priv/cma/alloc-free-cycle.png"
-       inkscape:export-xdpi="90"
-       inkscape:export-ydpi="90" />
-    <path
-       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       d="m 99.99824,35.359964 0,0"
-       id="path3782"
-       inkscape:connector-type="polyline"
-       inkscape:export-filename="/home/mpn/priv/cma/alloc-free-cycle.png"
-       inkscape:export-xdpi="90"
-       inkscape:export-ydpi="90" />
-    <rect
-       style="fill:#800000;fill-rule:evenodd;stroke:#000000;stroke-width:0.98120421;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       id="rect2831-2-5-4"
-       width="39.018795"
-       height="19.018795"
-       x="1.0620344"
-       y="120.85277"
-       inkscape:export-filename="/home/mpn/priv/cma/alloc-free-cycle.png"
-       inkscape:export-xdpi="90"
-       inkscape:export-ydpi="90" />
-    <rect
-       style="fill:#a5ff9c;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.98120421;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       id="rect2831-2-5-3-0"
-       width="39.018795"
-       height="19.018795"
-       x="41.062027"
-       y="120.85277"
-       inkscape:export-filename="/home/mpn/priv/cma/alloc-free-cycle.png"
-       inkscape:export-xdpi="90"
-       inkscape:export-ydpi="90" />
-    <rect
-       style="fill:#fffd9c;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.99036735;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       id="rect2831-2-4-2-9"
-       width="79.009636"
-       height="19.009632"
-       x="81.06662"
-       y="120.85736"
-       inkscape:export-filename="/home/mpn/priv/cma/alloc-free-cycle.png"
-       inkscape:export-xdpi="90"
-       inkscape:export-ydpi="90" />
-    <rect
-       y="160.85277"
-       x="0.49060798"
-       height="19.018795"
-       width="39.018795"
-       id="rect5145"
-       style="fill:#a5ff9c;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.98120421;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       inkscape:export-filename="/home/mpn/priv/cma/alloc-free-cycle.png"
-       inkscape:export-xdpi="90"
-       inkscape:export-ydpi="90" />
-    <rect
-       y="160.85277"
-       x="40.490608"
-       height="19.018795"
-       width="39.018795"
-       id="rect5147"
-       style="fill:#a5ff9c;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.98120421;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       inkscape:export-filename="/home/mpn/priv/cma/alloc-free-cycle.png"
-       inkscape:export-xdpi="90"
-       inkscape:export-ydpi="90" />
-    <rect
-       y="160.85735"
-       x="80.495193"
-       height="19.009632"
-       width="79.009636"
-       id="rect5149"
-       style="fill:#fffd9c;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.99036735;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       inkscape:export-filename="/home/mpn/priv/cma/alloc-free-cycle.png"
-       inkscape:export-xdpi="90"
-       inkscape:export-ydpi="90" />
-    <rect
-       y="200.85735"
-       x="0.49518561"
-       height="19.009632"
-       width="79.009636"
-       id="rect5151"
-       style="fill:#fffd9c;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.99036747;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       inkscape:export-filename="/home/mpn/priv/cma/alloc-free-cycle.png"
-       inkscape:export-xdpi="90"
-       inkscape:export-ydpi="90" />
-    <rect
-       y="200.85735"
-       x="80.495193"
-       height="19.009632"
-       width="79.009636"
-       id="rect5153"
-       style="fill:#fffd9c;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.99036747;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       inkscape:export-filename="/home/mpn/priv/cma/alloc-free-cycle.png"
-       inkscape:export-xdpi="90"
-       inkscape:export-ydpi="90" />
-    <path
-       inkscape:connector-type="polyline"
-       id="path5155"
-       d="m 99.99824,200.86217 0,0"
-       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       inkscape:export-filename="/home/mpn/priv/cma/alloc-free-cycle.png"
-       inkscape:export-xdpi="90"
-       inkscape:export-ydpi="90" />
-    <rect
-       y="240.86179"
-       x="0.49961066"
-       height="19.000788"
-       width="159.00079"
-       id="rect5179"
-       style="fill:#9cfeff;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.99921149;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       inkscape:export-filename="/home/mpn/priv/cma/alloc-free-cycle.png"
-       inkscape:export-xdpi="90"
-       inkscape:export-ydpi="90" />
-    <path
-       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#Arrow1Mend)"
-       d="M 89.500404,19.862573 110.49519,40.857357"
-       id="path5181"
-       inkscape:connector-type="polyline"
-       inkscape:connection-start="#rect2831"
-       inkscape:connection-end="#rect2831-2-4"
-       inkscape:export-filename="/home/mpn/priv/cma/alloc-free-cycle.png"
-       inkscape:export-xdpi="90"
-       inkscape:export-ydpi="90" />
-    <path
-       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#Arrow1Mend)"
-       d="M 70.499611,19.862573 49.504822,40.857357"
-       id="path5183"
-       inkscape:connector-type="polyline"
-       inkscape:connection-start="#rect2831"
-       inkscape:connection-end="#rect2831-2"
-       inkscape:export-filename="/home/mpn/priv/cma/alloc-free-cycle.png"
-       inkscape:export-xdpi="90"
-       inkscape:export-ydpi="90" />
-    <path
-       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#Arrow1Mend)"
-       d="M 44.752413,59.866989 55.245306,80.852768"
-       id="path5185"
-       inkscape:connector-type="polyline"
-       inkscape:connection-start="#rect2831-2"
-       inkscape:connection-end="#rect2831-2-5-3"
-       inkscape:export-filename="/home/mpn/priv/cma/alloc-free-cycle.png"
-       inkscape:export-xdpi="90"
-       inkscape:export-ydpi="90" />
-    <path
-       style="fill:#00ffff;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#Arrow1Mend)"
-       d="M 35.247595,59.866989 24.754705,80.852768"
-       id="path5187"
-       inkscape:connector-type="polyline"
-       inkscape:connection-start="#rect2831-2"
-       inkscape:connection-end="#rect2831-2-5"
-       inkscape:export-filename="/home/mpn/priv/cma/alloc-free-cycle.png"
-       inkscape:export-xdpi="90"
-       inkscape:export-ydpi="90" />
-    <path
-       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#Arrow1Mend)"
-       d="m 20.135854,99.871563 0.29973,20.981207"
-       id="path5189"
-       inkscape:connector-type="polyline"
-       inkscape:connection-start="#rect2831-2-5"
-       inkscape:connection-end="#rect2831-2-5-4"
-       inkscape:export-filename="/home/mpn/priv/cma/alloc-free-cycle.png"
-       inkscape:export-xdpi="90"
-       inkscape:export-ydpi="90" />
-    <path
-       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#Arrow1Mend)"
-       d="m 20.435584,139.87156 -0.29973,20.98121"
-       id="path5191"
-       inkscape:connector-type="polyline"
-       inkscape:connection-start="#rect2831-2-5-4"
-       inkscape:connection-end="#rect5145"
-       inkscape:export-filename="/home/mpn/priv/cma/alloc-free-cycle.png"
-       inkscape:export-xdpi="90"
-       inkscape:export-ydpi="90" />
-    <path
-       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#Arrow1Mend)"
-       d="M 55.245306,179.87156 44.752413,200.85735"
-       id="path5193"
-       inkscape:connector-type="polyline"
-       inkscape:connection-start="#rect5147"
-       inkscape:connection-end="#rect5151"
-       inkscape:export-filename="/home/mpn/priv/cma/alloc-free-cycle.png"
-       inkscape:export-xdpi="90"
-       inkscape:export-ydpi="90" />
-    <path
-       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#Arrow1Mend)"
-       d="m 24.754704,179.87156 10.492892,20.98579"
-       id="path5195"
-       inkscape:connector-type="polyline"
-       inkscape:connection-start="#rect5145"
-       inkscape:connection-end="#rect5151"
-       inkscape:export-filename="/home/mpn/priv/cma/alloc-free-cycle.png"
-       inkscape:export-xdpi="90"
-       inkscape:export-ydpi="90" />
-    <path
-       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#Arrow1Mend)"
-       d="m 49.504816,219.86698 20.994801,20.99481"
-       id="path5197"
-       inkscape:connector-type="polyline"
-       inkscape:connection-start="#rect5151"
-       inkscape:connection-end="#rect5179"
-       inkscape:export-filename="/home/mpn/priv/cma/alloc-free-cycle.png"
-       inkscape:export-xdpi="90"
-       inkscape:export-ydpi="90" />
-    <path
-       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#Arrow1Mend)"
-       d="M 110.4952,219.86698 89.500398,240.86179"
-       id="path5199"
-       inkscape:connector-type="polyline"
-       inkscape:connection-start="#rect5153"
-       inkscape:connection-end="#rect5179"
-       inkscape:export-filename="/home/mpn/priv/cma/alloc-free-cycle.png"
-       inkscape:export-xdpi="90"
-       inkscape:export-ydpi="90" />
-    <text
-       xml:space="preserve"
-       style="font-size:12px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:DejaVu Sans;-inkscape-font-specification:DejaVu Sans"
-       x="115.24692"
-       y="34.004742"
-       id="text5395"
-       inkscape:export-filename="/home/mpn/priv/cma/alloc-free-cycle.png"
-       inkscape:export-xdpi="90"
-       inkscape:export-ydpi="90"><tspan
-         sodipodi:role="line"
-         id="tspan5397"
-         x="115.24692"
-         y="34.004742">podział</tspan></text>
-    <text
-       id="text5399"
-       y="73.140038"
-       x="115.24692"
-       style="font-size:12px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:DejaVu Sans;-inkscape-font-specification:DejaVu Sans"
-       xml:space="preserve"
-       inkscape:export-filename="/home/mpn/priv/cma/alloc-free-cycle.png"
-       inkscape:export-xdpi="90"
-       inkscape:export-ydpi="90"><tspan
-         y="73.140038"
-         x="115.24692"
-         id="tspan5401"
-         sodipodi:role="line">podział</tspan></text>
-    <text
-       xml:space="preserve"
-       style="font-size:12px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:DejaVu Sans;-inkscape-font-specification:DejaVu Sans"
-       x="95.424652"
-       y="153.4977"
-       id="text5403"
-       inkscape:export-filename="/home/mpn/priv/cma/alloc-free-cycle.png"
-       inkscape:export-xdpi="90"
-       inkscape:export-ydpi="90"><tspan
-         sodipodi:role="line"
-         id="tspan5405"
-         x="95.424652"
-         y="153.4977">zwalinanie</tspan></text>
-    <text
-       id="text5407"
-       y="194.07674"
-       x="94.51059"
-       style="font-size:12px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:DejaVu Sans;-inkscape-font-specification:DejaVu Sans"
-       xml:space="preserve"
-       inkscape:export-filename="/home/mpn/priv/cma/alloc-free-cycle.png"
-       inkscape:export-xdpi="90"
-       inkscape:export-ydpi="90"><tspan
-         y="194.07674"
-         x="94.51059"
-         id="tspan5409"
-         sodipodi:role="line">połączenie</tspan></text>
-    <text
-       xml:space="preserve"
-       style="font-size:12px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:DejaVu Sans;-inkscape-font-specification:DejaVu Sans"
-       x="94.51059"
-       y="231.53104"
-       id="text5411"
-       inkscape:export-filename="/home/mpn/priv/cma/alloc-free-cycle.png"
-       inkscape:export-xdpi="90"
-       inkscape:export-ydpi="90"><tspan
-         sodipodi:role="line"
-         id="tspan5413"
-         x="94.51059"
-         y="231.53104">połączenie</tspan></text>
-    <text
-       id="text5415"
-       y="112.68536"
-       x="109.89731"
-       style="font-size:12px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:DejaVu Sans;-inkscape-font-specification:DejaVu Sans"
-       xml:space="preserve"
-       inkscape:export-filename="/home/mpn/priv/cma/alloc-free-cycle.png"
-       inkscape:export-xdpi="90"
-       inkscape:export-ydpi="90"><tspan
-         y="112.68536"
-         x="109.89731"
-         sodipodi:role="line"
-         id="tspan5419">alokacja</tspan></text>
-    <path
-       inkscape:export-ydpi="90"
-       inkscape:export-xdpi="90"
-       inkscape:export-filename="/home/mpn/priv/cma/alloc-free-cycle.png"
-       inkscape:connector-type="polyline"
-       id="path5555"
-       d="m 263.99824,135.35996 0,0"
-       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
-    <path
-       inkscape:export-ydpi="90"
-       inkscape:export-xdpi="90"
-       inkscape:export-filename="/home/mpn/priv/cma/alloc-free-cycle.png"
-       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       d="m 263.99824,300.86217 0,0"
-       id="path5573"
-       inkscape:connector-type="polyline" />
+  <style>
+    rect {
+      stroke: none
+    }
+    .shadow {
+      opacity: 0.25
+    }
+    .shadow rect {
+      fill: #000;
+    }
+    path {
+      fill: none;
+      stroke: #000;
+      stroke-width: 1;
+    }
+    circle {
+      stroke: none;
+      fill: #000;
+      opacity: 0.75;
+    }
+    text {
+      font-family: DejaVu Sans;
+      font-size: 15px;
+      font-style: normal;
+      font-variant: normal;
+      font-weight: normal;
+      font-stretch: normal;
+      fill: #000;
+      stroke: none;
+      text-anchor: end;
+    }
+    .o2 { fill: #CCE7FF; /* blue */ }
+    .o1 { fill: #FFFFBB; /* yellow */ }
+    .o0 { fill: #B3FFC5; /* green */ }
+    .al { fill: #D50F25; /* red */ }
+  </style>
+
+  <g class="shadow">
+    <rect x="5" y="  5" width="200" height="20" />
+    <rect x="5" y=" 45" width="200" height="20" />
+    <rect x="5" y=" 85" width="200" height="20" />
+    <rect x="5" y=" 85" width="200" height="20" />
+    <rect x="5" y="125" width="200" height="20" />
+    <rect x="5" y="165" width="200" height="20" />
+    <rect x="5" y="205" width="200" height="20" />
+    <rect x="5" y="245" width="200" height="20" />
   </g>
+
+  <rect x="  0" y="  0" width="200" height="20" class="o2" />
+  <rect x="  0" y=" 40" width="200" height="20" class="o1" />
+  <rect x="  0" y=" 80" width="100" height="20" class="o0" />
+  <rect x="100" y=" 80" width="100" height="20" class="o1" />
+  <rect x="  0" y="120" width=" 50" height="20" class="al" />
+  <rect x=" 50" y="120" width=" 50" height="20" class="o0" />
+  <rect x="100" y="120" width="100" height="20" class="o1" />
+  <rect x="  0" y="160" width="100" height="20" class="o0" />
+  <rect x="100" y="160" width="100" height="20" class="o1" />
+  <rect x="  0" y="200" width="200" height="20" class="o1" />
+  <rect x="  0" y="240" width="200" height="20" class="o2" />
+
+  <circle cx="100" cy=" 10" r="4" />
+  <circle cx=" 50" cy=" 50" r="4" />
+  <circle cx="150" cy=" 50" r="4" />
+  <circle cx=" 25" cy=" 90" r="4" />
+  <circle cx=" 75" cy=" 90" r="4" />
+  <circle cx=" 25" cy="130" r="4" />
+  <circle cx=" 25" cy="170" r="4" />
+  <circle cx=" 75" cy="170" r="4" />
+  <circle cx=" 50" cy="210" r="4" />
+  <circle cx="150" cy="210" r="4" />
+  <circle cx="100" cy="250" r="4" />
+
+  <path d="M  0,  0 h200 v20 h-200 z
+           M  0, 40 h200 v20 h-200 z
+           M  0, 80 h200 v20 h-200 z
+           M  0,120 h200 v20 h-200 z
+           M  0,160 h200 v20 h-200 z
+           M  0,200 h200 v20 h-200 z
+           M  0,240 h200 v20 h-200 z
+
+                       M100, 40v20
+           M 50, 80v20 M100, 80v20
+           M 50,120v20 M100,120v20
+           M 50,160v20 M100,160v20
+                       M100,200v20
+
+           M100, 10 L 50, 50 M100, 10 L150, 50
+           M 50, 50 L 25, 90 M 50, 50 L 75, 90
+           M 25, 90 v 80
+           M 50,210 L 25,170 M 50,210 L 75,170
+           M100,250 L 50,210 M100,250 L150,210
+           " />
+
+  <text>
+    <tspan x="200" y=" 35">podział</tspan>
+    <tspan x="200" y=" 75">podział</tspan>
+    <tspan x="200" y="115">alokacja</tspan>
+    <tspan x="200" y="155">zwalnianie</tspan>
+    <tspan x="200" y="195">łączenie</tspan>
+    <tspan x="200" y="235">łączenie</tspan>
+  </text>
 </svg>
