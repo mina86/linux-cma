@@ -114,7 +114,7 @@ problemu jest zarezerwowanie przy starcie systemu pewnego regionu
 pamięci na potrzeby danego sterownika.
 
 Najprostszym, acz niezbyt eleganckim sposobem dokonania tego jest
-wykorzystanie argumentu \lstinline|mem| jądra.  Przekazany przez
+wykorzystanie argumentu \code|mem| jądra.  Przekazany przez
 bootloader powoduje, że Linux nie stara się automatycznie wykryć
 dostępnej w~systemie pamięci RAM i~zamiast tego interpretuje
 przekazane informacje.  W~ten sposób, możliwe jest ograniczenie
@@ -159,8 +159,8 @@ mapowanie zaalokowanych obszarów był umieszczony wewnątrz PMM
 i poszczególne sterowniki nie musiały się tym problemem zajmować.
 
 Co więcej, PMM został zintegrowany z~mechanizmem współdzielenia
-pamięci Systemu V~(tj.\ funkcjami \lstinline|shmget()|,
-\lstinline|shmat()|, \lstinline|shmdt()| itp.) wykorzystywany między
+pamięci Systemu V~(tj.\ funkcjami \code|shmget()|,
+\code|shmat()|, \code|shmdt()| itp.) wykorzystywany między
 innymi przez system X~Window do umożliwienia współdzielenia map
 bitowych pomiędzy klientem i~serwerem (działającymi na tej samej
 maszynie) bez konieczności przysłania danych przez gniazdo sieciowe.
