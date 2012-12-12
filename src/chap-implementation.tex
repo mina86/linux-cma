@@ -214,8 +214,9 @@ przeniesieniu wszystkich zajętych stron do innego obszaru.
 krótki opis jak ten mechanizm działa.  Składa się on zasadniczo
 z~czterech kroków przedstawionych w~algorytmie \ref{alg:migrate}.
 
-\begin{algorithm}\label{alg:migrate}
+\begin{algorithm}
 \caption{Migracja strony $p$}
+\label{alg:migrate}
 \begin{algorithmic}[1]
 \Procedure{MigratePage}{$p$}
     \State $p' \gets$ \Call{AllocPage}{$0$}

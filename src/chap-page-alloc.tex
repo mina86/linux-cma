@@ -76,8 +76,9 @@ pół, aż do osiągnięcia żądanego rozmiaru.  Strony, które powstały na
 skutek podziału większej strony na pół, nazywamy stronami
 bliźniaczymi.  Cały proces ilustruje algorytm \ref{alg:buddy-alloc}
 
-\begin{algorithm}\label{alg:buddy-alloc}
+\begin{algorithm}
 \caption{Alokacja strony rzędu $k$ w~algorytmie bliźniaków}
+\label{alg:buddy-alloc}
 \begin{algorithmic}[1]
 \Require $0 \leq k < \mathrm{MAX\_ORDER}$
 \Function{AllocatePage}{$k$}
@@ -107,8 +108,9 @@ bliźniaczą stroną, dzięki czemu strony są dodawane do listy wolnych
 stron o~dużym rzędzie.  Proces ten ilustruje algorytm
 \ref{alg:buddy-free}
 
-\begin{algorithm}\label{alg:buddy-free}
+\begin{algorithm}
 \caption{Zwalnianie strony $p$ rzędu $k$ w algorytmie bliźniaków}
+\label{alg:buddy-free}
 \begin{algorithmic}[1]
 \Procedure{FreePage}{$p$, $k$}
     \While {$k + 1 \neq \mathrm{MAX\_ORDER} \wedge p$ posiada wolną stronę bliźniaczą}
@@ -117,7 +119,7 @@ stron o~dużym rzędzie.  Proces ten ilustruje algorytm
         \State $k \gets k + 1$
         \State $p~\gets$ strona powstała w~wyniku połączenia $p$ i~$p'$ \label{alg:buddy-free:join}
     \EndWhile
-    \State dodaj $p$ do listy wolnych stron rzędu $k$\label{alg:buddy-free:add}
+    \State dodaj $p$ do listy wolnych stron rzędu $k$ \label{alg:buddy-free:add}
 \EndProcedure
 \end{algorithmic}
 \end{algorithm}
@@ -209,8 +211,9 @@ Co więcej, jeżeli rząd żądanej strony jest dostatecznie duży, typ
 migracji wszystkich wolnych stron w~danym bloku zostaje zmieniano na
 ten zgodny z~wywołaniem funkcji \code|alloc_pages()|.
 
-\begin{algorithm}\label{alg:buddy-fallback}
+\begin{algorithm}
 \caption{Alokacja strony rzędu $k$ z~uwzględnieniem typu migracji $m$}
+\label{alg:buddy-fallback}
 \begin{algorithmic}[1]
 \Function{ChangeBlockMigrateType}{$b$, $m$}
 \State zmień typ migracji $b$ na $m$
@@ -259,9 +262,10 @@ których znajdują się wolne strony rzędu 0.  Biorąc również i~ten
 aspekt pod uwagę, alokacja przyjmuje postać przedstawianą w~algorytmie
 \ref{alg:buddy-pcp}
 
-\begin{algorithm}\label{alg:buddy-pcp}
+\begin{algorithm}
 \caption{Alokacja strony rzędu $k$ z~typem migracji $m$
   z~uwzględnieniem list PCP}
+\label{alg:buddy-pcp}
 \begin{algorithmic}[1]
 \Function{AllocPageUsePCP}{$k$, $m$}
     \If {$k \neq 0$}
