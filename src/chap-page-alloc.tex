@@ -1,35 +1,36 @@
 \chapter{Zapoznanie z~alokatorem stron}
 
-Ponieważ CMA integruje się dość mocno z~podsystemem zarządzania
-pamięci (\ang{memory management}), do jej zrozumienia potrzeba
-choć ogólnej wiedzy na temat tego w~jaki sposób Linuks zarządza
-pamięcią \TODO{powtórzenie zarządza pamięcią}.
+Ponieważ CMA w~dużym stopniu integruje się z~podsystemem zarządzania
+pamięci (\ang{memory management} lub w~skrócie mm), do jego
+zrozumienia potrzeba ogólnej wiedzy na temat tego w~jaki sposób jądro
+śledzi i~przydziela pamięć procesom i~sterownikom.  .
 
-Linuks posiada wiele mechanizmów dzięki którym sterowniki mogą
+\begin{figure}[tbp]
+  \centering
+  \includegraphics[width=.7\textwidth]{build/linux-allocators--base.eps}
+  \caption{Relacje między kilkoma najistotniejszymi alokatorami
+    pamięci dostępnymi w~Linuksie.}
+  \label{fig:allocators-base}
+\end{figure}
+
+Linux posiada wiele mechanizmów dzięki którym sterowniki mogą
 alokować pamięć.  Począwszy od funkcji \code|kmalloc()|
 i \code|vmalloc()|, poprzez mechanizmy puli pamięci, aż do
 alokatora czasu bootowania i~alokatorów pamięci dostępnej dla urządzeń
-zewnętrznych \cite[rozdział 8]{bib:ldd3}.  Pomimo, tak dużej liczby
+zewnętrznych \cite[rozdział 8]{bib:ldd3}.  Pomimo tak dużej liczby
 interfejsów, wiele z~nich sprowadza się do alokatora stron (\ang{page
   allocator}), który jest sercem całego podsystemu zarządzania
-pamięcią.
+pamięcią.  Uproszczone zależności między tymi komponentami przedstawia
+rysunek \ref{fig:allocators-base}.
 
 \section{Algorytm bliźniaków}
-
-\begin{wrapfigure}{o}[1.5cm]{0.3\textwidth}
-\begin{center}
-\includegraphics[width=0.25\textwidth]{build/alloc-free-cycle.eps}
-\end{center}
-\caption{Graficzna reprezentacja cyklu alokacji i~zwalniania buforów
-  w~algorytmie bliźniaków.}
-\end{wrapfigure}
 
 Alokator stron implementuje algorytm bliźniaków (skąd też jego inna
 angielska nazwa: {\it buddy system} lub {\it buddy allocator}), który
 operuje na blakach o~rozmiarze $2^k$ jednostek.  W~przypadku Linuksa
 jednostką jest pojedyncza strona fizyczna, a~na $k$~narzucone jest
 ograniczenie $k < \mathrm{MAX\_ORDER}$.  \code|MAX_ORDER| może
-zależeć od architektury, na którą Linuks jest kompilowany, ale
+zależeć od architektury, na którą Linux jest kompilowany, ale
 zazwyczaj ma wartość $11$ (toteż na potrzeby tej pracy zakładam, iż $0
 \le k \le 10$).
 
@@ -44,13 +45,21 @@ się z~dwóch stron rzędu $n-1$.
 Funkcja \code|alloc_pages()|, która jest interfejsem dla
 alokatora stron, przyjmuje jako argument właśnie rząd żądanej strony.
 
-Z~powyższego opisu wynikają następujące właściwości alokatora stron.
+\begin{wrapfigure}{o}[1.5cm]{0.3\textwidth}
+\begin{center}
+\includegraphics[width=0.25\textwidth]{build/alloc-free-cycle.eps}
+\end{center}
+\caption{Graficzna reprezentacja cyklu alokacji i~zwalniania buforów
+  w~algorytmie bliźniaków.}
+\end{wrapfigure}
+
+Z~powyższego opisu wynikają następujące właściwości alokatora stron:
 
 \begin{itemize}
 \item Nie można za jego pomocą zaalokować mniej niż jednej strony,
   tj.\ 4096 bajtów.
-\item Interfejs zwyczajnie nie pozwala alokować obszarów, których
-  rozmiar nie jest potęgą dwójki.
+\item Interfejs nie pozwala alokować obszarów, których rozmiar nie
+  jest potęgą dwójki.
 \item Gdyby jednak chcieć zaalokować taki obszar, wiązałoby się to
   z~potencjalnie dużą fragmentacją wewnętrzną.  Dla przykładu bufor
   dla kolorowej tekstury o~rozmiarze $512 \times 512$ pikseli
