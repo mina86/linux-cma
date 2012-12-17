@@ -47,12 +47,12 @@ wszystkie zajęte strony, a~wolne usuwa z~listy wolnych stron.
 
 Wydruk \ref{lst:alloc-contig-range} przedstawia skrócony (bo
 pozbawiony sprawdzania błędów oraz komentarzy) kod źródłowy funkcji
-\code|alloc_contig_range()| znajdującej się w~Linuksie 3.5.  Jak
+\code|alloc_contig_range| znajdującej się w~Linuksie 3.5.  Jak
 można się było domyślać, jest ona bardziej skomplikowana, niżby to
 wynikało z~wcześniejszego paragrafu.
 
 \begin{lstlisting}[float=tbhp,caption=Skrócony wydruk funkcji
-    \code|alloc_conting_range()| z Linuksa 3.5.,label=lst:alloc-contig-range]
+    \code|alloc_conting_range| z Linuksa 3.5.,label=lst:alloc-contig-range]
 int alloc_contig_range(unsigned long start, unsigned long end,
 		       unsigned migratetype)
 {
@@ -88,17 +88,17 @@ int alloc_contig_range(unsigned long start, unsigned long end,
 \end{lstlisting}
 
 Pierwszym krokiem jest wywołanie w~8 linii z~funkcji
-\code|start_isolate_page_range()|.  Jej celem jest zmiana typu
+\code|start_isolate_page_range|.  Jej celem jest zmiana typu
 bloków stron na izolowany typ migracji (\ang{isolate}) i~przeniesienie
 wszystkich wolnych stron należących do tych bloków na listy tego typu.
 Pomimo, że izolowane strony są przechowywane na liście wolnych stron,
 i~formalnie są pod kontrolą alokatora stron, nie są one nigdy
 alokowane.  W~związku z~tym, strony z~podanego zakresu nie zostaną
 zaalokowane dla innych wątków jądra, które mogą żądać alokacji
-w~trakcie działania funkcji \code|alloc_contig_range()|.
+w~trakcie działania funkcji \code|alloc_contig_range|.
 
 Kolejnym krokiem jest wywołanie w~11 linii funkcji
-\code|__alloc_contig_migrate_range()|.  Jej zadaniem jest
+\code|__alloc_contig_migrate_range|.  Jej zadaniem jest
 zidentyfikowanie wszystkich zajętych stron z~zakresu
 $\left<\mathrm{start}, \mathrm{end}\right)$ i~zmigrowanie ich do
 innego obszaru pamięci.
@@ -117,7 +117,7 @@ nie musi wcale być poprawną wolną stroną.  Wynika to z~faktu, że
 w~procesie zwalniania stron (linia \ref{alg:buddy-free:join} algorytmu
 \ref{alg:buddy-free}) mogła ona zostać połączona ze swoją bliźniaczą
 stroną tworząc wolną stronę o~wyższym rzędzie.  Z~tego powodu,
-w~liniach 16--20 funkcja \code|alloc_contig_range()| wyszukuje tę
+w~liniach 16--20 funkcja \code|alloc_contig_range| wyszukuje tę
 początkową stronę -- „zewnętrzny początek” zakresu.
 
 W~linii 22 następuje właściwe zaalokowanie stron, tj.\ usunięcie ich
@@ -128,7 +128,7 @@ jest niezerowy są dzielone na strony rzędu zerowego.
 
 Należy zauważyć, że tak samo jak na początku zakresu, tak samo i~na
 końcu możemy trafić na stronę, które przekracza interesujący nas
-zakres.  Dlatego też funkcja \code|isolate_freepages_range()|,
+zakres.  Dlatego też funkcja \code|isolate_freepages_range|,
 która dokonuje alokacji, zwraca „zewnętrzny koniec” zakresu, który
 może wypadać poza żądanym końcem zakresu.
 
@@ -145,14 +145,13 @@ stron, na których funkcja operowała, co jest dokonane w~linii 31.
 \section{Migracja zakresu stron}\label{sec:alloc-contig-migrate-range}
 
 Jak w~takim razie wygląda migracja stron?  Funkcja
-\code|alloc_contig_range()| woła
-\code|__alloc_contig_migrate_range()|, której zadaniem jest
-zmigrowanie zakresu stron.  Wydruk
+\code|alloc_contig_range| woła \code|__alloc_contig_migrate_range|,
+której zadaniem jest zmigrowanie zakresu stron.  Wydruk
 \ref{lst:alloc-contig-migrate-range} przedstawia tę funkcję (ponownie
 w~skróconej wersji, bez sprawdzania błędów i~komentarzy).
 
 \begin{lstlisting}[float=tbhp,caption={Skrócony wydruk funkcji
-    \code|__alloc_conting_migrate_range()| z Linuksa 3.5.},label=lst:alloc-contig-migrate-range]
+    \code|__alloc_conting_migrate_range| z Linuksa 3.5.},label=lst:alloc-contig-migrate-range]
 static int __alloc_contig_migrate_range(unsigned long start, unsigned long end)
 {
 	unsigned long pfn = start;
@@ -195,7 +194,7 @@ $\left<\mathrm{start}, \mathrm{end}\right)$ nie zostaną zmigrowane.
 
 Funkcja przechowuje kolejkę stron, które czekają na zmigrowanie
 w~liście \code|cc.migratepages|, która (jeżeli jest pusta) jest
-uzupełniana przez funkcję \code|isolate_migratepages_range()|.
+uzupełniana przez funkcję \code|isolate_migratepages_range|.
 
 Funkcja ta skanuje podany zakres stron od początku zakresu szukając
 strony, które mogą zostać zmigrowane, aż znajdzie 32 strony (ten
@@ -241,15 +240,15 @@ aby nie posiadała, żadnych nieaktualnych wpisów.
 
 \section{Wybór zakresu stron}
 
-Funkcja \code|alloc_contig_range()| potrafi zaalokawać zakres
+Funkcja \code|alloc_contig_range| potrafi zaalokawać zakres
 stron (wykonując przy tym migrację stron w~tym zakresie, które są
 zajęte), ale w~jaki sposób CMA wybiera zakres do wykonania alokacji?
 Odpowiedzi na to pytanie należy szukać w~funkcji
-\code|dma_alloc_from_contiguous()|, której skróconą wersję
+\code|dma_alloc_from_contiguous|, której skróconą wersję
 przedstawia wydruk \ref{lst:dma-alloc-from-contiguous}.
 
 \begin{lstlisting}[float=tbhp,caption={Skrócony wydruk funkcji
-    \code|dma_alloc_from_contiguous()| z Linuksa
+    \code|dma_alloc_from_contiguous| z Linuksa
     3.5.},label=lst:dma-alloc-from-contiguous]
 struct page *dma_alloc_from_contiguous(struct device *dev, int count,
 				       unsigned int align)
@@ -275,7 +274,7 @@ struct page *dma_alloc_from_contiguous(struct device *dev, int count,
 
 Funkcja używa metody „pierwszy pasujący” do wyszukania pasującego
 obszaru w~bitmapie (linie 9--10).  Po wybraniu obszaru, wołana jest
-funkcja \code|alloc_contig_range()|, aby dany obszar zaalokować
+funkcja \code|alloc_contig_range|, aby dany obszar zaalokować
 (linia 14) i~jeżeli się to powiedzie, oznacza obszar w~bitmapie jako
 zajęty i~zwraca wynik (linie 15--16).
 
@@ -287,7 +286,7 @@ może się nie powieść, ale takie istnieją\footnote{W~istocie, jest ich
   zarządzanie pamięcią w~Linuksie, jest jednak skomplikowany i~czasem
   trudno prześledzić wszystkie zależności i~interakcje pomiędzy
   komponentami, które mogą prowadzić do błędu alokacji.} i~z~tego
-powodu, funkcja \code|dma_alloc_from_contiguous()| działa w~pętli
+powodu, funkcja \code|dma_alloc_from_contiguous| działa w~pętli
 w~ten sposób, że jeżeli alokacja jednego obszaru się nie powiedzie,
 w~następnej iteracji funkcja próbuje zaalokować kolejny obszar.
 

@@ -14,8 +14,8 @@ zrozumienia potrzeba ogólnej wiedzy na temat tego w~jaki sposób jądro
 \end{figure}
 
 Linux posiada wiele mechanizmów dzięki którym sterowniki mogą
-alokować pamięć.  Począwszy od funkcji \code|kmalloc()|
-i \code|vmalloc()|, poprzez mechanizmy puli pamięci, aż do
+alokować pamięć.  Począwszy od funkcji \code|kmalloc|
+i \code|vmalloc|, poprzez mechanizmy puli pamięci, aż do
 alokatora czasu bootowania i~alokatorów pamięci dostępnej dla urządzeń
 zewnętrznych \cite[rozdział 8]{bib:ldd3}.  Pomimo tak dużej liczby
 interfejsów, wiele z~nich sprowadza się do alokatora stron (\ang{page
@@ -42,7 +42,7 @@ Strona rzędu 0 to pojedyncza strona fizyczna, strona rzędu 1
 składa się z~1024 stron fizycznych.  Ogólnie, strona rzędu $n$ składa
 się z~dwóch stron rzędu $n-1$.
 
-Funkcja \code|alloc_pages()|, która jest interfejsem dla
+Funkcja \code|alloc_pages|, która jest interfejsem dla
 alokatora stron, przyjmuje jako argument właśnie rząd żądanej strony.
 
 \begin{wrapfigure}{o}[1.5cm]{0.3\textwidth}
@@ -177,7 +177,7 @@ hot-swapu pamięci, a~także w~trackie procesu zagęszczania (opisanego
 w~\cite{bib:compaction}), którego celem jest zwiększenie liczby
 dostępnych stron o~wysokich rzędach.
 
-Wołając funkcję \code|alloc_pages()|, typ migracji strony jest
+Wołając funkcję \code|alloc_pages|, typ migracji strony jest
 przekazywany jako argument, co pozwala alokatorowi stron grupować
 strony tego samego typu.  Jest to istotne, gdyż mechanizm zagęszczania
 nie działa zbyt dobrze jeżeli ruchome strony przelatają się
@@ -218,7 +218,7 @@ to pokazuje algorytm \ref{alg:buddy-fallback}
 
 Co więcej, jeżeli rząd żądanej strony jest dostatecznie duży, typ
 migracji wszystkich wolnych stron w~danym bloku zostaje zmieniano na
-ten zgodny z~wywołaniem funkcji \code|alloc_pages()|.
+ten zgodny z~wywołaniem funkcji \code|alloc_pages|.
 
 \begin{algorithm}
 \caption{Alokacja strony rzędu $k$ z~uwzględnieniem typu migracji $m$}

@@ -25,7 +25,7 @@ gwarantujących spójność pamięci podręcznej -- zadanie to leży
 w~kwestii DMA API.
 
 Najprostszym mechanizmem z~tego interfejsu są funkcje
-\code|dma_alloc_coherent()| i~\code|dma_free_coherent()|.
+\code|dma_alloc_coherent| i~\code|dma_free_coherent|.
 Służą one odpowiednio do alokacji i~zwalniania buforów DMA, których
 zawartość jest zawsze spójna z~tym co widzi
 procesor\footnote{W~różnych architekturach efekt ten jest uzyskiwany
@@ -33,7 +33,7 @@ procesor\footnote{W~różnych architekturach efekt ten jest uzyskiwany
   zawartości kości RAM oraz pamięci podręcznej procesora, gdy tymczasem
   architektura ARM nie daje takich gwarancji.  Z~tego powodu,
   w~systemach opartych o~Linuksa działających na platformie ARM,
-  bufory alokowane przy pomocy \code|dma_alloc_coherent()| nie
+  bufory alokowane przy pomocy \code|dma_alloc_coherent| nie
   podlegają cacheowaniu \TODO{przetłumaczyć} po stronie procesora.}.  Wydruk
 \ref{lst:dma-alloc-example} pokazuje sposób wykorzystania tych dwóch
 funkcji.  Prosty sterownik, który można wykorzystać do testowania CMA
@@ -79,8 +79,8 @@ void dma_contiguous_reserve(phys_addr_t limit);
 Wywołanie to musi nastąpić gdy podsystem alokacji pamięci czasu startu
 systemu (tj.\ {\it. memblock}) zostanie zainicjowany, ale przed
 aktywowaniem alokatora stron.  Dla przykładu w~architekturze ARM
-dogodnym miejscem jest funkcja \code|arm_memblock_init()|, a~x86
--- \code|setup_arch()| zaraz po aktywowaniu memblock.
+dogodnym miejscem jest funkcja \code|arm_memblock_init|, a~x86
+-- \code|setup_arch| zaraz po aktywowaniu memblock.
 
 Argument \code|limit| określa górny adres pamięci fizycznej,
 którego zarezerwowany obszar CMA nie przekroczy.  Dzięki niemu regiony
@@ -108,7 +108,7 @@ wybrać jeden z~czterech sposobów określania rozmiaru:
 
 Domyślną wartością konfiguracji jest alokacja \unit[16]{MiB}.
 
-Funkcja \code|dma_contiguous_reserve()| tworzy domyślny region
+Funkcja \code|dma_contiguous_reserve| tworzy domyślny region
 CMA wykorzystywany przez wszystkie urządzenia, które nie mają
 przypisanych prywatnych regionów CMA.  Prywatne regiony CMA opisane są
 w~podrozdziale \ref{sec:priv-regions}.
@@ -156,7 +156,7 @@ ta nie jest konieczna, wystarczy dostarczyć pustą implementację
 
 \begin{lstlisting}[float=tbhp,caption={Plik nagłówkowy
       \code|asm/dma-contiguous.h| z~pustą implementacją funkcji
-      \code|dma_contiguous_early_fixup()|.},label=lst:empty-fixup]
+      \code|dma_contiguous_early_fixup|.},label=lst:empty-fixup]
 #ifndef ASM_DMA_CONTIGUOUS_H
 #define ASM_DMA_CONTIGUOUS_H
 
@@ -177,7 +177,7 @@ dma_contiguous_early_fixup(phys_addr_t base, unsigned long size)
 
 Należy pamiętać, że funkcja ta jest wołana dość wcześnie w~trakcie
 startu systemu, zatem wiele podsystemów może jeszcze nie być
-dostępnych, a~w~szczególności funkcja \code|kmalloc()| nie będzie
+dostępnych, a~w~szczególności funkcja \code|kmalloc| nie będzie
 działać.  Co więcej, może ona zostać wywołana kilkakrotnie, dla
 różnych regionów CMA, ale nie więcej niż \code|MAX_CMA_AREAS|
 razy (domyślnie 8).
@@ -210,7 +210,7 @@ z~fragmentacją.  Warto zauważyć, że na wartość argumentu
 kompilacji jądra.  Jego domyślną wartością jest osiem (co oznacza
 wyrównanie do 256 stron).
 
-Funkcja \code|dma_alloc_from_contiguous()| zwraca wskaźnik na
+Funkcja \code|dma_alloc_from_contiguous| zwraca wskaźnik na
 pierwszą stronę spośród serii \code|count| zaalokowanych stron,
 lub \code|NULL| w~przypadku nieudanej alokacji.
 
@@ -224,11 +224,11 @@ bool dma_release_from_contiguous(
 \end{lstlisting}
 
 Argumenty \code|dev| i \code|count| mają takie samo
-znaczenie jak w~funkcji \code|dma_alloc_from_contiguous()|,
+znaczenie jak w~funkcji \code|dma_alloc_from_contiguous|,
 a~argument \code|pages| jest wartością zwróconą przez tę funkcję.
 
 Jeżeli dany bufor nie był zaalokowany poprzez CMA, funkcja
-\code|dma_release_from_contiguous()| zwróci \code|false|.
+\code|dma_release_from_contiguous| zwróci \code|false|.
 W~przeciwnym wypadku, bufor zostanie zwolniony i~funkcja zwróci
 \code|true|.  Ta zwracana wartość może zostać wykorzystana przez
 DMA API aby rozróżnić, czy dany bufor jest buforem CMA, czy też nie.
@@ -269,10 +269,10 @@ diff --git a/arch/x86/kernel/pci-dma.c b/arch/x86/kernel/pci-dma.c
 
 \paragraph{Alokacje w~kontekście atomowym} \hspace{0pt} \\
 
-Należy pamiętać, iż funkcja \code|dma_alloc_from_contiguous()|
+Należy pamiętać, iż funkcja \code|dma_alloc_from_contiguous|
 nie może zostać wywołana w~kontekście atomowym (np.\ z~procedury
 obsługi przerwania), a~jednocześnie dopuszczalne jest wywołanie
-\code|dma_alloc_coherent()| z~kontekstu atomowego.  Z~tego
+\code|dma_alloc_coherent| z~kontekstu atomowego.  Z~tego
 powodu, subsystem DMA musi posiadać inny mechanizm przeznaczony dla
 takich alokacji.
 
@@ -300,7 +300,7 @@ tekstur dla koprocesora graficznego z~alokacjami dużych buforów
 przeznaczonych dla kamery, może przyczynić się do zwiększenia
 fragmentacji regionu CMA.
 
-Funkcja \code|dma_declare_contiguous()| tworzy domyślny region
+Funkcja \code|dma_declare_contiguous| tworzy domyślny region
 CMA, ale istnieje możliwość przypisania różnych regionów CMA do
 poszczególnych urządzeń.  Istnieje mapowanie wiele-do-jednego pomiędzy
 strukturą \code|device|, a~regionem CMA.  Oznacza to, że
@@ -324,14 +324,14 @@ Pierwszy argument to urządzenie do którego region ma być przypisany.
 Drugi to \emph{rozmiar w~bajtach}.  Trzeci to adres gdzie region ma
 się zaczynać lub zero, jeżeli nie ma to znaczenia.  Ostatni argument,
 \code|limit|, ma takie samo znaczenie jak w~przypadku funkcji
-\code|dma_contiguous_reserve()|.  Dla przykładu, wydruk
+\code|dma_contiguous_reserve|.  Dla przykładu, wydruk
 \ref{lst:s5p-priv-region} pokazuje fragment patcha dodającego prywatne
 regiony do dwóch urządzeń.
 
 Istnieje limit „prywatnych” regionów CMA, konkretnie
 \code|CONFIG_CMA_AREAS|, którego domyślna wartość to siedem.
 Jeżeli limit ten zostanie przekroczony, funkcja
-\code|dma_declare_contiguous()| zacznie zwracać
+\code|dma_declare_contiguous| zacznie zwracać
 \code|-ENOSPC|.  Jednakże, jeżeli istnieje taka potrzeba, nic nie
 stoi na przeszkodzie aby ten limit zwiększyć w~trakcie kompilacji
 jądra.
