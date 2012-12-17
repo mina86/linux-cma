@@ -30,10 +30,9 @@ build/%.eps: img/%.svg
 	@exec mkdir -p build
 	exec inkscape -z -D --file=$^ --export-eps=$@
 
-build/%.eps: img/%.eps
+build/%.eps: img/%.dia
 	@exec mkdir -p build
-	exec cp $< $@
-
+	exec dia -l -t eps -e $@ $<
 
 clean:
 	exec rm -fr -- build

@@ -3,25 +3,17 @@
 Ponieważ CMA w~dużym stopniu integruje się z~podsystemem zarządzania
 pamięci (\ang{memory management} lub w~skrócie mm), do jego
 zrozumienia potrzeba ogólnej wiedzy na temat tego w~jaki sposób jądro
-śledzi i~przydziela pamięć procesom i~sterownikom.  .
+śledzi i~przydziela pamięć procesom i~sterownikom.
 
-\begin{figure}[tbp]
-  \centering
-  \includegraphics[width=.7\textwidth]{build/linux-allocators--base.eps}
-  \caption{Relacje między kilkoma najistotniejszymi alokatorami
-    pamięci dostępnymi w~Linuksie.}
-  \label{fig:allocators-base}
-\end{figure}
-
-Linux posiada wiele mechanizmów dzięki którym sterowniki mogą
-alokować pamięć.  Począwszy od funkcji \code|kmalloc|
-i \code|vmalloc|, poprzez mechanizmy puli pamięci, aż do
-alokatora czasu bootowania i~alokatorów pamięci dostępnej dla urządzeń
-zewnętrznych \cite[rozdział 8]{bib:ldd3}.  Pomimo tak dużej liczby
-interfejsów, wiele z~nich sprowadza się do alokatora stron (\ang{page
-  allocator}), który jest sercem całego podsystemu zarządzania
-pamięcią.  Uproszczone zależności między tymi komponentami przedstawia
-rysunek \ref{fig:allocators-base}.
+Linux posiada wiele mechanizmów alokacji pamięci.  Począwszy od
+najprostszych w~użyciu funkcji \code|kmalloc| i \code|vmalloc|,
+poprzez mechanizmy puli pamięci, aż do alokatora czasu bootowania
+i~alokatorów pamięci dostępnej dla urządzeń zewnętrznych
+\cite[rozdział 8]{bib:ldd3}.  Pomimo tak dużej liczby interfejsów,
+wiele z~nich sprowadza się do wywołania alokatora stron (\ang{page
+  allocator}), który jest sercem podsystemu zarządzania pamięcią.
+Uproszczone zależności między tymi komponentami przedstawia rysunek
+\ref{fig:allocators-base}.
 
 \section{Algorytm bliźniaków}
 
@@ -34,17 +26,6 @@ zależeć od architektury, na którą Linux jest kompilowany, ale
 zazwyczaj ma wartość $11$ (toteż na potrzeby tej pracy zakładam, iż $0
 \le k \le 10$).
 
-W~Linuksie, przez $k$ rozumie się rząd\TODO{może po prostu lepiej
-  zostawić „order” i~nie tłumaczyć?} strony (\ang{page order}).
-Strona rzędu 0 to pojedyncza strona fizyczna, strona rzędu 1
-(\ang{1-order page}) to dwie strony fizyczne itd.\ aż do strony rzędu
-10, czy też strony maksymalnego rzędu (\ang{max order page}), która
-składa się z~1024 stron fizycznych.  Ogólnie, strona rzędu $n$ składa
-się z~dwóch stron rzędu $n-1$.
-
-Funkcja \code|alloc_pages|, która jest interfejsem dla
-alokatora stron, przyjmuje jako argument właśnie rząd żądanej strony.
-
 \begin{wrapfigure}{o}[1.5cm]{0.3\textwidth}
 \begin{center}
 \includegraphics[width=0.25\textwidth]{build/alloc-free-cycle.eps}
@@ -53,7 +34,16 @@ alokatora stron, przyjmuje jako argument właśnie rząd żądanej strony.
   w~algorytmie bliźniaków.}
 \end{wrapfigure}
 
-Z~powyższego opisu wynikają następujące właściwości alokatora stron:
+W~Linuksie, przez $k$ rozumie się rząd strony (\ang{page order}).
+Strona rzędu 0 to pojedyncza strona fizyczna, strona rzędu 1
+(\ang{1-order page}) to dwie strony fizyczne itd.\ aż do strony rzędu
+10, czy też strony maksymalnego rzędu (\ang{max order page}), która
+składa się z~1024 stron fizycznych.  Ogólnie, strona rzędu $n$ składa
+się z~dwóch stron rzędu $n-1$.
+
+Funkcja \code|alloc_pages|, która jest interfejsem dla alokatora
+stron, przyjmuje jako argument właśnie rząd żądanej strony.  Wynikają
+stąd następujące właściwości alokatora stron:
 
 \begin{itemize}
 \item Nie można za jego pomocą zaalokować mniej niż jednej strony,
@@ -61,15 +51,24 @@ Z~powyższego opisu wynikają następujące właściwości alokatora stron:
 \item Interfejs nie pozwala alokować obszarów, których rozmiar nie
   jest potęgą dwójki.
 \item Gdyby jednak chcieć zaalokować taki obszar, wiązałoby się to
-  z~potencjalnie dużą fragmentacją wewnętrzną.  Dla przykładu bufor
-  dla kolorowej tekstury o~rozmiarze $512 \times 512$ pikseli
-  wymagałby obszaru o~rozmiarze \unit[1]{MiB}, z~których
-  \unit[256]{KiB}, a~więc \nicefrac{1}{4}, byłoby nieużywane.
+  z~potencjalnie dużą fragmentacją wewnętrzną.  Dla przykładu kolorowa
+  tekstura o~rozmiarze $512 \times 512$ pikseli zajmuje
+  \unit[768]{KiB}, zatem bufor ją przechowujący musiałby mieć rozmiar
+  \unit[1]{MiB}, z~których \unit[256]{KiB}, a~więc \nicefrac{1}{4},
+  byłoby nieużywane.
 \item Alokator stron nie jest w~stanie zaalokować obszaru większego
   niż \unit[4]{MiB}.  Z~tego powodu, nie nadaje się do alokowania
-  ciągłego fizycznie buforu dla 5 megapikselowej kamery, czy nawet dla
-  pojedynczej ramki {\it full HD}.
+  ciągłego fizycznie buforu dla pięciomegapikselowej kamery, czy nawet
+  dla pojedynczej ramki {\it full HD}.
 \end{itemize}
+
+\begin{figure}[tbp]
+  \centering
+  \includegraphics[width=\textwidth]{build/linux-allocators--base.eps}
+  \caption{Relacje między kilkoma najistotniejszymi alokatorami
+    pamięci dostępnymi w~Linuksie.}
+  \label{fig:allocators-base}
+\end{figure}
 
 Jak zatem działa algorytm bliźniaków?  Alokator posiada listę wolnych
 stron, których rząd jest pomiędzy $0$ a~$10$.  W~Linuksie zrealizowane
@@ -133,30 +132,26 @@ stron o~dużym rzędzie.  Proces ten ilustruje algorytm
 \end{algorithmic}
 \end{algorithm}
 
+Dokładniejszy opis algorytmu bliźniaków oraz przedstawienie jego
+właściwości można znaleźć na stronach 435--455 \cite{bib:taocp-fa}.
 
-\section{Typy migracji}\label{sec:migratetype}
 
-Powyższy opis pomija niektóre szczegóły alokatora stron.  Po pierwsze,
-nawet jeżeli w~danej chwili nie istnieje wolna strona o~żądanym
-rzędzie, aktywowana jest tzw.\ wolna ścieżka (\ang{slow path}), która
-wykorzystuje różne mechanizmy odzyskiwania pamięci (np.\ poprzez
-zwalnianie buforów dyskowych, czy w~najgorszym przypadku zabiciu
-jednego z~działających procesów).  Mechanizmy te nie są jednak istotne
-dla tematyki niniejszej pracy i~dlatego zostały pominięte.
+\section{Migracja i~typy migracji}\label{sec:migratetype}
 
-Ważnym czynnikiem są typy migracji (\ang{migratetype}), których jest
-sześć: {\it unmovable}, {\it reclaimable}, {\it movable}, {\it cma},
-{\it reserve} oraz {\it isolate}).
+Kolejnym istotnym elementem alokatora stron pominiętym z~opisu
+w~poprzednim podrozdziale są typy migracji (\ang{migratetype}),
+których jest sześć: {\it unmovable}, {\it reclaimable}, {\it movable},
+{\it cma}, {\it reserve} oraz {\it isolate}).
 
 \begin{itemize}
 \item Dla potrzeb tej pracy traktuję typy {\it unmovable}, {\it
   reclaimable} i~{\it reserve} jak jeden typ -- typ nieruchomy.  To
   uproszczenie wynika z~faktu, iż dla CMA-y istotne jest tylko
-  rozróżnienie pomiędzy stroną ruchomą i~nieruchomą.
+  rozróżnienie pomiędzy stronami ruchomymi i~nieruchomymi.
 \item Strony które są typu ruchomego charakteryzują się tym, że ich
   adres fizyczny nie jest istotny, w~związku z~czym mogą być
   przeniesione w~inne miejsce pamięci RAM.
-\item Typ cma jest nowym typem dodanym przez CMA i~jest opisany
+\item Typ {\it cma} jest nowym typem dodanym przez CMA i~jest opisany
   dokładniej w~podrozdziale \ref{sec:migrate-cma}
 \item Typ {\it isolate} jest niejako pseudo-typem, gdyż jeżeli wolna
   strona ma taki typ, nie może ona zostać zaalokowana.  Więcej na
@@ -167,15 +162,39 @@ sześć: {\it unmovable}, {\it reclaimable}, {\it movable}, {\it cma},
 Jednym z~przykładów stron ruchomych są strony anonimowe działających
 procesów.  Ponieważ program odwołują się do nich poprzez mapowania
 wirtualne, o~ile tablice translacji zostaną uaktualnione, zawartość
-strony może być przeniesiona w~dowolne miejsce.  Podobnie wygląda
+strony może być przeniesiona w~dowolne inne miejsce.  Podobnie wygląda
 sprawa z~buforami dyskowymi i~wieloma innymi strukturami, którymi
 zarządza jądro.
 
-Proces przenoszenia ruchomej strony z~jednego miejsca w~inne nazywa
-się migracją i wykorzystywany jest między innymi przy obsłudze
-hot-swapu pamięci, a~także w~trackie procesu zagęszczania (opisanego
+Proces przenoszenia ruchomej strony nazywa się migracją
+i wykorzystywany jest między innymi przy obsłudze hot-swapu pamięci,
+a~także w~trackie procesu zagęszczania (opisanego
 w~\cite{bib:compaction}), którego celem jest zwiększenie liczby
 dostępnych stron o~wysokich rzędach.
+
+\begin{algorithm}
+\caption{Migracja strony $p$}
+\label{alg:migrate}
+\begin{algorithmic}[1]
+\Procedure{MigratePage}{$p$}
+    \State $p' \gets$ \Call{AllocPage}{$0$}
+    \State skopiuj zawartość $p$ do $p'$
+    \State uaktualnij odwołania do $p$ tak aby wskazywały na $p'$
+    \State \Call{FreePage}{$p$, $0$}
+\EndProcedure
+\end{algorithmic}
+\end{algorithm}
+
+Najbardziej skomplikowanym krokiem migracji -- zilustrowanej poprzez
+algorytm \ref{alg:migrate} -- jest uaktualnienie odwołań do strony
+tak, aby wskazywały na nową stronę $p'$.  Ponieważ istnieje wiele
+rodzajów stron ruchomych (strony anonimowe, bufory dyskowe itp.), jest
+to krok specyficzny dla danej strony.
+
+Przykładowo dla stron anonimowych wiąże się to z~uaktualnieniem
+tablicy translacji adresów tak, aby wskazywały w~nowe miejsce, a~także
+wyczyszczeniem pamięci TLB (\ang{Translate Lookaside Buffer}), aby nie
+posiadała, żadnych nieaktualnych wpisów.
 
 Wołając funkcję \code|alloc_pages|, typ migracji strony jest
 przekazywany jako argument, co pozwala alokatorowi stron grupować
@@ -183,22 +202,25 @@ strony tego samego typu.  Jest to istotne, gdyż mechanizm zagęszczania
 nie działa zbyt dobrze jeżeli ruchome strony przelatają się
 z~pozostałymi stronami, które nie podlegają migracji.
 
+
 \section{Grupy stron}
 
-Grupowanie to realizowane jest poprzez podział pamięci na bloki
-składające się z~\code|pageblock_nr_pages| stron (czy też
-równoważnie na bloki rzędu \code|pageblock_order|).  Konkretne
-wartości tych stałych zależą od architektury, no którą jądro zostało
-skompilowane, jak i~opcji konfiguracyjnych wybranych w~trakcie
+Grupowanie stron realizowane jest poprzez podział pamięci na bloki
+(\ang{pageblock}) składające się z~\code|pageblock_nr_pages| stron
+(czy też równoważnie na bloki rzędu \code|pageblock_order|).
+Konkretne wartości tych stałych zależą od architektury, no którą jądro
+zostało skompilowane, jak i~opcji konfiguracyjnych wybranych w~trakcie
 kompilacji.  Niemniej, przeważnie wartość tych stałych to odpowiednio
-1024 (stron) i~(rząd) 10 i~właśnie takie są przyjęte w~tej pracy.
+1024 (stron) i~(rząd) 10 i~właśnie takie są przyjęte w~tej pracy
+i~wykorzystane w~graficznej reprezentacji na rysunku \ref{fig:pages}.
 
-\begin{figure}[tbh]
+\begin{figure}[tbp]
 \begin{center}
 \includegraphics[width=0.8\textwidth]{build/pages.eps}
 \end{center}
 \caption{Graficzna reprezentacja organizacji stron pamięci stosowanej
-  przez Linuksa.}
+  w~podsystemie zarządzania pamięcią Linuksa.}
+\label{fig:pages}
 \end{figure}
 
 Każdy blok stron (\ang{pageblock}) ma przypisany typ migracji,
@@ -263,13 +285,13 @@ strony o~innym typie migracji mogą być z~niego przydzielone.
 \section{Listy PCP}\label{sec:pcp-lists}
 
 Ostatnim istotnym, z~punktu widzenia CMA, aspektem alokatora stron są
-listy PCP.  Ponieważ listy wolnych stron są współdzielone w~obrębie
-całego systemu dostęp do nich musi być synchronizowany pomiędzy
-wszystkimi procesorami.  Aby uniknąć kosztów związanych
-z~synchronizacją, każdy procesor posiada swoje prywatne PCP listy, na
-których znajdują się wolne strony rzędu 0.  Biorąc również i~ten
-aspekt pod uwagę, alokacja przyjmuje postać przedstawianą w~algorytmie
-\ref{alg:buddy-pcp}
+listy PCP (\ang{per CPU pages}).  Ponieważ listy wolnych stron są
+współdzielone w~obrębie całego systemu dostęp do nich musi być
+synchronizowany pomiędzy wszystkimi procesorami.  Aby uniknąć kosztów
+związanych z~synchronizacją, każdy procesor posiada swoje prywatne
+listy PCP, na których znajdują się wolne strony rzędu 0.  Biorąc
+również i~ten aspekt pod uwagę, alokacja przyjmuje postać
+przedstawianą w~algorytmie \ref{alg:buddy-pcp}
 
 \begin{algorithm}
 \caption{Alokacja strony rzędu $k$ z~typem migracji $m$
@@ -304,3 +326,55 @@ aspekt pod uwagę, alokacja przyjmuje postać przedstawianą w~algorytmie
 \EndFunction
 \end{algorithmic}
 \end{algorithm}
+
+
+\section{Inne aspekty alokatora stron}
+
+Powyższy opis pomija wiele szczegółów alokatora stron, które nie są
+istotne z~punktu widzenia mechanizmu CMA.  Niemniej dla porządku
+wymienię kilka istotniejszych detali, które wpływają w~dużej mierze na
+sposób w~jaki Linux zarządza pamięcią.
+
+Po pierwsze cała pamięć podzielona jest na strefy (\ang{zones}),
+których, zależnie od architektury oraz opcji komplicaji, może być
+pięć:
+
+\begin{description}
+\item[ZONE\_DMA] Strefa przeznaczona dla urządzeń, które nie są
+  w~stanie wykonywać transferów DMA w~całej przestrzeni adresowej.  Na
+  przykład w~architekturze x86 strefa ta jest przeznaczona dla
+  urządzeń ISA, które operują na 24-bitowy adresach.
+\item[ZONE\_DMA32] Strefa przeznaczona dla urządzeń operujących
+  na 32-bitowych adresach pracujących w~architekturze x86\_64.
+\item[ZONE\_NORMAL] Strefa z~„normalnymi” stronami, które są na
+  stałe zmapowane w~przestrzeni adresowej jądra.
+\item[ZONE\_HIGHMEM] Strefa ze stronami, dla których zabrakło
+  adresów logicznych w~przestrzeni jądra i~które nie posiadają stałego
+  mapowania.
+\item[ZONE\_MOVABLE] Strefa, z~które można alokować jedynie
+  strony ruchome.
+\end{description}
+
+Co więcej, pamięć jest również podzielona na węzły (\ang{nodes}),
+które odpowiadają wezłom w~systemach z~niejednolitym dostępem do
+pamięci (\ang{Non-Uniform Memory Access} lub NUMA).  Ponieważ
+w~architekturach tego typu czas dostępu do pamięci zależy od jej
+miejsca względem procesora, istotne jest alokowanie buforów blisko
+procesora, który bódzie z~nich korzystał.
+
+Niniejszy rozdział przemilczał również co się dzieje jeżeli podczas
+alokacji wolna pamięć nie może zostać odnaleziona.  Otóż jeżeli
+algorytm \ref{alg:buddy-alloc} nie znajdzie żadnej wolnej strony
+aktywowana jest tzw.\ wolna ścieżka (\ang{slow path}), która
+wykorzystuje różne mechanizmy odzyskiwania pamięci (np.\ poprzez
+zwalnianie buforów dyskowych, czy w~najgorszym przypadku zabiciu
+jednego z~działających procesów, czego dokonuje {\it out-of-memory
+  killer} lub OOM {\it killer}).
+
+Istnieje jeszcze wiele innych aspektów takich -- jak chociażby
+alokacja w~kontekście atomowym (np.\ w~trakcie obsługi przerwania),
+tzw.\ wskaźniki poziamu wody (\ang{watermarks}), które kontrolują jak
+duży wolnej pamięci jest w~systemie -- które wprowadzają dodakową
+komplikację do podsystemu zarządzania pamięcią, jednak ponieważ nie
+mają one wpływu na CMA, wychodzą poza zakres niniejszej pracy
+w~związku z~czym są całkowicie ignorowane.

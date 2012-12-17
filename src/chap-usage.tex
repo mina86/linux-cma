@@ -25,20 +25,20 @@ gwarantujących spójność pamięci podręcznej -- zadanie to leży
 w~kwestii DMA API.
 
 Najprostszym mechanizmem z~tego interfejsu są funkcje
-\code|dma_alloc_coherent| i~\code|dma_free_coherent|.
-Służą one odpowiednio do alokacji i~zwalniania buforów DMA, których
-zawartość jest zawsze spójna z~tym co widzi
-procesor\footnote{W~różnych architekturach efekt ten jest uzyskiwany
-  w~różny sposób.  W~architekturze Intel istnieje gwarancja spójność
-  zawartości kości RAM oraz pamięci podręcznej procesora, gdy tymczasem
-  architektura ARM nie daje takich gwarancji.  Z~tego powodu,
-  w~systemach opartych o~Linuksa działających na platformie ARM,
-  bufory alokowane przy pomocy \code|dma_alloc_coherent| nie
-  podlegają cacheowaniu \TODO{przetłumaczyć} po stronie procesora.}.  Wydruk
-\ref{lst:dma-alloc-example} pokazuje sposób wykorzystania tych dwóch
-funkcji.  Prosty sterownik, który można wykorzystać do testowania CMA
-można znaleźć w~\cite{patch:cma-test}, a~dokładniejszy opis DMA API
-w~rozdziale 15 \cite{bib:ldd3}.
+\code|dma_alloc_coherent| i~\code|dma_free_coherent|.  Służą one
+odpowiednio do alokacji i~zwalniania buforów DMA, których zawartość
+jest zawsze spójna z~tym co widzi procesor\footnote{W~różnych
+  architekturach efekt ten jest uzyskiwany w~różny sposób.
+  W~architekturze Intel istnieje gwarancja spójność zawartości kości
+  RAM oraz pamięci podręcznej procesora, gdy tymczasem architektura
+  ARM nie daje takich gwarancji.  Z~tego powodu, w~systemach opartych
+  o~Linuksa działających na platformie ARM, bufory alokowane przy
+  pomocy \code|dma_alloc_coherent| nie podlegają buforowaniu w~pamięci
+  podręcznej procesora.}.  Wydruk \ref{lst:dma-alloc-example} pokazuje
+sposób wykorzystania tych dwóch funkcji.  Prosty sterownik, który
+można wykorzystać do testowania CMA można znaleźć
+w~\cite{patch:cma-test}, a~dokładniejszy opis DMA API w~rozdziale 15
+\cite{bib:ldd3}.
 
 \begin{lstlisting}[float=tbhp,caption={Alokacja bufora DMA z~użyciem
       DMA API.},label=lst:dma-alloc-example]
@@ -121,9 +121,10 @@ obróbki zarezerwowanych regionów pamięci.
 
 Przykładowo, z~uwagi na brak spójności pamięci RAM i~pamięci
 podręcznej procesora na architekturze ARM, wymagane jest aby strony,
-z~których korzystają urządzenia, były mapowane jako niecacheowalne.
-Co więcej, specyfikacja architektury mówi, że jeżeli dana strona jest
-mapowana z~różnymi parametrami cacheowania, efekt działania systemu
+z~których korzystają urządzenia, były mapowane jako niepodlegające
+buforowaniu (\ang{noncacheable}).  Co więcej, specyfikacja
+architektury mówi, że jeżeli dana strona jest mapowana z~różnymi
+parametrami buforowania (\ang{cacheability}), efekt działania systemu
 nie jest zdefiniowany.
 
 Dlatego w~architekturze ARM, kod integrujący CMA z~DMA API zmienia
@@ -338,7 +339,6 @@ jądra.
 
 % For some reason, breaklines=true does not work, so I'm breaking the
 % line manually...
-% XXX TODO: add some indicator that the line has been broken.
 \begin{lstlisting}[float=tbhp,caption={Przypisanie prywatnych regionów
       CMA do dwóch urządzeń.},label=lst:s5p-priv-region]
 diff --git a/arch/arm/plat-s5p/dev-mfc.c b/arch/arm/plat-s5p/dev-mfc.c
@@ -347,16 +347,16 @@ diff --git a/arch/arm/plat-s5p/dev-mfc.c b/arch/arm/plat-s5p/dev-mfc.c
  				phys_addr_t lbase, unsigned int lsize)
  {
 	(*{\it [ \ldots ]}*)
-+	if (dma_declare_contiguous(&amp;s5p_device_mfc_r.dev,
-		rsize, rbase, 0))
-+		printk(KERN_ERR "Failed to reserve memory for MFC device
-			(\%u bytes at 0x\%08lx)\n",
-+		       rsize, (unsigned long) rbase);
-	(*{\it [ \ldots ]}*)
-+	if (dma_declare_contiguous(&amp;s5p_device_mfc_l.dev,
-		lsize, lbase, 0))
-+		printk(KERN_ERR "Failed to reserve memory for MFC device
-			(\%u bytes at 0x\%08lx)\n",
++	if (dma_declare_contiguous(&amp;s5p_device_mfc_r.dev, (*{\color{gray} $\hookleftarrow$}*)
+(*{\color{gray} $\hookrightarrow$}*)		rsize, rbase, 0))
++		printk(KERN_ERR "Failed to reserve memory for MFC device (*{\color{gray} $\hookleftarrow$}*)
+(*{\color{gray} $\hookrightarrow$}*)			(\%u bytes at 0x\%08lx)\n",
++		       rsize, (unsigned long) rbase); (*{\color{gray} $\hookleftarrow$}*)
+(*{\color{gray} $\hookrightarrow$}*)	(*{\it [ \ldots ]}*)
++	if (dma_declare_contiguous(&amp;s5p_device_mfc_l.dev, (*{\color{gray} $\hookleftarrow$}*)
+(*{\color{gray} $\hookrightarrow$}*)		lsize, lbase, 0))
++		printk(KERN_ERR "Failed to reserve memory for MFC device (*{\color{gray} $\hookleftarrow$}*)
+(*{\color{gray} $\hookrightarrow$}*)			(\%u bytes at 0x\%08lx)\n",
 +		       rsize, (unsigned long) rbase);
  }
 \end{lstlisting}

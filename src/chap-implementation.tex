@@ -3,23 +3,33 @@
 Podstawowym założeniem CMA jest umożliwienie alokowania dużych
 obszarów ciągłych fizycznie bez konieczneści rezerwacji na wyłączność
 dużej ilości pamięci.  Aby to umożliwić, CMA korzysta z~mechanizmu
-migracji stron opisanego w~podrozdziale \ref{sec:migratetype}.
+migracji stron opisanego pokrótce w~podrozdziale
+\ref{sec:migratetype}.  Ogólny zarys alokacji z~regionów CMA
+przedstawiony jest na rysunku \ref{fig:cma-alloc-algo} a~niniejszy
+rozdział opisze ją w~większych szczegółach.
+
+\begin{figure}[tbp]
+  \includegraphics[width=\textwidth]{build/cma-alloc-algo.eps}
+  \caption{Schemat działania alokatora CMA.}
+  \label{fig:cma-alloc-algo}
+\end{figure}
 
 \section{Typ migracji CMA}\label{sec:migrate-cma}
 
 Migracja jest możliwa tylko dla stron ruchomych.  Niestety, przed
-zaimplementowaniem CMA, w~Linuksie nie istniał mechanizm, który
+zaimplementowaniem CMA, Linux nie posiadał mechanizmu, który
 pozwalałby zagwarantować, aby w~systemie istniał duży obszar, w~którym
-strony są wolne albo ruchome.  Ponieważ (jak opisałem w~podrozdziale
-\ref{sec:type-change}) jądro dopuszcza alokacje nieruchomych stron
-z~bloków stron oznaczonych jako przechowujące strony ruchome, a~także
-posiada mechanizm na skutek którego bloki stron zmieniają swój typ,
-oznaczenie bloku stron jako ruchome nie gwarantuje, że tylko strony
-ruchome będą alokowane z~tego bloku stron.
+strony są albo wolne, albo ruchome.  Ponieważ (jak opisałem
+w~podrozdziale \ref{sec:type-change}) jądro dopuszcza alokacje
+nieruchomych stron z~bloków stron oznaczonych jako przechowujące
+strony ruchome, a~także posiada mechanizm na skutek którego bloki
+stron zmieniają swój typ, oznaczenie bloku stron jako ruchome nie
+gwarantuje, że tylko strony ruchome będą alokowane z~tego bloku stron.
 
-Z~tego powodu, aby CMA dobrze działała, pierwszym krokiem było
-stworzenie nowego typu migracji, nazwanym po prostu typem migracji CMA
-(\code|MIGRATE_CMA|).  Typ ten posiada dwie bardzo istotne cechy:
+Z~tego powodu, aby mechanizm CMA działał dobrze, pierwszym krokiem
+było stworzenie nowego typu migracji, nazwanym po prostu typem
+migracji CMA (\code|MIGRATE_CMA|), który posiada dwie bardzo istotne
+cechy:
 
 \begin{itemize}
 \item Z~bloków stron oznaczonych typem CMA mogą być alokowane tylko
@@ -47,9 +57,8 @@ wszystkie zajęte strony, a~wolne usuwa z~listy wolnych stron.
 
 Wydruk \ref{lst:alloc-contig-range} przedstawia skrócony (bo
 pozbawiony sprawdzania błędów oraz komentarzy) kod źródłowy funkcji
-\code|alloc_contig_range| znajdującej się w~Linuksie 3.5.  Jak
-można się było domyślać, jest ona bardziej skomplikowana, niżby to
-wynikało z~wcześniejszego paragrafu.
+\code|alloc_contig_range| znajdującej się w~Linuksie 3.5.  Jest ona
+trochę bardziej skomplikowana, niżby to wynikało z~powyższego opisu.
 
 \begin{lstlisting}[float=tbhp,caption=Skrócony wydruk funkcji
     \code|alloc_conting_range| z Linuksa 3.5.,label=lst:alloc-contig-range]
@@ -70,9 +79,8 @@ int alloc_contig_range(unsigned long start, unsigned long end,
 
 	order = 0;
 	outer_start = start;
-	while (!PageBuddy(pfn_to_page(outer_start))) {
+	while (!PageBuddy(pfn_to_page(outer_start)))
 		outer_start &= ~0UL << ++order;
-	}
 
 	outer_end = isolate_freepages_range(outer_start, end);
 
@@ -87,24 +95,26 @@ int alloc_contig_range(unsigned long start, unsigned long end,
 }
 \end{lstlisting}
 
-Pierwszym krokiem jest wywołanie w~8 linii z~funkcji
-\code|start_isolate_page_range|.  Jej celem jest zmiana typu
-bloków stron na izolowany typ migracji (\ang{isolate}) i~przeniesienie
+Pierwszym krokiem jest wywołanie funkcji
+\code|start_isolate_page_range|, której celem jest zmiana typu bloków
+stron na izolowany typ migracji (\ang{isolate}) i~przeniesienie
 wszystkich wolnych stron należących do tych bloków na listy tego typu.
 Pomimo, że izolowane strony są przechowywane na liście wolnych stron,
-i~formalnie są pod kontrolą alokatora stron, nie są one nigdy
-alokowane.  W~związku z~tym, strony z~podanego zakresu nie zostaną
-zaalokowane dla innych wątków jądra, które mogą żądać alokacji
-w~trakcie działania funkcji \code|alloc_contig_range|.
+i~formalnie są pod kontrolą alokatora stron, nie są one nigdy używano
+do zaspokajania żądań alokacji.  W~ten sposób, funkcja
+\code|alloc_contig_range| uzyskuje gwarancje, że w~trakcie jej
+działania strony, na których operuje nie zostaną zaalokowane dla
+innych wątków jądra.
 
-Kolejnym krokiem jest wywołanie w~11 linii funkcji
-\code|__alloc_contig_migrate_range|.  Jej zadaniem jest
-zidentyfikowanie wszystkich zajętych stron z~zakresu
-$\left<\mathrm{start}, \mathrm{end}\right)$ i~zmigrowanie ich do
-innego obszaru pamięci.
+W~dalszej części wołana jest funkcja
+\code|__alloc_contig_migrate_range|, której zadaniem jest
+zidentyfikowanie i~zmigrowanie wszystkich zajętych stron z~zakresu
+$\left<\mathrm{start}, \mathrm{end}\right)$.  Również i~tę funkcję
+musiałem zaimplementować specjalnie na potrzeby CMA i~jest ona opisana
+w~następnym podrozdziale.
 
 Po tych dwóch krokach w~zasadzie wszystkie strony z~interesującego nas
-zakresu powinny być wolne.  Jednak, zgodnie z~opisem w~podrozdziale
+zakresu powinny być wolne.  Jednak, jak opisano w~podrozdziale
 \ref{sec:pcp-lists}, strona może być wolna, ale nie znajdować się na
 liście wolnych stron.  Dlatego, w~dalszej części, w~liniach 13--14
 wszystkie strony przenoszone są z~list PCP i~wstawiane z~powrotem na
@@ -112,15 +122,15 @@ listy wolnych stron.
 
 Po tych operacjach wszystkie strony w~zakresie $\left<\mathrm{start},
 \mathrm{end}\right)$ są wolne, jednak z~uwagi na sposób działania
-algorytmu bliźniaków, strona identyfikowana przez \code|start|
-nie musi wcale być poprawną wolną stroną.  Wynika to z~faktu, że
+algorytmu bliźniaków, strona identyfikowana przez \code|start| nie
+musi wcale być poprawną wolną stroną.  Wynika to z~faktu, że
 w~procesie zwalniania stron (linia \ref{alg:buddy-free:join} algorytmu
 \ref{alg:buddy-free}) mogła ona zostać połączona ze swoją bliźniaczą
 stroną tworząc wolną stronę o~wyższym rzędzie.  Z~tego powodu,
-w~liniach 16--20 funkcja \code|alloc_contig_range| wyszukuje tę
+w~liniach 16--19 funkcja \code|alloc_contig_range| wyszukuje tę
 początkową stronę -- „zewnętrzny początek” zakresu.
 
-W~linii 22 następuje właściwe zaalokowanie stron, tj.\ usunięcie ich
+W~linii 21 następuje właściwe zaalokowanie stron, tj.\ usunięcie ich
 z~list wolnych stron, na skutek czego alokator stron zupełnie nie
 zdaje sobie sprawy z~ich istnienia (co jest rzecz jasna równoważne
 z~alokacją tych stron).  W~procesie tym, wszystkie strony których rząd
@@ -136,16 +146,16 @@ Po tych wszystkich operacjach, funkcja zaalokowała strony z~zakresu
 $\left<\mathrm{outer\_start}, \mathrm{outer\_end}\right)$, który może
 być większy od żądanego $\left<\mathrm{start}, \mathrm{end}\right)$.
 Niepotrzebne strony są zwalniane z~powrotem do alokatora stron
-w~liniach 26--29.
+w~liniach 23--26.
 
 Ostatnim krokiem jest przywrócenie pierwotnego typu migracji blokom
-stron, na których funkcja operowała, co jest dokonane w~linii 31.
+stron, na których funkcja operowała, co jest dokonane w~linii 28.
 
 
 \section{Migracja zakresu stron}\label{sec:alloc-contig-migrate-range}
 
-Jak w~takim razie wygląda migracja stron?  Funkcja
-\code|alloc_contig_range| woła \code|__alloc_contig_migrate_range|,
+
+Funkcja \code|__alloc_contig_migrate_range|,
 której zadaniem jest zmigrowanie zakresu stron.  Wydruk
 \ref{lst:alloc-contig-migrate-range} przedstawia tę funkcję (ponownie
 w~skróconej wersji, bez sprawdzania błędów i~komentarzy).
@@ -206,36 +216,6 @@ Strony te są migrowane przez funkcję \code|migrate_pages|
 i~jeżeli wszystko się powiedzie, funkcja kończy się powodzeniem po
 przeniesieniu wszystkich zajętych stron do innego obszaru.
 
-
-\subsection{Migracja pojedynczej strony}
-
-\TODO{Zredagować ten akapit} W~tym miejscu należałoby umieścić pewne
-krótki opis jak ten mechanizm działa.  Składa się on zasadniczo
-z~czterech kroków przedstawionych w~algorytmie \ref{alg:migrate}.
-
-\begin{algorithm}
-\caption{Migracja strony $p$}
-\label{alg:migrate}
-\begin{algorithmic}[1]
-\Procedure{MigratePage}{$p$}
-    \State $p' \gets$ \Call{AllocPage}{$0$}
-    \State skopiuj zawartość $p$ do $p'$
-    \State uaktualnij odwołania do $p$ tak aby wskazywały na $p'$
-    \State \Call{FreePage}{$p$, $0$}
-\EndProcedure
-\end{algorithmic}
-\end{algorithm}
-
-\TODO{Za duża „strony”.} W~zasadzie najbardziej skomplikowanym krokiem
-jest uaktualnienie odwołań do strony tak, aby wskazywały na nową
-stronę $p'$.  Ponieważ istnieje wiele rodzajów stron ruchomych (strony
-anonimowe, bufory dyskowe itp.), jest to krok specyficzny dla danej
-strony.
-
-Przykładowo dla stron anonimowych wiązałoby się to z~uaktualnieniem
-tablicy translacji stron MMU tak, aby wskazywały w~nowe miejsce,
-a~także wyczyszczeniem pamięci TLB (\ang{Translate Lookaside Buffer}),
-aby nie posiadała, żadnych nieaktualnych wpisów.
 
 
 \section{Wybór zakresu stron}
