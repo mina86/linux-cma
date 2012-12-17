@@ -67,10 +67,11 @@ void *my_dev_free_buffer(unsigned long size_in_bytes,
 \section{Integracja z~architekturą procesora}\label{sec:integrate-with-arch}
 
 CMA działa dzięki rezerwowaniu w~trakcie startu systemu pewnego
-regionu pamięci (zwanego regionem CMA), który po zainicjowaniu całego
-mechanizmu CMA jest zwracany do systemu (tak że może być
-wykorzystywany do pewnego rodzaju alokacji).  Aby taki obszar został
-zarezerwowany, w~trakcie startu systemu musi zostać wywołana funkcja:
+regionu pamięci (zwanego regionem lub kontekstem CMA), który po
+zainicjowaniu całego mechanizmu CMA jest zwracany do systemu (tak że
+może być wykorzystywany do pewnego rodzaju alokacji).  Aby taki obszar
+został zarezerwowany, w~trakcie startu systemu musi zostać wywołana
+funkcja:
 
 \begin{lstlisting}
 void dma_contiguous_reserve(phys_addr_t limit);
@@ -90,7 +91,7 @@ wartość zmiennych \code|arm_dma_limit| lub
 \code|arm_lowmem_limit|, którakolwiek jest mniejsza,
 a~w~procesorach 64-bitowych może zaistnieć potrzeba ograniczenia do
 32-bitowych adresów.  Jeżeli wartością tego argumentu jest zero, na
-region CMA nie jest narzucany żaden limit.
+kontekst CMA nie jest narzucany żaden limit.
 
 Ilość zarezerwowanej pamięci zależy od argumentu \code|cma|
 (który określa rozmiar regionu w~bajtach) przekazywanego do jądra
@@ -108,10 +109,10 @@ wybrać jeden z~czterech sposobów określania rozmiaru:
 
 Domyślną wartością konfiguracji jest alokacja \unit[16]{MiB}.
 
-Funkcja \code|dma_contiguous_reserve| tworzy domyślny region
-CMA wykorzystywany przez wszystkie urządzenia, które nie mają
-przypisanych prywatnych regionów CMA.  Prywatne regiony CMA opisane są
-w~podrozdziale \ref{sec:priv-regions}.
+Funkcja \code|dma_contiguous_reserve| tworzy domyślny region CMA
+wykorzystywany przez wszystkie urządzenia, które nie mają przypisanych
+prywatnych kontekstów.  Prywatne regiony CMA opisane są w~podrozdziale
+\ref{sec:priv-regions}.
 
 
 \subsection{Poprawki specyficzne dla architektury}
@@ -143,7 +144,7 @@ pojedynczych stron co pozwala na (w~miarę) proste modyfikowanie
 ustawień cachowania danej strony.  Więcej na ten temat można
 przeczytać w~artykule \cite{bib:cma-and-arm}.
 
-Aby to umożliwić, dla każdego regionu CMA, zawołana zostanie funkcja
+Aby to umożliwić, dla każdego kontekstu CMA, zawołana zostanie funkcja:
 
 \begin{lstlisting}
 void dma_contiguous_early_fixup(phys_addr_t base, unsigned long size);
@@ -302,13 +303,13 @@ tekstur dla koprocesora graficznego z~alokacjami dużych buforów
 przeznaczonych dla kamery, może przyczynić się do zwiększenia
 fragmentacji regionu CMA.
 
-Funkcja \code|dma_declare_contiguous| tworzy domyślny region
-CMA, ale istnieje możliwość przypisania różnych regionów CMA do
-poszczególnych urządzeń.  Istnieje mapowanie wiele-do-jednego pomiędzy
-strukturą \code|device|, a~regionem CMA.  Oznacza to, że
-pojedynczy region CMA może zostać przypisany do danego urządzenia, ale
-jeżeli urządzenie ma korzystać z~wielu regionów CMA konieczne jest
-stworzenie kilku struktur \code|device|.
+Funkcja \code|dma_declare_contiguous| tworzy domyślny kontekst CMA,
+ale istnieje możliwość przypisania różnych regionów do różnych
+urządzeń.  Istnieje mapowanie wiele-do-jednego pomiędzy strukturą
+\code|device|, a~kontekstem CMA.  Oznacza to, że pojedynczy region CMA
+może zostać przypisany do danego urządzenia, ale jeżeli urządzenie ma
+korzystać z~wielu kontekstów CMA konieczne jest stworzenie kilku
+struktur \code|device|.
 
 \paragraph{Przypisywanie regionu CMA do pojedynczego urządzenia} \hspace{0pt} \\
 
@@ -322,13 +323,13 @@ int dma_declare_contiguous(
 	phys_addr_t limit);
 \end{lstlisting}
 
-Pierwszy argument to urządzenie do którego region ma być przypisany.
+Pierwszy argument to urządzenie do którego kontekst ma być przypisany.
 Drugi to \emph{rozmiar w~bajtach}.  Trzeci to adres gdzie region ma
 się zaczynać lub zero, jeżeli nie ma to znaczenia.  Ostatni argument,
 \code|limit|, ma takie samo znaczenie jak w~przypadku funkcji
 \code|dma_contiguous_reserve|.  Dla przykładu, wydruk
 \ref{lst:s5p-priv-region} pokazuje fragment patcha dodającego prywatne
-regiony do dwóch urządzeń.
+konteksty do dwóch urządzeń.
 
 Istnieje limit „prywatnych” regionów CMA, konkretnie
 \code|CONFIG_CMA_AREAS|, którego domyślna wartość to siedem.
@@ -364,7 +365,7 @@ diff --git a/arch/arm/plat-s5p/dev-mfc.c b/arch/arm/plat-s5p/dev-mfc.c
 
 \paragraph{Przypisywanie jednego regionu CMA do wielu urządzeń} \hspace{0pt} \\
 
-Odrobinę bardziej skomplikowane jest przypisanie tego samego regionu
+Odrobinę bardziej skomplikowane jest przypisanie tego samego kontekstu
 do kilku urządzeń.  Obecny interfejs CMA nie udostępnia funkcji, która
 by na to pozwalała, ale i~tak nie jest to szczególnie trudne do
 osiągnięcia.  Wystarczy zastosować metodę opisaną powyżej, aby
@@ -385,6 +386,6 @@ postcore_initcall(foo_set_up_cma_areas);
 \paragraph{Brak domyślnego regionu} \hspace{0pt} \\
 
 Warto zauważyć, że nic nie stoi na przeszkodzie, aby nie tworzyć
-domyślnego regionu CMA.  Oczywiście, jeżeli nie zostanie on stworzony,
-urządzenia, którym nie zostaną przypisane prywatne regiony nie będą
-mogły korzystać z~buforów CMA.
+domyślnego kontekstu CMA.  Oczywiście, jeżeli nie zostanie on
+stworzony, urządzenia, którym nie zostaną przypisane prywatne regiony
+nie będą mogły korzystać z~buforów CMA.
