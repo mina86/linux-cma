@@ -271,12 +271,78 @@ w~następnej iteracji funkcja próbuje zaalokować kolejny.
 
 \section{Regiony CMA}
 
-Bitmapa, w~której śledzone są wolne i~zajęte strony zapisana jest
-w~strukturze \code|cma|, która opisuje pojedynczy region pamięci,
-który jest pod kontrolą CMA.  Ma ona następujące pola:
+Regiony rezerwowane są przy starcie systemu wewnątrz funkcji
+\code|dma_declare_contiguous| zanim jeszcze alokator stron zostanie
+zainicjowany, jak to opisanuje podrozdział
+\ref{sec:integrate-with-arch}.  Zadaniem funkcji
+\code|dma_declare_contiguous| przedstawionej w~wydruku
+\ref{lst:dma-declare-contiguous} jest żądanie pamięci z~alokatora
+czasu startu systemu, który nosi nazwę {\it memblock}.
+
+\begin{lstlisting}[float=tbhp,caption={Skrócony wydruk funkcji
+    \code|dma_declare_contiguous| z Linuksa
+    3.5.},label=lst:dma-declare-contiguous]
+int __init dma_declare_contiguous(struct device *dev, unsigned long size,
+				  phys_addr_t base, phys_addr_t limit)
+{
+	struct cma_reserved *r = &cma_reserved[cma_reserved_count];
+	unsigned long alignment;
+
+	alignment = PAGE_SIZE << max(MAX_ORDER - 1, pageblock_order);
+	base = ALIGN(base, alignment);
+	size = ALIGN(size, alignment);
+	limit &= ~(alignment - 1);
+
+	if (base) {
+		if (memblock_is_region_reserved(base, size) ||
+		    memblock_reserve(base, size) < 0)
+			return -EBUSY;
+	} else {
+		phys_addr_t addr = __memblock_alloc_base(size, alignment, limit);
+		if (!addr)
+			return -ENOMEM;
+		base = addr;
+	}
+
+	r->start = base;
+	r->size = size;
+	r->dev = dev;
+	cma_reserved_count++;
+
+	dma_contiguous_early_fixup(base, size);
+	return 0;
+err:
+	return base;
+}
+\end{lstlisting}
+
+Jeżeli alokacja się powiedzie, informacja o~zarezerwowanym obszarze
+jest zapisywana w~tablicy \code|cma_reserved|.  Jest ona odczytywana
+dopiero w~późniejszej fazie startu systemu przez funkcję
+\code|cma_init_reserved_areas|.  Dla każdego zarezerwowanego regionu
+wywołuje ona funkcję \code|cma_create_area|, która tworzy struktury
+\code|cma| reprezentujące pojedynczy region pamięci, kontrolowany
+przez alokator CMA.  Struktura \code|cma| posiada następujące pola:
 
 \begin{tabular}{lll}
 \code|unsigned long|   & {\bf \code|base_pfn|} & Identyfikator początkowej strony w~regionie. \\
 \code|unsigned long|   & {\bf \code|count|}    & Liczba strony w~regionie. \\
 \code|unsigned long *| & {\bf \code|bitmap|}   & Bitmapa zajętych stron. \\
 \end{tabular}
+
+Pierwsze dwa identyfikują obszar w~pamięci fizycznej, gdzie znajduje
+się kontekst CMA, a~ostatnia jest bitmapą wykorzystywaną przez funkcję
+\code|dma_alloc_from_contiguous| zgodnie z~opisem w~poprzednim
+podrozdziale.
+
+
+\section{Podsumowanie}
+
+Z~uwagi na złożoność mechanizmu CMA, niniejszy rozdział skupiał się
+jedynie na jego najistotniejszych aspektach.  Aby prześledzić
+implementację alokatora CMA w~większych szczegółach, czytelnik będzie
+musiał zwrócić się do \cite{patch:cma-24} lub przyjrzeć się plikom
+\code|drivers/base/dma-contiguous.c|, \code|mm/page_alloc.c|,
+\code|mm/compaction.c| oraz \code|mm/page_isolation.c| w~jądrze Linux.
+Niemniej wiedza zawarta w~tym rozdziale powinna wystarczyć, aby móc
+z~łatwością prześledzić kod stojący za mechanizmem CMA.
