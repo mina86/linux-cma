@@ -150,33 +150,11 @@ Aby to umożliwić, dla każdego kontekstu CMA, zawołana zostanie funkcja:
 void dma_contiguous_early_fixup(phys_addr_t base, unsigned long size);
 \end{lstlisting}
 
-Nie jest ona zdefiniowana przez CMA i~musi zostać dostarczona przez
-kod danej architektury.  Jej deklaracja powinna znaleźć się w~pliku
-nagłówkowym \code|asm/dma-contiguous.h|.  Jeżeli funkcjonalność
-ta nie jest konieczna, wystarczy dostarczyć pustą implementację
-(np.\ prezentowaną przez wydruk \ref{lst:empty-fixup}).
-
-\begin{lstlisting}[float=tbhp,caption={[Pusta implementacja funkcji
-        \code|dma_contiguous_early_fixup|.]Plik nagłówkowy
-      \code|asm/dma-contiguous.h| z~pustą implementacją funkcji
-      \code|dma_contiguous_early_fixup|.},label=lst:empty-fixup]
-#ifndef ASM_DMA_CONTIGUOUS_H
-#define ASM_DMA_CONTIGUOUS_H
-
-#ifdef __KERNEL__
-
-#include <linux/types.h>
-#include <asm-generic/dma-contiguous.h>
-
-static inline void
-dma_contiguous_early_fixup(phys_addr_t base, unsigned long size)
-{
-	/* nop, no need for early fixups */
-}
-
-#endif
-#endif
-\end{lstlisting}
+Nie jest ona zaimplementowana przez kod CMA i~musi zostać dostarczona
+wraz z~kod danej architektury -- jej deklaracja powinna znaleźć się
+w~pliku nagłówkowym \code|asm/dma-contiguous.h|.  Jeżeli
+funkcjonalność ta nie jest konieczna, wystarczy dostarczyć pustą
+implementację.
 
 Należy pamiętać, że funkcja ta jest wołana dość wcześnie w~trakcie
 startu systemu, zatem wiele podsystemów może jeszcze nie być
