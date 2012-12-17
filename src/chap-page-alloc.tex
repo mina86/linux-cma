@@ -30,8 +30,9 @@ zazwyczaj ma wartość $11$ (toteż na potrzeby tej pracy zakładam, iż $0
 \begin{center}
 \includegraphics[width=0.25\textwidth]{build/alloc-free-cycle.eps}
 \end{center}
-\caption{Graficzna reprezentacja cyklu alokacji i~zwalniania buforów
-  w~algorytmie bliźniaków.}
+\caption[Zarządzanie pamięcią w~algorytmie bliźniaków]{Graficzna
+  reprezentacja cyklu alokacji i~zwalniania buforów w~algorytmie
+  bliźniaków.}
 \end{wrapfigure}
 
 W~Linuksie, przez $k$ rozumie się rząd strony (\ang{page order}).
@@ -65,8 +66,8 @@ stąd następujące właściwości alokatora stron:
 \begin{figure}[tbp]
   \centering
   \includegraphics[width=\textwidth]{build/linux-allocators--base.eps}
-  \caption{Relacje między kilkoma najistotniejszymi alokatorami
-    pamięci dostępnymi w~Linuksie.}
+  \caption[Alokatory dostępne w~jądrze Linux.]{Relacje między kilkoma
+    najistotniejszymi alokatorami pamięci dostępnymi w~Linuksie.}
   \label{fig:allocators-base}
 \end{figure}
 
@@ -85,7 +86,8 @@ skutek podziału większej strony na pół, nazywamy stronami
 bliźniaczymi.  Cały proces ilustruje algorytm \ref{alg:buddy-alloc}
 
 \begin{algorithm}
-\caption{Alokacja strony rzędu $k$ w~algorytmie bliźniaków}
+\caption[Alokacja strony w~algorytmie bliźniaków.]{Alokacja strony
+  rzędu $k$ w~algorytmie bliźniaków.}
 \label{alg:buddy-alloc}
 \begin{algorithmic}[1]
 \Require $0 \leq k < \mathrm{MAX\_ORDER}$
@@ -117,7 +119,8 @@ stron o~dużym rzędzie.  Proces ten ilustruje algorytm
 \ref{alg:buddy-free}
 
 \begin{algorithm}
-\caption{Zwalnianie strony $p$ rzędu $k$ w algorytmie bliźniaków}
+\caption[Zwalnianie strony w~algorytmie bliźniaków.]{Zwalnianie strony
+  $p$ rzędu $k$ w algorytmie bliźniaków.}
 \label{alg:buddy-free}
 \begin{algorithmic}[1]
 \Procedure{FreePage}{$p$, $k$}
@@ -173,7 +176,7 @@ w~\cite{bib:compaction}), którego celem jest zwiększenie liczby
 dostępnych stron o~wysokich rzędach.
 
 \begin{algorithm}
-\caption{Migracja strony $p$}
+\caption[Migracja strony.]{Migracja strony $p$.}
 \label{alg:migrate}
 \begin{algorithmic}[1]
 \Procedure{MigratePage}{$p$}
@@ -218,8 +221,9 @@ i~wykorzystane w~graficznej reprezentacji na rysunku \ref{fig:pages}.
 \begin{center}
 \includegraphics[width=0.8\textwidth]{build/pages.eps}
 \end{center}
-\caption{Graficzna reprezentacja organizacji stron pamięci stosowanej
-  w~podsystemie zarządzania pamięcią Linuksa.}
+\caption[Organizacja pamięci w~Linuksie.]{Graficzna reprezentacja
+  organizacji stron pamięci stosowanej w~podsystemie zarządzania
+  pamięcią Linuksa.}
 \label{fig:pages}
 \end{figure}
 
@@ -243,7 +247,8 @@ migracji wszystkich wolnych stron w~danym bloku zostaje zmieniano na
 ten zgodny z~wywołaniem funkcji \code|alloc_pages|.
 
 \begin{algorithm}
-\caption{Alokacja strony rzędu $k$ z~uwzględnieniem typu migracji $m$}
+\caption[Alokacja z~uwzględnieniem typu migracji.]{Alokacja strony
+  rzędu $k$ z~uwzględnieniem typu migracji $m$}
 \label{alg:buddy-fallback}
 \begin{algorithmic}[1]
 \Function{ChangeBlockMigrateType}{$b$, $m$}
@@ -294,8 +299,8 @@ również i~ten aspekt pod uwagę, alokacja przyjmuje postać
 przedstawianą w~algorytmie \ref{alg:buddy-pcp}
 
 \begin{algorithm}
-\caption{Alokacja strony rzędu $k$ z~typem migracji $m$
-  z~uwzględnieniem list PCP}
+\caption[Alokacja z~uwzględnieniem list PCP.]{Alokacja strony rzędu
+  $k$ z~typem migracji $m$ z~uwzględnieniem list PCP.}
 \label{alg:buddy-pcp}
 \begin{algorithmic}[1]
 \Function{AllocPageUsePCP}{$k$, $m$}

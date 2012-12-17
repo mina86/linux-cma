@@ -155,7 +155,8 @@ nagłówkowym \code|asm/dma-contiguous.h|.  Jeżeli funkcjonalność
 ta nie jest konieczna, wystarczy dostarczyć pustą implementację
 (np.\ prezentowaną przez wydruk \ref{lst:empty-fixup}).
 
-\begin{lstlisting}[float=tbhp,caption={Plik nagłówkowy
+\begin{lstlisting}[float=tbhp,caption={[Pusta implementacja funkcji
+        \code|dma_contiguous_early_fixup|.]Plik nagłówkowy
       \code|asm/dma-contiguous.h| z~pustą implementacją funkcji
       \code|dma_contiguous_early_fixup|.},label=lst:empty-fixup]
 #ifndef ASM_DMA_CONTIGUOUS_H
@@ -237,7 +238,7 @@ DMA API aby rozróżnić, czy dany bufor jest buforem CMA, czy też nie.
 Wydruk \ref{lst:dma-integration} pokazuje fragment patcha, który
 integruje CMA z~podsystemem DMA architektury x86.
 
-\begin{lstlisting}[float=tbhp,caption={Integracja CMA z~podsystemem DMA
+\begin{lstlisting}[float=bht,caption={Integracja CMA z~podsystemem DMA
       architektury x86.},label=lst:dma-integration]
 diff --git a/arch/x86/kernel/pci-dma.c b/arch/x86/kernel/pci-dma.c
 @@ -99,14 +99,18 @@ void *dma_generic_alloc_coherent(

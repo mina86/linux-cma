@@ -23,6 +23,8 @@
 
 \definecolor{gray}{rgb}{0.5,0.5,0.5}
 
+\makeatletter
+
 \usepackage{listings}
 \usepackage{listingsutf8}
 \lstset{
@@ -41,36 +43,59 @@
   breakautoindent,
   columns=fixed,
   escapeinside={(*}{*)},
-  morekeywords={inline}
+  morekeywords={inline,bool}
 }
 \renewcommand*\lstlistingname{Wydruk}
 \renewcommand*\lstlistlistingname{Spis wydruków}
-\def\code{\lstinline[basicstyle=\small\it]}
+\def\code{\lstinline[basicstyle=\itshape]}
 
 \usepackage[chapter]{algorithm}
-\makeatletter
-\renewcommand{\ALG@name}{Algorytm}
-\renewcommand{\listalgorithmname}{Lista algorytmów}
-\renewcommand{\thealgorithm}{\arabic{chapter}.\arabic{algorithm}.}
-\makeatother
+\renewcommand*{\ALG@name}{Algorytm}
+\renewcommand*{\listalgorithmname}{Spis algorytmów}
+\renewcommand*{\thealgorithm}{\arabic{chapter}.\arabic{algorithm}.}
 
 \usepackage[noend]{algpseudocode}
-\renewcommand{\algorithmicrequire}{\textbf{Wymaga:}}
-\renewcommand{\algorithmicensure}{\textbf{Zapewnia:}}
-\renewcommand{\algorithmiccomment}[1]{{\footnotesize \it \{ #1 \}}}
-\renewcommand{\algorithmicif}{\textbf{Jeżeli}}
-\renewcommand{\algorithmicthen}{}
-\renewcommand{\algorithmicelse}{\textbf{wpp.}}
-\renewcommand{\algorithmicfor}{\textbf{Dla}}
-\renewcommand{\algorithmicforall}{\textbf{Dla wszystkich}}
-\renewcommand{\algorithmicdo}{\textbf{}}
-\renewcommand{\algorithmicwhile}{\textbf{Dopóki}}
-\renewcommand{\algorithmicloop}{\textbf{Wykonuj}}
-\renewcommand{\algorithmicrepeat}{\textbf{Wykonuj}}
-\renewcommand{\algorithmicreturn}{\textbf{zwróć}}
-\renewcommand{\algorithmicuntil}{\textbf{aż}}
-\renewcommand{\algorithmicfunction}{\textbf{Funkcja}}
-\renewcommand{\algorithmicprocedure}{\textbf{Procedura}}
+\renewcommand*{\algorithmicrequire}{\textbf{Wymaga:}}
+\renewcommand*{\algorithmicensure}{\textbf{Zapewnia:}}
+\renewcommand*{\algorithmiccomment}[1]{{\footnotesize \it \{ #1 \}}}
+\renewcommand*{\algorithmicif}{\textbf{Jeżeli}}
+\renewcommand*{\algorithmicthen}{}
+\renewcommand*{\algorithmicelse}{\textbf{wpp.}}
+\renewcommand*{\algorithmicfor}{\textbf{Dla}}
+\renewcommand*{\algorithmicforall}{\textbf{Dla wszystkich}}
+\renewcommand*{\algorithmicdo}{\textbf{}}
+\renewcommand*{\algorithmicwhile}{\textbf{Dopóki}}
+\renewcommand*{\algorithmicloop}{\textbf{Wykonuj}}
+\renewcommand*{\algorithmicrepeat}{\textbf{Wykonuj}}
+\renewcommand*{\algorithmicreturn}{\textbf{zwróć}}
+\renewcommand*{\algorithmicuntil}{\textbf{aż}}
+\renewcommand*{\algorithmicfunction}{\textbf{Funkcja}}
+\renewcommand*{\algorithmicprocedure}{\textbf{Procedura}}
+
+\renewcommand*\lstlistoflistings{%
+    \section*{\lstlistlistingname}
+    {\secondarysize
+    \gdef\previous@toc@level{-1000}%
+    \@starttoc{lol}}%
+    \if@restonecol\twocolumn\fi
+}
+\renewcommand*\l@lstlisting{\mw@tocline{1}{0pt}{2.5em}}
+\renewcommand*\listoffigures{%
+    \section*{\listfigurename}
+    {\secondarysize
+     \renewcommand*\addvspace[1]{}
+    \gdef\previous@toc@level{-1000}%
+    \@starttoc{lof}}%
+    \if@restonecol\twocolumn\fi
+}
+\renewcommand*\listofalgorithms{%
+    \section*{\listalgorithmname}
+    {\secondarysize
+    \gdef\previous@toc@level{-1000}%
+    \@starttoc{loa}}%
+    \if@restonecol\twocolumn\fi
+}
+\newcommand*\l@algorithm{\mw@tocline{1}{0pt}{2.5em}}
 
 \usepackage[top=2.5cm,bottom=2.5cm,inner=2cm,outer=3cm]{geometry}
 
@@ -84,29 +109,31 @@
 \hfuzz=1.5pt
 \hbadness1450
 
-\renewcommand{\chaptermark}[1]{\markboth{\scshape\small\bfseries \
+\renewcommand*{\chaptermark}[1]{\markboth{\scshape\small\bfseries \
 #1}{\small\bfseries \ #1}}
-\renewcommand{\sectionmark}[1]{\markboth{\scshape\small\bfseries\thesection.\
+\renewcommand*{\sectionmark}[1]{\markboth{\scshape\small\bfseries\thesection.\
 #1}{\small\bfseries\thesection.\ #1}}
-\newcommand{\headrulewidth}{0.5pt}
-\newcommand{\footrulewidth}{0.pt}
+\newcommand*{\headrulewidth}{0.5pt}
+\newcommand*{\footrulewidth}{0.pt}
 \pagestyle{uheadings}
 
 \usepackage[sort,compress]{cite}
 
-\newcommand{\TODO}[1]{{\setlength{\fboxsep}{0pt}\footnotesize (\colorbox{red}{TODO}: #1)}}
-\newcommand{\ang}[1]{ang.\ {\it #1}}
+\newcommand*{\TODO}[1]{{\setlength{\fboxsep}{0pt}\footnotesize (\colorbox{red}{TODO}: #1)}}
+\newcommand*{\ang}[1]{ang.\ {\it #1}}
 
 \usepackage{titling}
 \title{Alokacja ciągłych fizycznie obszarów pamięci w~systemie Linux}
 \author{Michał Nazarewicz}
 \date{\today}
-\newcommand{\theengishtitle}{Physically contiguous memory allocation in Linux-based systems}
+\newcommand*{\theengishtitle}{Physically contiguous memory allocation in Linux-based systems}
+
+\makeatother
 
 \begin{document}
 
 \pagenumbering{roman}
-\renewcommand{\baselinestretch}{1.0}
+\renewcommand*{\baselinestretch}{1.0}
 \raggedbottom
 
 \input{src/title}
@@ -124,7 +151,7 @@
 
 \appendix
 
-\bibliographystyle{plplain}
+\input{src/lists}
 \input{src/bib}
 
 \end{document}
