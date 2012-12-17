@@ -1,12 +1,12 @@
 \chapter{Wstęp}
 
-Tematem niniejszej pracy inżynierskiej jest stworzenie sterownika dla
-jądra Linux, który pozwoli w~efektywny sposób alokować duże obszary
-ciągłej fizycznie pamięci.  W~wyniku powstał menadżer ciągłej pamięci,
-{\it Contiguous Memory Allocator} (lub CMA).
+Tematem niniejszej pracy inżynierskiej jest sterownika dla jądra
+Linux, który pozwala w~efektywny sposób alokować duże obszary ciągłej
+fizycznie pamięci.  Opisanym mechanizmem jest stworzony przeze mnie
+menadżer ciągłej pamięci, {\it Contiguous Memory Allocator} (lub CMA).
 
-Podstawowym zastosowaniem takich buforów, który brałem w~głównej
-mierze podczas pisania takiego sterownika, jest wykorzystanie ich
+Podstawowym zastosowaniem dużych buforów, który brałem w~głównej
+mierze podczas pisania alokatora CMA, jest wykorzystanie ich
 w~podzespołach dostępnych w~nowoczesnych telefonach komórkowych.
 Niemniej odkąd stworzony przeze mnie kod został dołączony do Linuksa,
 różne osoby wykazały zainteresowanie, aby wykorzystywać go również
@@ -202,42 +202,43 @@ Aby rozwiązać i~ten problem, {\it Contiguous Memory Allocator}
 umożliwia systemowi używanie zarezerwowanej pamięci o~ile żadne
 urządzenie jej w~danym momencie nie potrzebuje.
 
-W~swoich początkowych wersjach, również CMA działał na założeniach
-podobnych do PMM -- rezerwował pamięć przy starcie systemu, którą
-potem zarządzał pozwalając sterownikom i~programom na alokowanie
-obszarów ciągłych fizycznie \cite{patch:cma-4}.
+W~swoich początkowych wersjach, również mechanizm CMA działał na
+założeniach podobnych do PMM -- rezerwował pamięć przy starcie
+systemu, którą potem zarządzał pozwalając sterownikom i~programom na
+alokowanie obszarów ciągłych fizycznie \cite{patch:cma-4}.
 
-Wynika to z~faktu, iż pierwsze wersje CMA skupiały się w~dużej mierze
-na rozwiązywaniu problemu przypisywania różnych zarezerwowanych
-obszarów do różnych urządzeń, a~także umożliwianiu sterownikom
-alokowanie różnych buforów w~różnych obszarach pamięci.  Było to
-potrzebne, gdyż dekoder wideo (\ang{Multi-Format Codec}, lub MFC)
-stosowany na platformie S5PV110 wymagał, aby różne dane były
+Wynika to z~faktu, iż pierwsze wersje alokatora CMA skupiały się
+w~dużej mierze na rozwiązywaniu problemu przypisywania różnych
+zarezerwowanych obszarów do różnych urządzeń, a~także umożliwianiu
+sterownikom alokowanie różnych buforów w~różnych obszarach pamięci.
+Było to potrzebne, gdyż dekoder wideo (\ang{Multi-Format Codec}, lub
+MFC) stosowany na platformie S5PV110 wymagał, aby różne dane były
 przechowywane w~różnych bankach pamięci.  Pozwalało to na zwiększenie
 szybkości dostępu do tych danych dzięki zastosowaniu odczytu z~dwóch
 banków pamięci jednocześnie.
 
-Z~czasem, coraz bardziej integrowałem CMA z~kodem zarządzania pamięci
-w~Linuksie w~wyniku czego, pamięć rezerwowana przy starcie systemu,
-stała się dostępna dla reszty systemu, o~ile żaden sterownik jej nie
-używał \cite{patch:cma-24}.  Takie rozwiązanie zostało ostatecznie
-zaakceptowane przez społeczność deweloperów Linuksa i~jest dostępne
-w~źródłach Linuksa począwszy od wersji 3.5.  W~tej pracy opisuję CMA
-w~formie w~jakiej znalazł się on w~Linuksie 3.5\footnote{Należy
-  zauważyć, że Linux jest szybko rozwijającym się projektem wolnego
-  oprogramowania i~ponieważ CMA używana jest przez coraz więcej osób,
-  jest ona ciągle rozwijana i~im dalej w~przyszłość, tym bardziej opis
-  w~niniejszej pracy będzie się różnił od stanu faktycznego.}.
+Z~czasem, coraz bardziej integrowałem mechanizm CMA z~kodem
+zarządzania pamięci w~Linuksie w~wyniku czego, pamięć rezerwowana przy
+starcie systemu, stała się dostępna dla reszty systemu, o~ile żaden
+sterownik jej nie używał \cite{patch:cma-24}.  Takie rozwiązanie
+zostało ostatecznie zaakceptowane przez społeczność deweloperów
+Linuksa i~jest dostępne w~źródłach Linuksa począwszy od wersji 3.5.
+W~tej pracy opisuję alokator CMA w~formie w~jakiej znalazł się on
+w~Linuksie 3.5\footnote{Należy zauważyć, że Linux jest szybko
+  rozwijającym się projektem wolnego oprogramowania i~ponieważ
+  mechanizm CMA używana jest przez coraz więcej osób, jest ona ciągle
+  rozwijana i~im dalej w~przyszłość, tym bardziej opis w~niniejszej
+  pracy będzie się różnił od stanu faktycznego.}.
 
 \section{Wielkie strony}
 
-Zagadnieniem związanym z~CMA są wielkie strony (\ang{huge pages}).
-O~ile zwyczajne strony pamięci mają przeważnie cztery kibibajty,
-a~tyle wielkie strony mają rozmiary rzędu dwóch lub czterech
-mebibajtów\footnote{Konkretne rozmiary zależą od architektury
-  procesora i~co więcej wiele rozmiarów może być wspieranych.}.
-Stosowane są w~celu zmniejszenia liczby wpisów w~tablicy translacji
-adresów, a~co za tym idzie również TLB procesora.
+Zagadnieniem związanym w~pewnym stopniu z~mechanizmem CMA są wielkie
+strony (\ang{huge pages}).  O~ile zwyczajne strony pamięci mają
+przeważnie cztery kibibajty, a~tyle wielkie strony mają rozmiary rzędu
+dwóch lub czterech mebibajtów\footnote{Konkretne rozmiary zależą od
+  architektury procesora i~co więcej wiele rozmiarów może być
+  wspieranych.}.  Stosowane są w~celu zmniejszenia liczby wpisów
+w~tablicy translacji adresów, a~co za tym idzie również TLB procesora.
 
 Począwszy od wersji 2.6.38, Linux posiada mechanizm automatycznego
 wykorzystywania wielkich stron dla działających programów,
@@ -245,12 +246,13 @@ wykorzystywania wielkich stron dla działających programów,
 o~ile to możliwe, wiele czterokibibajtowe stron mapowanych jest za
 pomocą pojedynczego wpisu w~tablicy translacji adresów.
 
-Podobnie jak w~przypadku CMA, wymaga to alokowania dużych obszarów
-ciągły fizycznie.  Tym co różni oba mechanizmy jest wymóg aby alokacja
-CMA zakończyła się sukcesem i~do tego w~jak najkrótszym czasie, gdy
-tymczasem mechanizm automatycznego wykorzystania wielkich stron jest
-oportunistyczny i~jeżeli w~danej chwili w~systemie nie ma dostatecznie
-dużego wolnego obszaru, mechanizm ten nie jest wykorzystywany.
+Podobnie jak w~przypadku mechanizmu CMA, wymaga to alokowania dużych
+obszarów ciągły fizycznie.  Tym co różni oba mechanizmy jest wymóg aby
+alokacja CMA zakończyła się sukcesem i~do tego w~jak najkrótszym
+czasie, gdy tymczasem mechanizm automatycznego wykorzystania wielkich
+stron jest oportunistyczny i~jeżeli w~danej chwili w~systemie nie ma
+dostatecznie dużego wolnego obszaru, mechanizm ten nie jest
+wykorzystywany.
 
 Z~uwagi na te odmienne wymagania, obie implementacje, pomimo, że
 pozornie mające podobne założenia, są całkowicie rozłączne.

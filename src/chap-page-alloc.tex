@@ -1,9 +1,9 @@
 \chapter{Zapoznanie z~alokatorem stron}
 
-Ponieważ CMA w~dużym stopniu integruje się z~podsystemem zarządzania
-pamięci (\ang{memory management} lub w~skrócie mm), do jego
-zrozumienia potrzeba ogólnej wiedzy na temat tego w~jaki sposób jądro
-śledzi i~przydziela pamięć procesom i~sterownikom.
+Ponieważ mechanizm CMA w~dużym stopniu integruje się z~podsystemem
+zarządzania pamięci (\ang{memory management} lub w~skrócie mm), do
+jego zrozumienia potrzeba ogólnej wiedzy na temat tego w~jaki sposób
+jądro śledzi i~przydziela pamięć procesom i~sterownikom.
 
 Linux posiada wiele mechanizmów alokacji pamięci.  Począwszy od
 najprostszych w~użyciu funkcji \code|kmalloc| i \code|vmalloc|,
@@ -149,13 +149,13 @@ których jest sześć: {\it unmovable}, {\it reclaimable}, {\it movable},
 \begin{itemize}
 \item Dla potrzeb tej pracy traktuję typy {\it unmovable}, {\it
   reclaimable} i~{\it reserve} jak jeden typ -- typ nieruchomy.  To
-  uproszczenie wynika z~faktu, iż dla CMA-y istotne jest tylko
-  rozróżnienie pomiędzy stronami ruchomymi i~nieruchomymi.
+  uproszczenie wynika z~faktu, iż dla mechanizmu CMA istotne jest
+  tylko rozróżnienie pomiędzy stronami ruchomymi i~nieruchomymi.
 \item Strony które są typu ruchomego charakteryzują się tym, że ich
   adres fizyczny nie jest istotny, w~związku z~czym mogą być
   przeniesione w~inne miejsce pamięci RAM.
-\item Typ {\it cma} jest nowym typem dodanym przez CMA i~jest opisany
-  dokładniej w~podrozdziale \ref{sec:migrate-cma}
+\item Typ {\it cma} jest nowym typem dodanym dla potrzeb interfejsu
+  CMA i~jest opisany dokładniej w~podrozdziale \ref{sec:migrate-cma}
 \item Typ {\it isolate} jest niejako pseudo-typem, gdyż jeżeli wolna
   strona ma taki typ, nie może ona zostać zaalokowana.  Więcej na
   temat sposobu w~jaki ten typ może być wykorzystywany opisuję
@@ -289,13 +289,13 @@ strony o~innym typie migracji mogą być z~niego przydzielone.
 
 \section{Listy PCP}\label{sec:pcp-lists}
 
-Ostatnim istotnym, z~punktu widzenia CMA, aspektem alokatora stron są
-listy PCP (\ang{per CPU pages}).  Ponieważ listy wolnych stron są
-współdzielone w~obrębie całego systemu dostęp do nich musi być
-synchronizowany pomiędzy wszystkimi procesorami.  Aby uniknąć kosztów
-związanych z~synchronizacją, każdy procesor posiada swoje prywatne
-listy PCP, na których znajdują się wolne strony rzędu 0.  Biorąc
-również i~ten aspekt pod uwagę, alokacja przyjmuje postać
+Ostatnim istotnym, z~punktu widzenia mechanizmu CMA, aspektem
+alokatora stron są listy PCP (\ang{per CPU pages}).  Ponieważ listy
+wolnych stron są współdzielone w~obrębie całego systemu dostęp do nich
+musi być synchronizowany pomiędzy wszystkimi procesorami.  Aby uniknąć
+kosztów związanych z~synchronizacją, każdy procesor posiada swoje
+prywatne listy PCP, na których znajdują się wolne strony rzędu 0.
+Biorąc również i~ten aspekt pod uwagę, alokacja przyjmuje postać
 przedstawianą w~algorytmie \ref{alg:buddy-pcp}
 
 \begin{algorithm}
@@ -379,7 +379,7 @@ jednego z~działających procesów, czego dokonuje {\it out-of-memory
 Istnieje jeszcze wiele innych aspektów takich -- jak chociażby
 alokacja w~kontekście atomowym (np.\ w~trakcie obsługi przerwania),
 tzw.\ wskaźniki poziamu wody (\ang{watermarks}), które kontrolują jak
-duży wolnej pamięci jest w~systemie -- które wprowadzają dodakową
+duży wolnej pamięci jest w~systemie -- które wprowadzają dodatkową
 komplikację do podsystemu zarządzania pamięcią, jednak ponieważ nie
-mają one wpływu na CMA, wychodzą poza zakres niniejszej pracy
-w~związku z~czym są całkowicie ignorowane.
+mają one wpływu na mechanizm CMA, wychodzą poza zakres niniejszej
+pracy w~związku z~czym są całkowicie ignorowane.

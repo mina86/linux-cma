@@ -1,9 +1,9 @@
-\chapter{Implementacja i~sposób działania CMA}
+\chapter{Implementacja i~sposób działania mechanizmu CMA}
 
-Podstawowym założeniem CMA jest umożliwienie alokowania dużych
-obszarów ciągłych fizycznie bez konieczneści rezerwacji na wyłączność
-dużej ilości pamięci.  Aby to umożliwić, CMA korzysta z~mechanizmu
-migracji stron opisanego pokrótce w~podrozdziale
+Podstawowym założeniem alokatora CMA jest umożliwienie alokowania
+dużych obszarów ciągłych fizycznie bez konieczneści rezerwacji na
+wyłączność dużej ilości pamięci.  Aby to umożliwić, interfejs CMA
+korzysta z~mechanizmu migracji stron opisanego pokrótce w~podrozdziale
 \ref{sec:migratetype}.  Ogólny zarys alokacji z~regionów CMA
 przedstawiony jest na rysunku \ref{fig:cma-alloc-algo} a~niniejszy
 rozdział opisze ją w~większych szczegółach.
@@ -17,9 +17,9 @@ rozdział opisze ją w~większych szczegółach.
 \section{Typ migracji CMA}\label{sec:migrate-cma}
 
 Migracja jest możliwa tylko dla stron ruchomych.  Niestety, przed
-zaimplementowaniem CMA, Linux nie posiadał mechanizmu, który
-pozwalałby zagwarantować, aby w~systemie istniał duży obszar, w~którym
-strony są albo wolne, albo ruchome.  Ponieważ (jak opisałem
+zaimplementowaniem mechanizmu CMA, Linux nie posiadał mechanizmu,
+który pozwalałby zagwarantować, aby w~systemie istniał duży obszar,
+w~którym strony są albo wolne, albo ruchome.  Ponieważ (jak opisałem
 w~podrozdziale \ref{sec:type-change}) jądro dopuszcza alokacje
 nieruchomych stron z~bloków stron oznaczonych jako przechowujące
 strony ruchome, a~także posiada mechanizm na skutek którego bloki
@@ -51,8 +51,8 @@ nastąpi.
 
 W~sytuacji, gdy istnieje gwarancja, że dany zakres stron posiada
 jedynie strony wolne i~ruchome, można przystąpić do jej alokacji.
-Drugim krokiem implementowania CMA było zatem stworzenie funkcji,
-która dostaje jako argument zakres stron, a~następnie migruje
+Drugim krokiem implementowania alokatora CMA było zatem stworzenie
+funkcji, która dostaje jako argument zakres stron, a~następnie migruje
 wszystkie zajęte strony, a~wolne usuwa z~listy wolnych stron.
 
 Wydruk \ref{lst:alloc-contig-range} przedstawia skrócony (bo
@@ -110,8 +110,8 @@ W~dalszej części wołana jest funkcja
 \code|__alloc_contig_migrate_range|, której zadaniem jest
 zidentyfikowanie i~zmigrowanie wszystkich zajętych stron z~zakresu
 $\left<\mathrm{start}, \mathrm{end}\right)$.  Również i~tę funkcję
-musiałem zaimplementować specjalnie na potrzeby CMA i~jest ona opisana
-w~następnym podrozdziale.
+musiałem zaimplementować specjalnie na potrzeby mechanizmu CMA i~jest
+ona opisana w~następnym podrozdziale.
 
 Po tych dwóch krokach w~zasadzie wszystkie strony z~interesującego nas
 zakresu powinny być wolne.  Jednak, jak opisano w~podrozdziale
@@ -217,15 +217,14 @@ i~jeżeli wszystko się powiedzie, funkcja kończy się powodzeniem po
 przeniesieniu wszystkich zajętych stron do innego obszaru.
 
 
+\section{Wybór zakresu stron}\label{sec:alloc-from-contig}
 
-\section{Wybór zakresu stron}
-
-Funkcja \code|alloc_contig_range| potrafi zaalokawać zakres
-stron (wykonując przy tym migrację stron w~tym zakresie, które są
-zajęte), ale w~jaki sposób CMA wybiera zakres do wykonania alokacji?
-Odpowiedzi na to pytanie należy szukać w~funkcji
-\code|dma_alloc_from_contiguous|, której skróconą wersję
-przedstawia wydruk \ref{lst:dma-alloc-from-contiguous}.
+Funkcja \code|alloc_contig_range| potrafi zaalokawać zakres ramek
+(wykonując przy tym migrację zajętych stron), ale w~jaki sposób
+mechanizm CMA wybiera zakres do wykonania alokacji?  Odpowiedzi na to
+pytanie należy szukać w~funkcji \code|dma_alloc_from_contiguous|,
+której skróconą wersję przedstawia wydruk
+\ref{lst:dma-alloc-from-contiguous}.
 
 \begin{lstlisting}[float=tbhp,caption={Skrócony wydruk funkcji
     \code|dma_alloc_from_contiguous| z Linuksa
@@ -268,7 +267,7 @@ może się nie powieść, ale takie istnieją\footnote{W~istocie, jest ich
   komponentami, które mogą prowadzić do błędu alokacji.} i~z~tego
 powodu, funkcja \code|dma_alloc_from_contiguous| działa w~pętli
 w~ten sposób, że jeżeli alokacja jednego obszaru się nie powiedzie,
-w~następnej iteracji funkcja próbuje zaalokować kolejny obszar.
+w~następnej iteracji funkcja próbuje zaalokować kolejny.
 
 \section{Regiony CMA}
 

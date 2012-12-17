@@ -1,26 +1,26 @@
-\chapter{Sposób użycia CMA}\label{sec:cma-usage}
+\chapter{Sposób użycia interfesju CMA}\label{sec:cma-usage}
 
-Pomimo, że idea CMA jest stosunkowo prosta, mechanizm ten urósł do
-raczej skomplikowanego interfejsu, który integruje się dość głęboko
+Pomimo, że idea mechanizmu CMA jest stosunkowo prosta, urósł on do
+raczej skomplikowanego kawałka kodu, który integruje się dość głęboko
 z~systemem zarządzania pamięci jądra Linuksa.  Pomimo tego, jego
 użycie nie jest szczególnie trudne, a~w~wielu przypadkach autor
-sterownika, który chciałby korzystać z~CMA nie musi niczego zmieniać
-w~swoim kodzie.
+sterownika, który chciałby korzystać z~alokatora CMA nie musi niczego
+zmieniać w~swoim kodzie.
 
 \section{Wykorzystanie w~sterownikach}\label{sec:usage-drivers}
 
-CMA integruje się z~interfejsem programowania DMA (DMA API), co
-oznacza, że jeżeli CMA jest włączone i~zintegrowane z~daną
-architekturą, poprawnie napisany sterownik (tzn.\ taki, który korzysta
-z~DMA API) będzie korzystał z~CMA bez konieczności dokonywania
-jakichkolwiek zmian.
+Alokator CMA integruje się z~interfejsem programowania DMA (DMA API),
+co oznacza, że jeżeli mechanizm CMA jest włączony i~zintegrowany
+z~daną architekturą, poprawnie napisany sterownik (tzn.\ taki, który
+korzysta z~DMA API) będzie korzystał z~alokatora CMA bez konieczności
+dokonywania jakichkolwiek zmian.
 
 Tak naprawdę, sterowniki nie powinny odwoływać się bezpośrednio do
 funkcji CMA, gdyż są one zbyt nisko poziomowe i~operują na stronach,
 gdy tymczasem sterowniki urządzeń są raczej zainteresowane adresami
 szyny.\footnote{W~ogólności, adres szyny strony może być inny niż jej
   adres fizyczny i~DMA API zostało zaprojektowane tak, aby brać to pod
-  uwagę.}  Co więcej, CMA nie posiada żadnych mechanizmów
+  uwagę.}  Co więcej, mechanizm CMA nie posiada żadnych interfejsów
 gwarantujących spójność pamięci podręcznej -- zadanie to leży
 w~kwestii DMA API.
 
@@ -36,7 +36,7 @@ jest zawsze spójna z~tym co widzi procesor\footnote{W~różnych
   pomocy \code|dma_alloc_coherent| nie podlegają buforowaniu w~pamięci
   podręcznej procesora.}.  Wydruk \ref{lst:dma-alloc-example} pokazuje
 sposób wykorzystania tych dwóch funkcji.  Prosty sterownik, który
-można wykorzystać do testowania CMA można znaleźć
+można wykorzystać do testowania mechanizmu CMA można znaleźć
 w~\cite{patch:cma-test}, a~dokładniejszy opis DMA API w~rozdziale 15
 \cite{bib:ldd3}.
 
@@ -66,12 +66,12 @@ void *my_dev_free_buffer(unsigned long size_in_bytes,
 
 \section{Integracja z~architekturą procesora}\label{sec:integrate-with-arch}
 
-CMA działa dzięki rezerwowaniu w~trakcie startu systemu pewnego
-regionu pamięci (zwanego regionem lub kontekstem CMA), który po
-zainicjowaniu całego mechanizmu CMA jest zwracany do systemu (tak że
-może być wykorzystywany do pewnego rodzaju alokacji).  Aby taki obszar
-został zarezerwowany, w~trakcie startu systemu musi zostać wywołana
-funkcja:
+Alokator CMA działa dzięki rezerwowaniu w~trakcie startu systemu
+pewnego regionu pamięci (zwanego regionem lub kontekstem CMA), który
+po zainicjowaniu całego mechanizmu CMA jest zwracany do systemu (tak
+że może być wykorzystywany do pewnego rodzaju alokacji).  Aby taki
+obszar został zarezerwowany, w~trakcie startu systemu musi zostać
+wywołana funkcja:
 
 \begin{lstlisting}
 void dma_contiguous_reserve(phys_addr_t limit);
@@ -111,7 +111,7 @@ Domyślną wartością konfiguracji jest alokacja \unit[16]{MiB}.
 
 Funkcja \code|dma_contiguous_reserve| tworzy domyślny region CMA
 wykorzystywany przez wszystkie urządzenia, które nie mają przypisanych
-prywatnych kontekstów.  Prywatne regiony CMA opisane są w~podrozdziale
+prywatnych kontekstów.  Prywatne regiony opisane są w~podrozdziale
 \ref{sec:priv-regions}.
 
 
@@ -187,9 +187,9 @@ razy (domyślnie 8).
 
 \subsection{Integracja z~podsystemem DMA}\label{sec:usage-integrate}
 
-Aby sterowniki mogły korzystać z~CMA poprzez DMA API, CMA musi zostać
-dodane do podsystemu DMA danej architektury.  Alokacja bufora CMA
-odbywa się poprzez wywołanie funkcji:
+Aby sterowniki mogły korzystać z~alokatora CMA poprzez DMA API, CMA
+musi zostać dodane do podsystemu DMA danej architektury.  Alokacja
+buforu CMA odbywa się poprzez wywołanie funkcji:
 
 \begin{lstlisting}
 struct page *dma_alloc_from_contiguous(
@@ -230,16 +230,16 @@ Argumenty \code|dev| i \code|count| mają takie samo
 znaczenie jak w~funkcji \code|dma_alloc_from_contiguous|,
 a~argument \code|pages| jest wartością zwróconą przez tę funkcję.
 
-Jeżeli dany bufor nie był zaalokowany poprzez CMA, funkcja
-\code|dma_release_from_contiguous| zwróci \code|false|.
-W~przeciwnym wypadku, bufor zostanie zwolniony i~funkcja zwróci
-\code|true|.  Ta zwracana wartość może zostać wykorzystana przez
-DMA API aby rozróżnić, czy dany bufor jest buforem CMA, czy też nie.
+Jeżeli dany bufor nie był zaalokowany poprzez alokator CMA, funkcja
+\code|dma_release_from_contiguous| zwróci \code|false|.  W~przeciwnym
+wypadku, bufor zostanie zwolniony i~funkcja zwróci \code|true|.  Ta
+zwracana wartość może zostać wykorzystana przez DMA API aby rozróżnić,
+czy dany bufor jest buforem CMA, czy też nie.
 
 Wydruk \ref{lst:dma-integration} pokazuje fragment patcha, który
-integruje CMA z~podsystemem DMA architektury x86.
+integruje mechanizm CMA z~podsystemem DMA architektury x86.
 
-\begin{lstlisting}[float=bht,caption={Integracja CMA z~podsystemem DMA
+\begin{lstlisting}[float=bht,caption={Integracja alokatora CMA z~podsystemem DMA
       architektury x86.},label=lst:dma-integration]
 diff --git a/arch/x86/kernel/pci-dma.c b/arch/x86/kernel/pci-dma.c
 @@ -99,14 +99,18 @@ void *dma_generic_alloc_coherent(
@@ -288,8 +288,8 @@ mechanizmy.
 \section{Regiony CMA dla poszczególnych urządzeń}\label{sec:priv-regions}
 
 Po dokonaniu zmian opisanych w~powyższym podrozdziale, sterowniki
-urządzeń powinny już działać.  Korzystając z~DMA API odwołują się
-bowiem do CMA.
+urządzeń powinny już działać.  Korzystając z~interfesju DMA odwołują
+się bowiem do alokatora CMA.
 
 Jednak niektóre urządzenia mogą mieć specyficzne wymagania.  Dla
 przykładu, wielo-formatowy koder multimedialny (\ang{Multi-format
