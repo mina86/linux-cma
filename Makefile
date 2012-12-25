@@ -15,10 +15,12 @@ include build/deps
 
 
 build/mnazarew_bsc.dvi: src/main.tex
-build/mnazarew_bsc.dvi: $(wildcard src/*.tex)
+build/mnazarew_bsc.dvi: $(wildcard src/*.*)
 build/mnazarew_bsc.dvi: images
 build/mnazarew_bsc.dvi:
 	@exec mkdir -p build
+	exec $(LATEX) $<
+	( cd build; exec bibtex main )
 	exec $(LATEX) $<
 	exec $(LATEX) $<
 	exec mv -- build/main.dvi $@

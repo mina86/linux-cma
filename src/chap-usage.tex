@@ -35,10 +35,10 @@ jest zawsze spójna z~tym co widzi procesor\footnote{W~różnych
   o~Linuksa działających na platformie ARM, bufory alokowane przy
   pomocy \code|dma_alloc_coherent| nie podlegają buforowaniu w~pamięci
   podręcznej procesora.}.  Wydruk \ref{lst:dma-alloc-example} pokazuje
-sposób wykorzystania tych dwóch funkcji.  Prosty sterownik, który
-można wykorzystać do testowania mechanizmu CMA można znaleźć
-w~\cite{patch:cma-test}, a~dokładniejszy opis DMA API w~rozdziale 15
-\cite{bib:ldd3}.
+sposób wykorzystania tych dwóch funkcji.  \textcite{patch:cma-test}
+stworzył prosty sterownik, który można wykorzystać do testowania
+mechanizmu CMA.  Dokładniejszy opis DMA API można znaleźć w~rozdziale
+15 \autocite{bib:ldd3}.
 
 \begin{lstlisting}[float=tbhp,caption={Alokacja bufora DMA z~użyciem
       DMA API.},label=lst:dma-alloc-example]
@@ -120,13 +120,14 @@ prywatnych kontekstów.  Prywatne regiony opisane są w~podrozdziale
 Na niektórych architekturach może zaistnieć przeprowadzenia dodatkowej
 obróbki zarezerwowanych regionów pamięci.
 
-Przykładowo, z~uwagi na brak spójności pamięci RAM i~pamięci
-podręcznej procesora na architekturze ARM, wymagane jest aby strony,
-z~których korzystają urządzenia, były mapowane jako niepodlegające
-buforowaniu (\ang{noncacheable}).  Co więcej, specyfikacja
-architektury mówi, że jeżeli dana strona jest mapowana z~różnymi
-parametrami buforowania (\ang{cacheability}), efekt działania systemu
-nie jest zdefiniowany.
+Przykładowo, z~uwagi na brak gwarancji spójności pamięci RAM i~pamięci
+podręcznej procesora na architekturze ARM
+\autocite[podrozdział B5.5]{bib:arm-arch-reference}, wymagane
+jest aby strony, z~których korzystają urządzenia, były mapowane jako
+niepodlegające buforowaniu (\ang{noncacheable}).  Co więcej,
+specyfikacja architektury mówi, że jeżeli dana strona jest mapowana
+z~różnymi parametrami buforowania (\ang{cacheability}), efekt
+działania systemu nie jest zdefiniowany.
 
 Dlatego w~architekturze ARM, kod integrujący CMA z~DMA API zmienia
 mapowanie strony na niechachewalne na czas, gdy jest ona używana przez
@@ -141,8 +142,8 @@ Niestety, takie mapowanie uniemożliwia zmianę parametrów mapowania
 pojedynczej strony.  Z~uwagi na to, regiony CMA są przygotowane w~ten
 sposób, że mapowanie wielkich stron jest rozbijane na wiele mapowań
 pojedynczych stron co pozwala na (w~miarę) proste modyfikowanie
-ustawień cachowania danej strony.  Więcej na ten temat można
-przeczytać w~artykule \cite{bib:cma-and-arm}.
+ustawień cachowania danej strony.  Więcej na ten temat napisał
+\textcite{bib:cma-and-arm}.
 
 Aby to umożliwić, dla każdego kontekstu CMA, zawołana zostanie funkcja:
 

@@ -155,10 +155,12 @@ stron, na których funkcja operowała, co jest dokonane w~linii 28.
 \section{Migracja zakresu stron}\label{sec:alloc-contig-migrate-range}
 
 
-Funkcja \code|__alloc_contig_migrate_range|,
-której zadaniem jest zmigrowanie zakresu stron.  Wydruk
-\ref{lst:alloc-contig-migrate-range} przedstawia tę funkcję (ponownie
-w~skróconej wersji, bez sprawdzania błędów i~komentarzy).
+Wydruk \ref{lst:alloc-contig-migrate-range} przedstawia funkcję
+\code|__alloc_contig_migrate_range|, której zadaniem jest zmigrowanie
+zakresu stron.  Funkcja działa w~pętli dopóki wszystkie zajęte strony
+z~zakresu $\left<\mathrm{start}, \mathrm{end}\right)$ nie zostaną
+zwolnione.
+
 
 \begin{lstlisting}[float=tbhp,caption={Skrócony wydruk funkcji
     \code|__alloc_conting_migrate_range| z Linuksa 3.5.},label=lst:alloc-contig-migrate-range]
@@ -199,18 +201,15 @@ static int __alloc_contig_migrate_range(unsigned long start, unsigned long end)
 }
 \end{lstlisting}
 
-Funkcja działa w~pętli dopóki wszystkie zajęte strony z~zakresu
-$\left<\mathrm{start}, \mathrm{end}\right)$ nie zostaną zmigrowane.
+Kolejka stron do zmigrowania przechowywana jest na liście
+\code|cc.migratepages|, która (jeżeli jest pusta) jest uzupełniana
+przez funkcję \code|isolate_migratepages_range|.
 
-Funkcja przechowuje kolejkę stron, które czekają na zmigrowanie
-w~liście \code|cc.migratepages|, która (jeżeli jest pusta) jest
-uzupełniana przez funkcję \code|isolate_migratepages_range|.
-
-Funkcja ta skanuje podany zakres stron od początku zakresu szukając
-strony, które mogą zostać zmigrowane, aż znajdzie 32 strony (ten
-arbitralny bądź co bądź limit, zdefiniowany jest przez stałą
-\code|COMPACT_CLUSTER_MAX|) lub dojdzie do końca zakresu.
-Wszystkie strony zapisywane są na wspomnianej już liście.
+Funkcja ta skanuje podany zakres stron szukając strony, które mogą
+zostać zmigrowane, aż znajdzie 32 strony (ten arbitralny bądź co bądź
+limit, zdefiniowany jest przez stałą \code|COMPACT_CLUSTER_MAX|) lub
+dojdzie do końca zakresu.  Wszystkie strony zapisywane są na
+wspomnianej już liście.
 
 Strony te są migrowane przez funkcję \code|migrate_pages|
 i~jeżeli wszystko się powiedzie, funkcja kończy się powodzeniem po
@@ -341,7 +340,7 @@ podrozdziale.
 Z~uwagi na złożoność mechanizmu CMA, niniejszy rozdział skupiał się
 jedynie na jego najistotniejszych aspektach.  Aby prześledzić
 implementację alokatora CMA w~większych szczegółach, czytelnik będzie
-musiał zwrócić się do \cite{patch:cma-24} lub przyjrzeć się plikom
+musiał zwrócić się do \autocite{patch:cma-24} lub przyjrzeć się plikom
 \code|drivers/base/dma-contiguous.c|, \code|mm/page_alloc.c|,
 \code|mm/compaction.c| oraz \code|mm/page_isolation.c| w~jądrze Linux.
 Niemniej wiedza zawarta w~tym rozdziale powinna wystarczyć, aby móc

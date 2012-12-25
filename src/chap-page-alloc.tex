@@ -9,7 +9,7 @@ Linux posiada wiele mechanizmów alokacji pamięci.  Począwszy od
 najprostszych w~użyciu funkcji \code|kmalloc| i \code|vmalloc|,
 poprzez mechanizmy puli pamięci, aż do alokatora czasu bootowania
 i~alokatorów pamięci dostępnej dla urządzeń zewnętrznych
-\cite[rozdział 8]{bib:ldd3}.  Pomimo tak dużej liczby interfejsów,
+\autocite[rozdział 8]{bib:ldd3}.  Pomimo tak dużej liczby interfejsów,
 wiele z~nich sprowadza się do wywołania alokatora stron (\ang{page
   allocator}), który jest sercem podsystemu zarządzania pamięcią.
 Uproszczone zależności między tymi komponentami przedstawia rysunek
@@ -136,7 +136,8 @@ stron o~dużym rzędzie.  Proces ten ilustruje algorytm
 \end{algorithm}
 
 Dokładniejszy opis algorytmu bliźniaków oraz przedstawienie jego
-właściwości można znaleźć na stronach 435--455 \cite{bib:taocp-fa}.
+właściwości można znaleźć na stronach 435--455
+\autocite{bib:taocp-fa}.
 
 
 \section{Migracja i~typy migracji}\label{sec:migratetype}
@@ -155,11 +156,11 @@ których jest sześć: {\it unmovable}, {\it reclaimable}, {\it movable},
   adres fizyczny nie jest istotny, w~związku z~czym mogą być
   przeniesione w~inne miejsce pamięci RAM.
 \item Typ {\it cma} jest nowym typem dodanym dla potrzeb interfejsu
-  CMA i~jest opisany dokładniej w~podrozdziale \ref{sec:migrate-cma}
+  CMA i~jest opisany dokładniej w~podrozdziale \ref{sec:migrate-cma}.
 \item Typ {\it isolate} jest niejako pseudo-typem, gdyż jeżeli wolna
   strona ma taki typ, nie może ona zostać zaalokowana.  Więcej na
   temat sposobu w~jaki ten typ może być wykorzystywany opisuję
-  w~podrozdziale \ref{sec:alloc-contig-range}
+  w~podrozdziale \ref{sec:alloc-contig-range}.
 \end{itemize}
 
 Jednym z~przykładów stron ruchomych są strony anonimowe działających
@@ -171,9 +172,9 @@ zarządza jądro.
 
 Proces przenoszenia ruchomej strony nazywa się migracją
 i wykorzystywany jest między innymi przy obsłudze hot-swapu pamięci,
-a~także w~trackie procesu zagęszczania (opisanego
-w~\cite{bib:compaction}), którego celem jest zwiększenie liczby
-dostępnych stron o~wysokich rzędach.
+a~także w~trackie procesu zagęszczania \autocite{bib:compaction,
+  bib:supporting-large-contig-regions}, którego celem jest zwiększenie
+liczby dostępnych stron o~wysokich rzędach.
 
 \begin{algorithm}
 \caption[Migracja strony.]{Migracja strony $p$.}

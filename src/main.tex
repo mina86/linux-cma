@@ -1,10 +1,20 @@
 \documentclass[a4paper,onecolumn,oneside,11pt]{mwrep}
-\usepackage[MeX]{polski}
+\usepackage[plmath,MeX]{polski}
 \usepackage[utf8]{inputenc}
 \usepackage{bookman}
 \usepackage[T1]{fontenc}
 \usepackage{amssymb}  % must be loaded before babel[polish]
 \usepackage[polish]{babel}
+\usepackage{csquotes}
+
+\DeclareQuoteStyle{polish}
+	{\quotedblbase}{\textquotedblright}
+	{\quotesinglbase}{\textquoteright}
+
+\usepackage[backend=bibtex,sorting=nyt,style=numeric-comp]{biblatex}
+\DeclareLanguageMapping{polish}{src/polish}
+\addbibresource{../src/bib.bib} % bibtex is run from inside of build/ directory
+
 
 \let\emptyset\varnothing
 
@@ -15,12 +25,11 @@
 \usepackage{wrapfig}
 \usepackage{graphicx}
 \usepackage{epstopdf}
-\usepackage{subfig}
+\usepackage[subrefformat=parens,labelformat=parens]{subfig}
 
 \usepackage{units}
 
 \usepackage{color}
-
 \definecolor{gray}{rgb}{0.5,0.5,0.5}
 
 \makeatletter
@@ -97,6 +106,8 @@
 }
 \newcommand*\l@algorithm{\mw@tocline{1}{0pt}{2.5em}}
 
+\makeatother
+
 \usepackage[top=2.5cm,bottom=2.5cm,inner=2cm,outer=3cm]{geometry}
 
 \clubpenalty=10000
@@ -117,8 +128,6 @@
 \newcommand*{\footrulewidth}{0.pt}
 \pagestyle{uheadings}
 
-\usepackage[sort,compress]{cite}
-
 \newcommand*{\TODO}[1]{{\setlength{\fboxsep}{0pt}\footnotesize (\colorbox{red}{TODO}: #1)}}
 \newcommand*{\ang}[1]{ang.\ {\it #1}}
 
@@ -127,8 +136,6 @@
 \author{Michał Nazarewicz}
 \date{\today}
 \newcommand*{\theengishtitle}{Physically contiguous memory allocation in Linux-based systems}
-
-\makeatother
 
 \begin{document}
 
