@@ -5744,8 +5744,8 @@
   <use x="50" y="0" xlink:href="#pages" />
 
   <text x="320" y=" 16">32 strony rzędu 0</text>
-  <text x="320" y=" 36">16 strony rzędu 1</text>
-  <text x="320" y=" 56">8 strony rzędu 2</text>
+  <text x="320" y=" 36">16 stron rzędu 1</text>
+  <text x="320" y=" 56">8 stron rzędu 2</text>
   <text x="320" y=" 76">4 strony rzędu 3</text>
   <text x="320" y=" 96">2 strony rzędu 4</text>
   <text x="320" y="116">1 strona rzędu 5</text>
