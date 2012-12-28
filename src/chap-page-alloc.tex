@@ -137,7 +137,8 @@ stron o~dużym rzędzie.  Proces ten ilustruje algorytm
 
 Dokładniejszy opis algorytmu bliźniaków oraz przedstawienie jego
 właściwości można znaleźć na stronach 435--455
-\autocite{bib:taocp-fa}.
+\autocite{bib:taocp-fa}, a~jego zastosowanie w~Linuksie w~podrozdziale
+8.1.7 \autocite{bib:utlk}.
 
 
 \section{Migracja i~typy migracji}\label{sec:migratetype}
@@ -291,12 +292,13 @@ strony o~innym typie migracji mogą być z~niego przydzielone.
 \section{Listy PCP}\label{sec:pcp-lists}
 
 Ostatnim istotnym, z~punktu widzenia mechanizmu CMA, aspektem
-alokatora stron są listy PCP (\ang{per CPU pages}).  Ponieważ listy
-wolnych stron są współdzielone w~obrębie całego systemu dostęp do nich
-musi być synchronizowany pomiędzy wszystkimi procesorami.  Aby uniknąć
-kosztów związanych z~synchronizacją, każdy procesor posiada swoje
-prywatne listy PCP, na których znajdują się wolne strony rzędu 0.
-Biorąc również i~ten aspekt pod uwagę, alokacja przyjmuje postać
+alokatora stron są listy PCP (\ang{per CPU pages})
+\autocite[podrozdział 8.1.8]{bib:utlk}.  Ponieważ listy wolnych stron
+są współdzielone w~obrębie całego systemu dostęp do nich musi być
+synchronizowany pomiędzy wszystkimi procesorami.  Aby uniknąć kosztów
+związanych z~synchronizacją, każdy procesor posiada swoje prywatne
+listy PCP, na których znajdują się wolne strony rzędu 0.  Biorąc
+również i~ten aspekt pod uwagę, alokacja przyjmuje postać
 przedstawianą w~algorytmie \ref{alg:buddy-pcp}
 
 \begin{algorithm}
@@ -341,9 +343,9 @@ istotne z~punktu widzenia mechanizmu CMA.  Niemniej dla porządku
 wymienię kilka istotniejszych detali, które wpływają w~dużej mierze na
 sposób w~jaki Linux zarządza pamięcią.
 
-Po pierwsze cała pamięć podzielona jest na strefy (\ang{zones}),
-których, zależnie od architektury oraz opcji komplicaji, może być
-pięć:
+Po pierwsze cała pamięć podzielona jest na strefy (\ang{zones})
+\autocite[podrozdział 8.1.3]{bib:utlk}, których, zależnie od
+architektury oraz opcji kompilacji, może być pięć:
 
 \begin{description}
 \item[ZONE\_DMA] Strefa przeznaczona dla urządzeń, które nie są
@@ -363,10 +365,11 @@ pięć:
 
 Co więcej, pamięć jest również podzielona na węzły (\ang{nodes}),
 które odpowiadają wezłom w~systemach z~niejednolitym dostępem do
-pamięci (\ang{Non-Uniform Memory Access} lub NUMA).  Ponieważ
-w~architekturach tego typu czas dostępu do pamięci zależy od jej
-miejsca względem procesora, istotne jest alokowanie buforów blisko
-procesora, który bódzie z~nich korzystał.
+pamięci (\ang{Non-Uniform Memory Access} lub NUMA)
+\autocite[podrozdział 8.1.2]{bib:utlk}.  Ponieważ w~architekturach
+tego typu czas dostępu do pamięci zależy od jej miejsca względem
+procesora, istotne jest alokowanie buforów blisko procesora, który
+bódzie z~nich korzystał.
 
 Niniejszy rozdział przemilczał również co się dzieje jeżeli podczas
 alokacji wolna pamięć nie może zostać odnaleziona.  Otóż jeżeli
@@ -375,7 +378,7 @@ aktywowana jest tzw.\ wolna ścieżka (\ang{slow path}), która
 wykorzystuje różne mechanizmy odzyskiwania pamięci (np.\ poprzez
 zwalnianie buforów dyskowych, czy w~najgorszym przypadku zabiciu
 jednego z~działających procesów, czego dokonuje {\it out-of-memory
-  killer} lub OOM {\it killer}).
+  killer} lub OOM {\it killer}) \autocite[rozdział 17]{bib:utlk}.
 
 Istnieje jeszcze wiele innych aspektów takich -- jak chociażby
 alokacja w~kontekście atomowym (np.\ w~trakcie obsługi przerwania),
