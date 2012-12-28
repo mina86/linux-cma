@@ -2,32 +2,19 @@
 % Distributed under the terms of the Creative Commons
 % Attribution-ShareAlike 3.0 Unported (CC BY-SA 3.0) license.
 
-\subsection{Page allocator}
-
-\begin{frame}[fragile]
-  \frametitle{Linux kernel memory allocators}
-
-  \begin{center}
-    \includegraphics<1>[width=\textwidth]{build/linux-allocators--base.eps}
-    \includegraphics<2>[width=\textwidth]{build/linux-allocators--important.eps}
-  \end{center}
-\end{frame}
+\subsection{Alokator stron}
 
 \begin{frame}
-  \frametitle{Buddy allocator}
+  \frametitle{Algorytm bliźniaków}
   \begin{columns}[c]
 
     \column{0.6\textwidth}
     \begin{itemize}
-    \item Page allocator uses buddy allocation algorithm.
-      \begin{itemize}
-      \item Hence different names: buddy system or buddy allocator.
-      \end{itemize}
-    \item Allocations are done in terms of orders.
-    \item User can request order from 0 to 10.
-    \item If best matching page is too large, it's recursively split
-      in half (into two buddies).
-    \item When releasing, page is merged with its buddy (if free).
+    \item Alokator stron implementuje algorytm bliźniaków.
+    \item Żądania w~kategoriach rzędu strony.
+    \item Rząd może być 0--10\textcolor{gray}{$^\dagger$}.
+    \item Zbyt duże strony są dzielone na połowy (tzw.\ bliźniaków).
+    \item Podczas zwalniania, strona jest łączona z~bliźniakami.
     \end{itemize}
 
     \column{0.4\textwidth}
@@ -38,28 +25,57 @@
 \end{frame}
 
 \begin{frame}
-  \frametitle{Pages and page blocks, cont}
+  \frametitle{Strony i~bloki stron}
   \begin{center}
   \includegraphics[width=0.9\textwidth]{build/pages.eps}
   \end{center}
 \end{frame}
 
 \begin{frame}[fragile]
-  \frametitle{Migrate types}
+  \frametitle{Typy migracji stron}
 
   \begin{itemize}
-  \item On allocation, user requests an unmovable, a~reclaimable or
-    a~movable page.
+  \item Przy alokacji, użytkownik określa typ migracji żądanej strony:
     \begin{itemize}
-    \item For our purposes, we treat reclaimable as unmovable.
+    \item {\it unmovable}, {\it reclaimable} lub {\it movable},
     \end{itemize}
-  \item To try keep pages of the same type together, each free page
-    and each page block has a~migrate type assigned.
+  \item Dla potrzeb CMA:
     \begin{itemize}
-    \item But allocator will use fallback types.
-    \item And migrate type of a~free page and page blocks can change.
+    \item {\it unmovable} i {\it reclaimable} $\rightarrow$ strony
+      \textsl{nieruchome},
+    \item {\it movable} $\rightarrow$ strony \textsl{ruchome}.
     \end{itemize}
-  \item When released, page takes migrate type of pageblock it belongs
-    to.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Typy migracji bloków stron}
+
+  \begin{itemize}
+  \item Każdy blok stron ma przpisany typ migracji.
+  \item Ułatwia to trzymanie stron tego samego typu razem.
+  \item Przy alokacji strony są brane z~odpowiedniego bloku.
+    \begin{itemize}
+    \item Chyba, że takowych nie ma.
+    \end{itemize}
+  \item Typ bloku może się zmieniać.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Migracja}
+
+  \begin{itemize}
+  \item Strony ruchome, mogą być migrowane.
+  \item Migracja polega na:
+    \begin{itemize}
+    \item skopiowaniu zawartości strony gdzie indziej i
+    \item uaktualnieniu odwołań do starej strony.
+    \end{itemize}
+  \item Przykładami stron ruchomych są:
+    \begin{itemize}
+    \item anonimove strony procesów i
+    \item bufory dyskowe.
+    \end{itemize}
   \end{itemize}
 \end{frame}

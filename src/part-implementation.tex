@@ -2,89 +2,66 @@
 % Distributed under the terms of the Creative Commons
 % Attribution-ShareAlike 3.0 Unported (CC BY-SA 3.0) license.
 
-\subsection{CMA implementation}
+\subsection{Implementacja CMA}
 
 \begin{frame}[fragile]
-  \frametitle{Interaction of CMA with Linux allocators}
+  \frametitle{Interakcja CMA z~innymi alokatorami}
 
   \begin{center}
-    \includegraphics[width=\textwidth]{build/linux-allocators--cma.eps}
+    \includegraphics<1>[width=\textwidth]{build/linux-allocators--important.eps}
+    \includegraphics<2>[width=\textwidth]{build/linux-allocators--cma.eps}
   \end{center}
 \end{frame}
 
 \begin{frame}
-  \frametitle{CMA migrate type}
+  \frametitle{Integracja z~DMA API}
 
   \begin{itemize}
-  \item CMA needs guarantees that large number of contiguous pages can
-    be migrated.
-    \begin{itemize}
-    \item 100\% guarantee is of course never possible.
-    \end{itemize}
+  \item DMA API umożliwia alokowanie buforów DMA.
+  \item Implementacja zależna od architektury.
+  \item Funkcje DMA API danej architektury muszą być zmodyfikowane
+    i~wołać CMA.
   \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Rezerwacja regionów CMA}
 
   \begin{itemize}
-  \item CMA introduced a~new migrate type.
+  \item Przy starcie, CMA rezerwuje pamięć z~memblock.
+    \begin{itemize}
+    \item Zarezerwowany obszar nazywa się regionem lub kontekstem.
+    \end{itemize}
+  \item Przygotowany region jest zwracany do puli alokatora stron.
+  \item Kontekst posiada bitmapę stron niezaalokowanych przez CMA.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Typ migracji CMA}
+
+  \begin{itemize}
+  \item CMA migruje wiele stron na raz.
+    \begin{itemize}
+    \item Dostępne typy migracji nie gwarantują ciągłości.
+    \end{itemize}
+  \item Nowy typ migracji:
     \begin{itemize}
     \item \code{MIGRATE_CMA}
     \end{itemize}
-  \item This migrate type has the following properties:
+  \item Blok stron tego typu:
     \begin{itemize}
-    \item CMA pageblocks never change migrate type.\footnote{Other
-      than while CMA is allocating memory from them.}
-    \item Only movable pages can be allocated from CMA pageblocks.
+    \item nigdy nie zmienia typu, oraz
+    \item alokator stron alokuje z~niego tylko strony ruchome.
     \end{itemize}
   \end{itemize}
 \end{frame}
 
 \begin{frame}
-  \frametitle{Preparing CMA region}
-
-  \begin{itemize}
-  \item At the boot time, some of the memory is reserved.
-  \item When page allocator initialises, that memory is released with
-    CMA's migrate type.
-  \item This way, it can be used for movable pages.
-    \begin{itemize}
-    \item Unless the memory is allocated to a~device driver.
-    \end{itemize}
-  \item Each CMA region has a~bitmap of “CMA free” pages.
-    \begin{itemize}
-    \item “CMA free” page is one that is not allocated for device
-      driver.
-    \item It may still be allocated as a~movable page.
-    \end{itemize}
-  \end{itemize}
-\end{frame}
-
-\begin{frame}
-  \frametitle{Allocation}
+  \frametitle{Algorytm alokacji}
 
   \begin{center}
     \includegraphics[width=\textwidth]{build/cma-alloc-algo.eps}
   \end{center}
-
-\end{frame}
-
-\begin{frame}
-  \frametitle{Migration}
-
-  \begin{itemize}
-  \item Pages allocated as movable are set up so that they can be
-    migrated.
-    \begin{itemize}
-    \item Such pages are only references indirectly.
-    \item Examples are anonymous process pages and disk cache.
-    \end{itemize}
-  \item Roughly speaking, migration consists of:
-    \begin{enumerate}
-    \item allocating a~new page,
-    \item copying contents of the old page to the new page,
-    \item updating all places where old page was referred, and
-    \item freeing the old page.
-    \end{enumerate}
-  \item In some cases, content of movable page can simply be
-    discarded.
-  \end{itemize}
 
 \end{frame}

@@ -1,7 +1,7 @@
 LATEX	:= latex -halt-on-error -file-line-error -output-directory=build
 FAST	?= false
 
-all: cma-lce.pdf
+all: cma-sdi.pdf
 
 
 build/deps: find-deps.sh $(wildcard src/*.tex)
@@ -14,10 +14,10 @@ include build/deps
 %.pdf: build/%.dvi
 	exec dvipdf $< $@
 
-build/cma-lce.dvi: src/main.tex
-build/cma-lce.dvi: $(wildcard src/*.tex)
-build/cma-lce.dvi: images
-build/cma-lce.dvi:
+build/cma-sdi.dvi: src/main.tex
+build/cma-sdi.dvi: $(wildcard src/*.tex)
+build/cma-sdi.dvi: images
+build/cma-sdi.dvi:
 	@exec mkdir -p build
 	exec $(LATEX) $<
 	$FAST || exec $(LATEX) $<
@@ -43,7 +43,7 @@ clean:
 	exec rm -fr -- build
 
 distclean: clean
-	exec rm -f -- cma-lce.pdf
+	exec rm -f -- cma-sdi.pdf
 
 
 .PHONY: images clean distclean

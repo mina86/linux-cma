@@ -5,7 +5,7 @@
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 \usepackage{lmodern}
-\usepackage[english]{babel}
+\usepackage[polish]{babel}
 \usepackage{pgf}
 \usepackage{units}
 \usepackage{lmodern}
@@ -16,19 +16,6 @@
 
 \newcommand{\notimplies}{%
   \mathrel{{\ooalign{\hidewidth$\not\phantom{=}$\hidewidth\cr$\implies$}}}}
-
-% Define the Google colours.
-\definecolor{GoogleBlue}{RGB}{51,105,232}
-\definecolor{GoogleYellow}{RGB}{238,178,17}
-\definecolor{GoogleGreen}{RGB}{0,153,37}
-\definecolor{GoogleRed}{RGB}{213,15,37}
-\newcommand\Google{\href{http://www.google.com/}{%
-{\color{GoogleBlue}G}%
-{\color{GoogleRed}o}%
-{\color{GoogleYellow}o}%
-{\color{GoogleBlue}g}%
-{\color{GoogleGreen}l}%
-{\color{GoogleRed}e}}}
 
 \definecolor{gray}{RGB}{102,102,102}
 \definecolor{darkgreen}{RGB}{0,128,0}
@@ -86,7 +73,7 @@
 \newcommand\Section[1]{%
 \section{#1}%
 \begin{frame}%
-\frametitle{Outline}
+\frametitle{Zarys prezentacji}
 \tableofcontents[currentsection]%,sections=\thesection]%
 \end{frame}}
 
@@ -94,12 +81,12 @@
 \newcommand\theauthor{Michał Nazarewicz}
 \newcommand\theemail{mina86@mina86.com}
 \title{Continuous Memory Allocator}
-\subtitle{Allocating big chunks of physically contiguous memory}
+\subtitle{Alokacja dużych obszarów ciągłej fizycznie pamięci}
 \author[\theauthor]{%
   \texorpdfstring{\theauthor\vskip 8pt%
     \scriptsize\href{mailto:\theemail}{\theemail}}{%
     \theauthor}}
-\institute{\Google}
+\institute{Instytut Informatyki Politechniki Warszawskiej}
 \date{\today}
 
 \setbeamerfont{institute}{size={\fontsize{10pt}{12pt}}}
@@ -117,25 +104,23 @@
   \tableofcontents
 \end{frame}
 
-\Section{Introduction}
+\Section{Wstęp}
 \input{src/part-the-problem}
 \input{src/part-solutions}
-\Section{Usage \& Integration}
-\input{src/part-usage}
-\input{src/part-integration}
-\input{src/part-regions}
-\Section{Implementation}
+\Section{Pamięci w Linuksie}
+\input{src/part-alloc-overview}
 \input{src/part-page-alloc}
+\Section{Implementacja}
 \input{src/part-implementation}
 \input{src/part-future}
 
 \appendix
 
-\section*{Q \& A}
+\section*{Pytania?}
 \begin{frame}
   \begin{center}
     \vskip 2em
-    {\Huge Thank you!}
+    {\Huge Dziękuję!}
     \vskip 2em
     \includegraphics[width=0.3\textwidth]{build/interrogation.eps}
   \end{center}
@@ -144,7 +129,7 @@
 
   \begin{itemize}
   \item \theauthor
-  \item \href{mailto:\theemail}{\theemail}
+  \item \href{mailto:\theemail}{\theemail}, \href{mailto:mpn@google.com}{mpn@google.com}
   \item \url{http://mina86.com/cma/}
   \end{itemize}
 

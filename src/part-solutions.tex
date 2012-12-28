@@ -2,30 +2,30 @@
 % Distributed under the terms of the Creative Commons
 % Attribution-ShareAlike 3.0 Unported (CC BY-SA 3.0) license.
 
-\subsection{Solutions to the problem}
+\subsection{Rozwiązania problemu}
 
 \begin{frame}
-  \frametitle{Reserve and assign at boot time}
+  \frametitle{Rezerwacja i~przydzielanie przy starcie}
 
   \begin{itemize}
-  \item Reserve memory during system boot time.
+  \item Rezerwacja pamięci przy starcie systemu.
     \begin{itemize}
-    \item \code{mem} parameter.
+    \item Parametr \code{mem}.
     \item Memblock / bootmem.
     \end{itemize}
-  \item Assign buffers to each device that might need it.
-  \item While device is not being used, memory is wasted.
+  \item Przypisanie na stałe buforów do urządzeń.
+  \item Gdy urządzenie nic nie robi, pamięć jest marnowana.
   \end{itemize}
 \end{frame}
 
 \begin{frame}
-  \frametitle{Reserve and allocate on demand}
+  \frametitle{Rezerwacja i~zarządzanie}
 
   \begin{itemize}
-  \item Reserve memory during system boot time.
-  \item Provide API for allocating from that reserved pool.
-  \item Less memory is reserved.
-  \item But it's still wasted.
+  \item Rezerwacja pamięci przy starcie systemu.
+  \item Zdefiniowanie interfejsu alokatora.
+  \item Mniej pamięci jest zarezerwowanej.
+  \item Niemniej nadal jest marnowana.
   \end{itemize}
 
   \begin{itemize}
@@ -35,16 +35,16 @@
 \end{frame}
 
 \begin{frame}
-  \frametitle{Reserve but give back}
+  \frametitle{Rezerwacja i zwrócenie systemowi}
 
   \begin{itemize}
-  \item Reserve memory during system boot time.
-  \item Give it back
+  \item Rezerwacja pamięci przy starcie systemu.
+  \item Zwracanie pamięci z~powrotem do systemu,
     \begin{itemize}
-    \item but set it up so only movable pages can be allocated.
+    \item ale tylko strony ruchome mogą być z~niej alokowane.
     \end{itemize}
-  \item Provide API for allocating from that reserved pool.
-  \item Migrate pages on allocation.
+  \item Zdefiniowanie interfejsu alokatora.
+  \item Migruj strony przy alokacji.
   \end{itemize}
 
   \begin{itemize}
