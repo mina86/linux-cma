@@ -91,7 +91,7 @@
       <rect x=" 10" y=" 10" width="140" height=" 30" />
       <text x=" 80" y=" 30">memblock</text>
       <rect x="230" y=" 80" width="140" height=" 30" />
-      <text x="300" y="100">page allocator</text>
+      <text x="300" y="100">alokator stron</text>
       <rect x="450" y=" 10" width="140" height=" 30" />
       <text x="520" y=" 30">DMA API</text>
     </g>
