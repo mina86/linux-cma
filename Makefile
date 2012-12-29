@@ -6,7 +6,10 @@ all: cma-lce.pdf
 
 build/deps: find-deps.sh $(wildcard src/*.tex)
 	@exec mkdir -p build
-	@exec sh $^ >$@
+	@DEPS_TARGET=build/cma-lce.dvi exec sh $^ >$@
+
+build/cma-lce.dvi: src/main.tex
+build/cma-lce.dvi: $(wildcard src/*.tex)
 
 include build/deps
 
@@ -14,17 +17,12 @@ include build/deps
 %.pdf: build/%.dvi
 	exec dvipdf $< $@
 
-build/cma-lce.dvi: src/main.tex
-build/cma-lce.dvi: $(wildcard src/*.tex)
-build/cma-lce.dvi: images
 build/cma-lce.dvi:
 	@exec mkdir -p build
 	exec $(LATEX) $<
 	$FAST || exec $(LATEX) $<
 	exec mv -- build/main.dvi $@
 
-
-images:
 
 build/%.eps: img/%.svg
 	@exec mkdir -p build
@@ -42,8 +40,11 @@ build/%.eps: img/%.eps
 clean:
 	exec rm -fr -- build
 
+clean-tex:
+	exec rm -r -- build/main.*
+
 distclean: clean
 	exec rm -f -- cma-lce.pdf
 
 
-.PHONY: images clean distclean
+.PHONY: clean clean-tex distclean
