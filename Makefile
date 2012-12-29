@@ -5,7 +5,10 @@ all: mnazarew_bsc.pdf
 
 build/deps: find-deps.sh $(wildcard src/*.tex)
 	@exec mkdir -p build
-	@exec sh $^ >$@
+	@DEPS_TARGET=build/mnazarew_bsc.dvi exec sh $^ >$@
+
+build/mnazarew_bsc.dvi: src/main.tex
+build/mnazarew_bsc.dvi: $(wildcard src/*.*)
 
 include build/deps
 
@@ -14,9 +17,6 @@ include build/deps
 	exec dvipdf $< $@
 
 
-build/mnazarew_bsc.dvi: src/main.tex
-build/mnazarew_bsc.dvi: $(wildcard src/*.*)
-build/mnazarew_bsc.dvi: images
 build/mnazarew_bsc.dvi:
 	@exec mkdir -p build
 	exec $(LATEX) $<
@@ -25,8 +25,6 @@ build/mnazarew_bsc.dvi:
 	exec $(LATEX) $<
 	exec mv -- build/main.dvi $@
 
-
-images:
 
 build/%.eps: img/%.svg
 	@exec mkdir -p build
@@ -39,8 +37,11 @@ build/%.eps: img/%.dia
 clean:
 	exec rm -fr -- build
 
+clean-tex:
+	exec rm -r -- build/main.*
+
 distclean: clean
 	exec rm -f -- mnazarew_bsc.pdf
 
 
-.PHONY: images clean distclean
+.PHONY: clean clean-tex distclean
