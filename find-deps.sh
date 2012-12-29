@@ -7,7 +7,7 @@
 sed -ne 's/.*\\includegraphics.*{\(build\/[^}]*\)}.*/\1/p' "$@" /dev/null |
 	sort -u |
 	while read img; do
-		echo "images: $img"
+		echo "${DEPS_TARGET?Must provide DEPS_TARGET env var}: $img"
 		case "$img" in build/*--*)
 			svg=${img%--*}.svg
 			svg=img/${svg#build/}
