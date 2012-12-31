@@ -1,14 +1,20 @@
 LATEX := latex -halt-on-error -file-line-error -output-directory=build
 
-all: mnazarew_bsc.pdf
+TEXINPUTS := .:./llncs:
+BIBINPUTS := .:./llncs:
+export TEXINPUTS
+export BIBINPUTS
+
+
+all: cma-sdi-paper.pdf
 
 
 build/deps: find-deps.sh $(wildcard src/*.tex)
 	@exec mkdir -p build
-	@DEPS_TARGET=build/mnazarew_bsc.dvi exec sh $^ >$@
+	@DEPS_TARGET=build/cma-sdi-paper.dvi exec sh $^ >$@
 
-build/mnazarew_bsc.dvi: src/main.tex
-build/mnazarew_bsc.dvi: $(wildcard src/*.*)
+build/cma-sdi-paper.dvi: src/main.tex
+build/cma-sdi-paper.dvi: $(wildcard src/*.*)
 
 include build/deps
 
@@ -17,7 +23,7 @@ include build/deps
 	exec dvipdf $< $@
 
 
-build/mnazarew_bsc.dvi:
+build/cma-sdi-paper.dvi:
 	@exec mkdir -p build
 	exec $(LATEX) $<
 	( cd build; exec bibtex main )
@@ -41,7 +47,7 @@ clean-tex:
 	exec rm -r -- build/main.*
 
 distclean: clean
-	exec rm -f -- mnazarew_bsc.pdf
+	exec rm -f -- cma-sdi-paper.pdf
 
 
 .PHONY: clean clean-tex distclean

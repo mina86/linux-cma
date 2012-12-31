@@ -1,18 +1,3 @@
-\chapter{Wstęp}
-
-Tematem niniejszej pracy inżynierskiej jest sterownik dla jądra Linux,
-który pozwala w~efektywny sposób alokować duże obszary ciągłej
-fizycznie pamięci.  Opisanym mechanizmem jest stworzony przeze mnie
-menadżer ciągłej pamięci, {\it Contiguous Memory Allocator} (lub CMA).
-
-Podstawowym zastosowaniem dużych buforów, który brałem w~głównej
-mierze podczas pisania alokatora CMA, jest wykorzystanie ich
-w~podzespołach dostępnych w~nowoczesnych telefonach komórkowych.
-Niemniej odkąd stworzony przeze mnie kod został dołączony do Linuksa,
-różne osoby wykazały zainteresowanie, aby wykorzystywać go również
-w~innych celach.
-
-
 \section{Opis problemu}
 
 W~celu zwiększenia efektywności działania oraz liczby udostępnianych
@@ -47,8 +32,6 @@ się jednak wiązać z~wieloma ograniczeniami.
   \label{fig:mmu-iommu}
 \end{figure}
 
-\subsection{Jednostka translacji adresów}
-
 Nowoczesne architektury przeznaczone do serwerów i~komputerów
 osobistych posiadają jednostkę zarządzania pamięcią (\ang{memory
   management unit}, MMU), która tłumaczy adresy logiczne na fizyczne.
@@ -56,36 +39,20 @@ Dzięki temu, bufory, które z~punktu widzenia procesora są ciągłe, mogą
 w~rzeczywistości być podzielone na wiele stron rozrzuconych po pamięci
 fizycznej.  W~ten sposób, nawet jeżeli program alokuje
 wielomegabajtowy obszar, system może zrealizować żądanie alokując
-wiele czterokibibajtowych\footnote{Aby uniknąć wieloznaczności,
-  stosuję przedrostki „kilo-” i~„mega-” w~znaczeniu odpowiednio tysiąc
-  i~milion (zgodnie z~układem SI), a~„kibi-” i~„mebi-” w~znaczeniu
-  odpowiednie $2^{10} = 1024$ i~$2^{20}$ (zgodnie
-  z~tzw.\ przedrostkami ICE).} stron i~nie przejmować się fragmentacją
+wiele czterokibibajtowych stron i~nie przejmować się fragmentacją
 pamięci.
 
-\subsection{Bezpośredni dostęp do pamięci}
+Niemniej, jak to przedstawia rysunek \subref*{fig:sys-with-mmu}, MMU
+przeważnie nie jest dostępny dla pozostałych układów znajdujących się
+w~urządzeniu, takich jak np.\ karta dźwiękowa, czy kontroler sieciowy.
+Także i~dla tych przypadków istnieje rozwiązanie w~postaci mechanizmu
+bezpośredniego dostępu do pamięci (\ang{Direct Memory Access}, DMA),
+którego celem jest odciążenie procesora od przesyłania danych.  Co
+prawda urządzenie nadal znajduje się w~przestrzeni adresów fizycznych,
+co ilustruje rysunek \subref*{fig:sys-with-dma}, ale dzięki układowi
+DMA nieciągłość buforów może zostać przed nim ukryta.
 
-Niemniej, tak jak to przedstawia rysunek \subref*{fig:sys-with-mmu},
-MMU przeważnie nie jest dostępny dla pozostałych układów znajdujących
-się w~urządzeniu, takich jak np.\ karta dźwiękowa, czy kontroler
-sieciowy.  Także i~dla tych przypadków istnieje rozwiązanie w~postaci
-mechanizmu bezpośredniego dostępu do pamięci (\ang{Direct Memory
-  Access}, DMA), którego celem jest odciążenie procesora od
-przesyłania danych.  Co prawda urządzenie nadal znajduje się
-w~przestrzeni adresów fizycznych, co ilustruje rysunek
-\subref*{fig:sys-with-dma}, ale dzięki układowi DMA nieciągłość
-buforów może zostać przed nim ukryta.
-
-Układ DMA może obsługiwać technikę wektorowego wejścia/wyjścia
-(\ang{vectored I/O}), która pozwala zbierać wiele rozrzuconych
-fragmentów danych w~jeden bufor (stąd też inna nazwa:
-rozrzucanie/zbieranie, \ang{scatter/gather}).  Nawet jeżeli DMA nie
-umożliwia wykorzystania tej techniki, procesor może ją symulować
-poprzez sekwencyjne wywoływanie wielu mniejszych transferów, choć jest
-to niestety mniej efektywne rozwiązanie.
-
-Mechanizm bezpośredniego dostępu do pomięci (niezależnie czy technika
-wektorowego wejścia/wyjścia jest dostępna, czy nie) jest ograniczony
+Niestety mechanizm bezpośredniego dostępu do pomięci jest ograniczony
 do transferów sekwencyjnych.  Sprawdza się bardzo dobrze dla operacji
 dyskowych, ale nie nadaje się dla sprzętowego dekodera wideo, który
 potrzebuje dostępu do wielu dekodowanych ramek
@@ -96,15 +63,14 @@ jednocześnie.\footnote{Jednym z~rodzajów ramek stosowanych do
   nowszego standardu H.264, może zależeć od więcej niż dwóch innych
   ramek.}
 
-\subsection{IOMMU}
-
 Oczywiście nie ma żadnych technologicznych przeszkód do zastosowania
 jednostki translacji adresów również dla podzespołów innych niż
-procesor.  Istotnie istnieją platformy sprzętowe z~tzw.\ MMU
-wejścia/wyjścia (ang.\ IOMMU), który pozwala na budowanie dużych
-ciągłych buforów złożonych ze stosunkowo małych stron.  W~takich
-systemach, w~zasadzie nie ma (lub nie powinno być) konieczności
-alokowania wielomegabajtowych buforów.
+procesor, tak jak to przedstawia rysunek \subref*{fig:sys-with-iommu}.
+Istotnie istnieją platformy sprzętowe z~tzw.\ MMU wejścia/wyjścia
+(ang.\ IOMMU), który pozwala na budowanie dużych ciągłych buforów
+złożonych ze stosunkowo małych stron.  W~takich systemach, w~zasadzie
+nie ma (lub nie powinno być) konieczności alokowania
+wielomegabajtowych buforów.
 
 Niestety, nawet jeżeli IOMMU jest dostępne na danej platformie, jego
 obecność może się wiązać z~dodatkowym kosztem wynikającym
@@ -113,8 +79,6 @@ odczytywania mapowań z~pamięci
 \autocite{bib:mitigate-iotlb-bottleneck}.  Z~tego względu architekt
 platformy może zdecyduje się wyłączyć IOMMU i~rozwiązać problem
 „w~oprogramowaniu”.
-
-\subsection{Podsumowanie}
 
 Z~uwagi na koszty i~ograniczenia zarówno kontrolerów DMA jak i~układów
 MMU, w~wielu systemach wbudowanych, takich jak np.\ telefony
@@ -131,13 +95,13 @@ obszarów.\footnote{W~szczególności, Linux nie jest nawet w~stanie (bez
   modyfikowania źródła) zarządzać obszarami większymi niż cztery
   mebibajty (1024 strony), gdy tymczasem pięciomegapikselowa kamera
   potrzebuje buforu o~rozmiarze 15 megabajtów, a~pojedyncza ramka {\it
-    full HD} (tj.\ $1920 \times 1080$) zajmuje ponad sześć megabajtów.}
+    full HD} (tj.\ 1920 $\times$ 1080) zajmuje ponad sześć megabajtów.}
 
 
 \section{Możliwe rozwiązania}
 
 Ponieważ opisany powyżej problem jest znany od dawna, na przestrzeni
-lat powstało wiele rozwiązań programowych umożliwiających obejść
+lat powstało wiele rozwiązań programowych umożliwiających obejście
 trudność w~alokacji dużych obszarów.  W~tym podrozdziale opiszę je
 pokrótce oraz przedstawie ich ograniczenia.
 
@@ -174,35 +138,25 @@ pewną przestrzeń pamięci, ale zamiast na stałe przypisywać obszary do
 urządzeń, pozwala sterownikom alokować bufory, wtedy, gdy są one
 potrzebne.
 
-W~trakcie moich prac stworzyłem {\it Physical Memory Manager} (lub
-PMM) \autocite{patch:pmm}, który implementuje dokładnie te
-założenia. W~tym podstawowym założeniu, PMM nie przedstawia sobą nic
-nowego.  Już bowiem w~1996 roku Matt Welsh napisał pierwszą wersję
-patcha \emph{bigphysarea} dla jądra 1.3.71, który był z~różnym
-zaangażowaniem utrzymywany i~przystosowywany aż do wersji
-3.2 Linuksa \autocite{patch:bigphys}.
+W~trakcie moich prac stworzyłem {\it Physical Memory Manager} (PMM)
+\autocite{patch:pmm}, który implementuje dokładnie te założenia. W~tym
+podstawowym zastosowaniu, PMM nie przedstawia sobą nic nowego.  Już
+bowiem w~1996 roku Matt Welsh napisał pierwszą wersję patcha
+\emph{bigphysarea} dla jądra 1.3.71, który był z~różnym zaangażowaniem
+utrzymywany i~przystosowywany aż do wersji 3.2 Linuksa
+\autocite{patch:bigphys}.
 
-PMM umożliwiał alokowanie dużych obszarów ciągłej pamięci fizycznej
-nie tylko sterownikom działającym w~przestrzeni jądra, ale także
-programom działającym pod kontrolą systemu.  W~ten sposób, aplikacja
-mogła zaalokować pamięć, tak aby (dla przykładu) dekoder JPEG mógł
-zdekodować plik graficzny i~umieścić go w~buforach bezpośrednio
-dostępnych dla aplikacji.  W~ten sposób, kod odpowiedzialny za
-mapowanie zaalokowanych obszarów był umieszczony wewnątrz PMM
-i poszczególne sterowniki nie musiały się tym problemem zajmować.
-
-Co więcej, PMM został zintegrowany z~mechanizmem współdzielenia
-pamięci Systemu V~(tj.\ funkcjami \code|shmget|, \code|shmat|,
-\code|shmdt| itp.) wykorzystywanym między innymi przez system X~Window
-do umożliwienia współdzielenia map bitowych pomiędzy klientem
-i~serwerem (działającymi na tej samej maszynie) bez konieczności
-przysłania danych przez gniazdo sieciowe.
-
-Pozwalało to na dekodowanie obrazów i~strumieni video bezpośrednio do
-buforów z~których X11 odczytywał dane.  Dzięki temu, w~całym procesie
-dane nie były niepotrzebnie kopiowane z~jednego miejsca w~pamięci do
-drugiego, co minimalizowało użycie procesora i~szyny pamięci
-i~w~rezultacie przyśpieszało działanie systemu.
+PMM umożliwiał jednak alokowanie dużych obszarów ciągłej pamięci
+fizycznej nie tylko sterownikom działającym w~przestrzeni jądra, ale
+także programom działającym pod kontrolą systemu. Co więcej, dzięki
+integracji z~mechanizmem współdzielenia pamięci Systemu
+V~(tj.\ funkcjami \code|shmget|, \code|shmat|, \code|shmdt| itp.)
+wykorzystywanym między innymi przez system X~Window, PMM pozwalał to
+na dekodowanie obrazów i~strumieni wideo bezpośrednio do buforów
+z~których X11 odczytywał dane.  Dzięki temu, w~całym procesie dane nie
+były niepotrzebnie kopiowane z~jednego miejsca w~pamięci do drugiego,
+co minimalizowało użycie procesora i~szyny pamięci i~w~rezultacie
+przyśpieszało działanie systemu.
 
 Jednakże, pamięć zarezerwowana przez PMM i~tak przez większość czasu
 była zupełnie nieużywana, a~więc marnowana.  Z~tego powodu, PMM
@@ -211,24 +165,19 @@ społeczność programistów Linuksa i~musiałem rozwijać inne rozwiązanie.
 
 \subsection{Zarys Contiguous Memory Allocatora}
 
-Aby rozwiązać i~ten problem, {\it Contiguous Memory Allocator}
+Aby rozwiązać i~ten problem, {\it Contiguous Memory Allocator} (CMA)
 umożliwia systemowi używanie zarezerwowanej pamięci, o~ile żadne
 urządzenie jej w~danym momencie nie potrzebuje.
 
-W~swoich początkowych wersjach, również mechanizm CMA działał na
-założeniach podobnych do PMM -- rezerwował przy starcie systemu
-pamięć, którą potem zarządzał pozwalając sterownikom i~programom na
-alokowanie obszarów ciągłych fizycznie \autocite{patch:cma-4}.
-
-Wynika to z~faktu, iż pierwsze wersje alokatora CMA skupiały się
-w~dużej mierze na rozwiązywaniu problemu przypisywania różnych
-zarezerwowanych obszarów do różnych urządzeń, a~także umożliwianiu
-sterownikom alokowanie różnych buforów w~różnych obszarach pamięci.
-Było to potrzebne, gdyż dekoder wideo (\ang{Multi-Format Codec}, lub
-MFC) stosowany na platformie S5PV110 wymagał, aby różne dane były
-przechowywane w~różnych bankach pamięci.  Pozwalało to na zwiększenie
-szybkości dostępu do tych danych dzięki zastosowaniu odczytu z~dwóch
-banków pamięci jednocześnie.
+Pierwsze wersje alokatora CMA skupiały się w~dużej mierze na
+rozwiązywaniu problemu przypisywania różnych zarezerwowanych obszarów
+do różnych urządzeń, a~także umożliwianiu sterownikom alokowanie
+różnych buforów w~różnych obszarach pamięci.  Było to potrzebne, gdyż
+dekoder wideo (\ang{Multi-Format Codec}, lub MFC) stosowany na
+platformie S5PV110 wymagał, aby różne dane były przechowywane
+w~różnych bankach pamięci.  Pozwalało to na zwiększenie szybkości
+dostępu do tych danych dzięki zastosowaniu odczytu z~dwóch banków
+pamięci jednocześnie.
 
 Z~czasem, coraz bardziej integrowałem mechanizm CMA z~kodem
 zarządzania pamięci w~Linuksie w~wyniku czego, pamięć rezerwowana przy
@@ -236,36 +185,3 @@ starcie systemu, stała się dostępna dla reszty systemu, o~ile żaden
 sterownik jej nie używał \autocite{patch:cma-24}.  Takie rozwiązanie
 zostało ostatecznie zaakceptowane przez społeczność deweloperów
 Linuksa i~jest dostępne w~źródłach Linuksa począwszy od wersji 3.5.
-W~tej pracy opisuję alokator CMA w~formie w~jakiej znalazł się on
-w~Linuksie 3.5\footnote{Należy zauważyć, że Linux jest szybko
-  rozwijającym się projektem wolnego oprogramowania i~ponieważ
-  mechanizm CMA używana jest przez coraz więcej osób, jest ona ciągle
-  rozwijana i~im dalej w~przyszłość, tym bardziej opis w~niniejszej
-  pracy będzie się różnił od stanu faktycznego.}.
-
-\section{Wielkie strony}
-
-Zagadnieniem związanym w~pewnym stopniu z~mechanizmem CMA są wielkie
-strony (\ang{huge pages}).  O~ile zwyczajne strony pamięci mają
-przeważnie cztery kibibajty, o~tyle wielkie strony mają rozmiary rzędu
-dwóch lub czterech mebibajtów\footnote{Konkretne rozmiary zależą od
-  architektury procesora i~co więcej wiele rozmiarów może być
-  dostępnych.}.  Stosowane są w~celu zmniejszenia liczby wpisów
-w~tablicy translacji adresów, a~co za tym idzie również TLB procesora.
-
-Począwszy od wersji 2.6.38, Linux posiada mechanizm automatycznego
-wykorzystywania wielkich stron dla działających programów,
-\ang{transparent huge pages} \autocite{bib:v2.6.38}.  Dzięki niemu,
-o~ile to możliwe, wiele czterokibibajtowych stron mapowanych jest za
-pomocą pojedynczego wpisu w~tablicy translacji adresów.
-
-Podobnie jak w~przypadku mechanizmu CMA, wymaga to alokowania dużych
-obszarów ciągłych fizycznie.  Tym co różni oba mechanizmy jest wymóg
-aby alokacja CMA zakończyła się sukcesem i~do tego w~jak najkrótszym
-czasie, gdy tymczasem mechanizm automatycznego wykorzystania wielkich
-stron jest oportunistyczny i~jeżeli w~danej chwili w~systemie nie ma
-dostatecznie dużego wolnego obszaru, mechanizm ten nie jest
-wykorzystywany.
-
-Z~uwagi na te odmienne wymagania, obie implementacje, pomimo, że
-pozornie mające podobne założenia, są w~dużym stopniu rozłączne.

@@ -1,0 +1,63 @@
+\section{Podsumowanie}
+
+Dołączenie CMA w~czerwcu 2012 r.\ do Linuksa w~żadnym stopniu nie
+oznacza zakończenia nad nim prace.  Nadal jest wiele aspektów, które
+można usprawnić i~nowych funkcji, które można dodać.
+
+Najistotniejszym aspektem CMA jest czas potrzebny na zrealizowanie
+alokacji.  Migracja tysięcy stron może być czasochłonna, gdyż nawet
+w~systemach z~szybką magistralą danych, kopiowanie kilkudziesięciu
+megabajtów danych może trochę potrwać.
+
+\textcite{patch:cma-discard} zaimplementował we wrześniu 2012
+r.\ funkcje, która w~istotny sposób może skrócić czas alokacji.
+W~swoich testach zauważył przyśpieszenie migracji \unit[10]{MiB}
+z~\unit[146]{ms} do zaledwie \unit[7]{ms}.  Pomysł polega na
+odrzucaniu stron które można w~prosty sposób odzyskać.  Najprostszym
+przykładem są tutaj bufory dyskowe -- ich zawartość można przywrócić
+ponownie odczytując dane z~nośnika.
+
+Innym możliwym usprawnieniem CMA jest ulepszenie algorytmu doboru
+zakresu stron do alokacji.  Obecnie stosowana metoda „pierwszy
+pasujący” nie uwzględnienia, które strony wymagają migracji, co może
+skutkować, iż alokator będzie dokonywał migracji, którym można było
+zapobiec.  Na chwilę obecną nie wiadomo jednak, czy zysk z~nowego
+algorytmu nie zostałby przysłonięty kosztami wynikającymi z~jego
+złożoności jak i~możliwą większą fragmentacją.
+
+Innym dość uciążliwym problemem, z~którym CMA musi sobie radzić jest,
+fakt iż strony ruchome, nie zawsze można migrować, co może być
+spowodowane brakiem funkcji migrującej lub chwilowym wykorzystaniem
+strony w~kontekście wymagającym stałego adresu fizycznego.
+
+Do pierwszej kategorii należą np.\ strony wykorzystywane przez wiele
+systemów plików.  Nawet w~bardzo popularnym i~powszechnie używanym
+systemie plików ext4, strony dziennika nie posiadają zaimplementowanej
+funkcji migracji.
+
+Druga kategoria to sytuacje, gdy strona została unieruchomiona na
+czas, gdy wykonywany jest na niej transfer DMA.  Przykładowo, jeżeli
+dane są kopiowane pomiędzy taką stroną, a~dyskiem twardym.  Jednym
+z~rozważanych przeze mnie rozwiązań było migrowanie strony poza region
+CMA zanim zostanie ona unieruchomiona, ale niestety sytuacja taka jest
+na tyle powszechna, że degradacja wydajności byłaby zbyt duża.
+
+Innymi możliwymi rozwiązaniami jest ograniczenie wykorzystywania
+regionów CMA tylko do stron przeznaczonych dla takich funkcji jak zRam
+\autocite{patch:zram}, pamięć transcendentna
+\autocite{bib:transcendent}, czy mechanizm \code|POSIX_FADV_VOLATILE|
+\autocite{bib:fadv-volatile}.  Gdyby to zrobić, istniałaby większa
+gwarancja, iż dane można przenieść, a~w~przypadku dwóch ostatnich
+mechanizmów, dane można by zwyczajnie odrzucić.  Z~drugiej strony
+w~znacznym stopniu zmniejszyłoby to użytkowników stron z~regionu CMA,
+możliwe że do tego stopnia, iż przez większość czasu nie byłyby one
+zupełnie wykorzystywane.
+
+Widać, że droga przed alokatorem CMA jest otwarta i~istnieje wiele
+aspektów nad które można ulepszać, a~dzięki coraz większemu gronu osób
+zainteresowanych tym kodem, można pokusić się o~predykcję, iż
+mechanizm CMA będzie się rozwijał.  Równocześnie kolejne osoby
+wykazuje zainteresowanie korzystania z~niego w~systemach znacznie
+różniących się od platform, dla których był projektowany
+(tj.\ telefonów komórkowych), takich jak zarządcy maszyn wirtualnych
+jaki i~oprogramowanie samolotów.

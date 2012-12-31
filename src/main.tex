@@ -1,4 +1,5 @@
-\documentclass[a4paper,onecolumn,oneside,11pt]{mwrep}
+%\documentclass[a4paper,onecolumn,oneside,11pt]{mwrep}
+\documentclass[runningheads,a4paper,twoside]{llncs}
 \usepackage[plmath,MeX]{polski}
 \usepackage[utf8]{inputenc}
 \usepackage{bookman}
@@ -6,6 +7,7 @@
 \usepackage{amssymb}  % must be loaded before babel[polish]
 \usepackage[polish]{babel}
 \usepackage{csquotes}
+\setcounter{tocdepth}{3}
 
 \DeclareQuoteStyle{polish}
 	{\quotedblbase}{\textquotedblright}
@@ -14,7 +16,6 @@
 \usepackage[backend=bibtex,sorting=nyt,style=numeric-comp]{biblatex}
 \DeclareLanguageMapping{polish}{src/polish}
 \addbibresource{../src/bib.bib} % bibtex is run from inside of build/ directory
-
 
 \let\emptyset\varnothing
 
@@ -32,10 +33,9 @@
 \usepackage{color}
 \definecolor{gray}{rgb}{0.5,0.5,0.5}
 
-\makeatletter
-
 \usepackage{listings}
 \usepackage{listingsutf8}
+\usepackage{chngcntr}
 \lstset{
   language=C,
   basicstyle=\small,
@@ -58,10 +58,10 @@
 \renewcommand*\lstlistlistingname{Spis wydruków}
 \def\code{\lstinline[basicstyle=\itshape]}
 
-\usepackage[chapter]{algorithm}
+\usepackage{algorithm}
+\makeatletter
 \renewcommand*{\ALG@name}{Algorytm}
-\renewcommand*{\listalgorithmname}{Spis algorytmów}
-\renewcommand*{\thealgorithm}{\arabic{chapter}.\arabic{algorithm}.}
+\makeatother
 
 \usepackage[noend]{algpseudocode}
 \renewcommand*{\algorithmicrequire}{\textbf{Wymaga:}}
@@ -81,84 +81,55 @@
 \renewcommand*{\algorithmicfunction}{\textbf{Funkcja}}
 \renewcommand*{\algorithmicprocedure}{\textbf{Procedura}}
 
-\renewcommand*\lstlistoflistings{%
-    \section*{\lstlistlistingname}
-    {\secondarysize
-    \gdef\previous@toc@level{-1000}%
-    \@starttoc{lol}}%
-    \if@restonecol\twocolumn\fi
-}
-\renewcommand*\l@lstlisting{\mw@tocline{1}{0pt}{2.5em}}
-\renewcommand*\listoffigures{%
-    \section*{\listfigurename}
-    {\secondarysize
-     \renewcommand*\addvspace[1]{}
-    \gdef\previous@toc@level{-1000}%
-    \@starttoc{lof}}%
-    \if@restonecol\twocolumn\fi
-}
-\renewcommand*\listofalgorithms{%
-    \section*{\listalgorithmname}
-    {\secondarysize
-    \gdef\previous@toc@level{-1000}%
-    \@starttoc{loa}}%
-    \if@restonecol\twocolumn\fi
-}
-\newcommand*\l@algorithm{\mw@tocline{1}{0pt}{2.5em}}
-
-\makeatother
-
-\usepackage[top=2.5cm,bottom=2.5cm,inner=2cm,outer=3cm]{geometry}
-
 \clubpenalty=10000
 \widowpenalty=10000
 \brokenpenalty=10000
 \sloppy
 
-\tolerance4500
-\pretolerance250
-\hfuzz=1.5pt
-\hbadness1450
-
-\renewcommand*{\chaptermark}[1]{\markboth{\scshape\small\bfseries \
-#1}{\small\bfseries \ #1}}
-\renewcommand*{\sectionmark}[1]{\markboth{\scshape\small\bfseries\thesection.\
-#1}{\small\bfseries\thesection.\ #1}}
-\newcommand*{\headrulewidth}{0.5pt}
-\newcommand*{\footrulewidth}{0.pt}
-\pagestyle{uheadings}
-
-\newcommand*{\TODO}[1]{{\setlength{\fboxsep}{0pt}\footnotesize (\colorbox{red}{TODO}: #1)}}
 \newcommand*{\ang}[1]{ang.\ {\it #1}}
+\newcommand{\keywords}[1]{\par\addvspace\baselineskip
+\noindent\textbf{Słowa kluczowe:}\enspace\ignorespaces#1}
 
-\usepackage{titling}
 \title{Alokacja ciągłych fizycznie obszarów pamięci w~systemie Linux}
 \author{Michał Nazarewicz}
 \date{\today}
-\newcommand*{\theengishtitle}{Physically contiguous memory allocation in Linux-based systems}
+\institute{Instytut Informatyki Politechniki Warszawskiej,\\
+ul.\ Nowowiejska 15/19, 00-665 Warszawa, Polska\\
+\href{mailto:mina86@mina86.com}{\path|mina86@mina86.com|}\\
+\url{http://mina86.com/cma/}}
 
 \begin{document}
 
-\pagenumbering{roman}
-\renewcommand*{\baselinestretch}{1.0}
-\raggedbottom
+\counterwithout{lstlisting}{chapter}
 
-\input{src/title}
+\mainmatter
 
-\tableofcontents
+\maketitle
 
-\newpage
-\pagenumbering{arabic}
-\setcounter{page}{1}
+\begin{abstract}
+Praca ta opisuje problemy w~alolkacji ciągłych fizycznie obszarów
+pamięci w~systemach opartych o~jądro Linuks, szczególnie widoczne
+w~tak zwanych systemach wbudowanych (np.\ telefonach komórkowych
+i~tabletach), gdzie jednostka translacji adresów może być niedostępna
+dla wielu podzespołów takich jak aparat fotograficzny, czy dekoder
+wideo.
+
+Praca ta przedstawia również często stosowane rozwiązania tych
+problemów wykazując kłopoty z~nich wynikające, aby na koniec
+zaprezentować proponowane przeze mnie rozwiązanie w~postaci alokator
+pamięci ciągłej \ang{Contiguous Memory Allocator} (CMA), który pozwala
+przydzielać duże ciągłe fizycznie bufory, bez konieczności
+rezerwowania na wyłączność dużych obszarów przy starcie systemu.
+
+\keywords{pamięć ciągła fizycznie, Linux, zarządzanie pamięcią}
+\end{abstract}
 
 \input{src/chap-intro}
-\input{src/chap-usage}
 \input{src/chap-page-alloc}
 \input{src/chap-implementation}
+\input{src/chap-summary}
 
 \appendix
-
-\input{src/lists}
-\input{src/bib}
+\printbibliography
 
 \end{document}

@@ -49,7 +49,6 @@
   url       = "http://lwn.net/Articles/433896/"
 }
 
-
 @article{bib:compaction,
   author    = "Jonathan Corbet",
   title     = "Memory Compaction",
@@ -68,6 +67,24 @@
   url       = "http://lwn.net/Articles/450286/"
 }
 
+@article{bib:transcendent,
+  author    = "Jonathan Corbet",
+  title     = "Transcendent Memory",
+  journal   = "Linux Weekly News",
+  publisher = "Eklektix",
+  date      = "2009-07-08",
+  url       = "http://lwn.net/Articles/340080/"
+}
+
+@article{bib:fadv-volatile,
+  author    = "Jonathan Corbet",
+  title     = "{POSIX\_FADV\_VOLATILE}",
+  journal   = "Linux Weekly News",
+  publisher = "Eklektix",
+  date      = "2011-11-22",
+  url       = "http://lwn.net/Articles/468896/"
+}
+
 @Comment Artykuly i konferencje
 
 @inproceedings{bib:price-of-safety,
@@ -84,13 +101,13 @@
   author    = "Nadav Amit and Muli Ben-Yehuda and Ben-Ami Yassour",
   title     = "{IOMMU}: {S}trategies for Mitigating the {IOTLB} Bottleneck.",
   booktitle = "Computer Architecture",
-  booksubtitle = "ISCA 2010 International Workshops A4MMC, AMAS-BT, EAMA, WEED, WIOSCA, Saint-Malo, France",
   pages     = "256-274",
   date      = "2012-06-19/2012-06-23",
   isbn      = "978-3-642-24321-9",
   doi       = "10.1007/978-3-642-24322-6_22",
   url       = "http://www.springerlink.com/index/N370U642151M4648.pdf"
 }
+  @Comment booksubtitle = "ISCA 2010 International Workshops A4MMC, AMAS-BT, EAMA, WEED, WIOSCA, Saint-Malo, France",
 
 @inproceedings{bib:supporting-large-contig-regions,
   author    = "Mel Gorman and Andy Whitcroft",
@@ -139,4 +156,20 @@
   version   = "4",
   date      = "2010-03-07",
   url       = "http://thread.gmane.org/gmane.linux.kernel/1263136"
+}
+
+@software{patch:cma-discard,
+  author    = "Minchan Kim",
+  title     = "Discard clean pages during contiguous allocation instead
+               of migration",
+  date      = "2012-09-11",
+  url       = "http://lkml.org/lkml/2012/9/10/65"
+}
+
+@software{patch:zram,
+  author    = "Nitin Gupta",
+  title     = "compcache: in-memory compressed swapping",
+  version   = "2",
+  date      = "2009-09-09",
+  url       = "http://lists.laptop.org/pipermail/linux-mm-cc/2009-September/000445.html"
 }
