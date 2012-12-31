@@ -137,7 +137,7 @@ obszarów.\footnote{W~szczególności, Linux nie jest nawet w~stanie (bez
 \section{Możliwe rozwiązania}
 
 Ponieważ opisany powyżej problem jest znany od dawna, na przestrzeni
-lat powstało wiele rozwiązań programowych umożliwiających obejść
+lat powstało wiele rozwiązań programowych umożliwiających obejście
 trudność w~alokacji dużych obszarów.  W~tym podrozdziale opiszę je
 pokrótce oraz przedstawie ich ograniczenia.
 
@@ -176,7 +176,7 @@ potrzebne.
 
 W~trakcie moich prac stworzyłem {\it Physical Memory Manager} (lub
 PMM) \autocite{patch:pmm}, który implementuje dokładnie te
-założenia. W~tym podstawowym założeniu, PMM nie przedstawia sobą nic
+założenia. W~tym podstawowym zastosowaniu, PMM nie przedstawia sobą nic
 nowego.  Już bowiem w~1996 roku Matt Welsh napisał pierwszą wersję
 patcha \emph{bigphysarea} dla jądra 1.3.71, który był z~różnym
 zaangażowaniem utrzymywany i~przystosowywany aż do wersji
@@ -198,7 +198,7 @@ do umożliwienia współdzielenia map bitowych pomiędzy klientem
 i~serwerem (działającymi na tej samej maszynie) bez konieczności
 przysłania danych przez gniazdo sieciowe.
 
-Pozwalało to na dekodowanie obrazów i~strumieni video bezpośrednio do
+Pozwalało to na dekodowanie obrazów i~strumieni wideo bezpośrednio do
 buforów z~których X11 odczytywał dane.  Dzięki temu, w~całym procesie
 dane nie były niepotrzebnie kopiowane z~jednego miejsca w~pamięci do
 drugiego, co minimalizowało użycie procesora i~szyny pamięci
