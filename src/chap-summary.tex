@@ -1,29 +1,29 @@
 \section{Podsumowanie}
 
 Dołączenie CMA w~czerwcu 2012 r.\ do Linuksa w~żadnym stopniu nie
-oznacza zakończenia nad nim prace.  Nadal jest wiele aspektów, które
+oznacza zakończenia nad nim prac.  Nadal jest wiele właściwości, które
 można usprawnić i~nowych funkcji, które można dodać.
 
 Najistotniejszym aspektem CMA jest czas potrzebny na zrealizowanie
 alokacji.  Migracja tysięcy stron może być czasochłonna, gdyż nawet
-w~systemach z~szybką magistralą danych, kopiowanie kilkudziesięciu
-megabajtów danych może trochę potrwać.
+w~systemach z~szybką magistralą, kopiowanie kilkudziesięciu megabajtów
+danych może trochę potrwać.
 
 \textcite{patch:cma-discard} zaimplementował we wrześniu 2012
-r.\ funkcje, która w~istotny sposób może skrócić czas alokacji.
-W~swoich testach zauważył przyśpieszenie migracji \unit[10]{MiB}
+r.\ usprawnienie, które w~istotny sposób skraca czas alokacji.
+W~swoich testach zauważył przyśpieszenie alokacji \unit[10]{MiB}
 z~\unit[146]{ms} do zaledwie \unit[7]{ms}.  Pomysł polega na
 odrzucaniu stron które można w~prosty sposób odzyskać.  Najprostszym
 przykładem są tutaj bufory dyskowe -- ich zawartość można przywrócić
 ponownie odczytując dane z~nośnika.
 
 Innym możliwym usprawnieniem CMA jest ulepszenie algorytmu doboru
-zakresu stron do alokacji.  Obecnie stosowana metoda „pierwszy
-pasujący” nie uwzględnienia, które strony wymagają migracji, co może
-skutkować, iż alokator będzie dokonywał migracji, którym można było
-zapobiec.  Na chwilę obecną nie wiadomo jednak, czy zysk z~nowego
-algorytmu nie zostałby przysłonięty kosztami wynikającymi z~jego
-złożoności jak i~możliwą większą fragmentacją.
+zakresu stron.  Obecnie stosowana metoda „pierwszy pasujący” nie
+uwzględnienia, które strony wymagają migracji.  Może to powodować, iż
+alokator będzie dokonywał migracji, którym można było zapobiec.  Na
+chwilę obecną nie wiadomo jednak, czy zysk z~nowego algorytmu nie
+zostałby przysłonięty kosztami wynikającymi z~jego złożoności jak
+i~możliwą większą fragmentacją.
 
 Innym dość uciążliwym problemem, z~którym CMA musi sobie radzić jest,
 fakt iż strony ruchome, nie zawsze można migrować, co może być

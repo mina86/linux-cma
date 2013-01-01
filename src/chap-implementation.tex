@@ -24,28 +24,26 @@ albo wolne, albo ruchome.  Ponieważ (jak opisałem w~podrozdziale
 \ref{sec:type-change}) jądro dopuszcza alokacje nieruchomych stron
 z~bloków ruchomych, a~także posiada mechanizm na skutek którego bloki
 zmieniają swój typ, aby mechanizm CMA mógł działać poprawnie, należało
-stworzyć nowy typ migracji -- nazwanym po prostu typem migracji CMA --
+stworzyć nowy typ migracji -- nazwanym po prostu typem migracji cma --
 który posiada dwie bardzo istotne cechy: (i) z~bloków oznaczonych
-typem CMA mogą być alokowane tylko strony ruchome, oraz (ii) blok
-oznaczony typem CMA nie zmienia swojego typu (na skutek działania
+typem cma mogą być alokowane tylko strony ruchome, oraz (ii) blok
+oznaczony typem cma nie zmienia swojego typu (na skutek działania
 alokatora stron).
 
 O~ile pierwsza właściwość jest stosunkowo prosta do osiągnięcia,
-zagwarantowania niezmienności typu bloku stron wymagało
+zagwarantowanie niezmienności typu bloku stron wymagało
 zidentyfikowania wszystkich sytuacji, w~których blok może zmienić swój
-typ (a~także sytuacji, w~których strony mogą trafić na listy wolnych
-stron dla typu niezgodnego z~typem bloku, do którego należą) i~dodanie
-odpowiednich warunków zapewniających, że niepożądana zmiana nie
-nastąpi.
+typ i~dodanie odpowiednich warunków zapewniających, że niepożądana
+zmiana nie nastąpi.
 
 \subsection{Alokowanie wybranego obszaru pamięci}\label{sec:alloc-contig-range}
 
-W~sytuacji, gdy istnieje gwarancja, że dany zakres stron posiada
-jedynie strony wolne i~ruchome, można przystąpić do jej alokacji.
-Drugim krokiem implementowania alokatora CMA było zatem stworzenie
-funkcji, która dostaje jako argument zakres stron, a~następnie migruje
-wszystkie zajęte strony, a~wolne usuwa z~listy wolnych stron.  Właśnie
-to czyni funkcja \code|alloc_contig_range|.
+Posiadając gwarancję, że dany zakres składa się jedynie z wolne
+i~ruchome stron, można przystąpić do jego alokacji.  Drugim krokiem
+implementowania alokatora CMA było zatem stworzenie funkcji, która
+dostaje jako argument zakres stron, a~następnie migruje wszystkie
+zajęte strony, a~wolne usuwa z~listy wolnych stron.  Właśnie to czyni
+funkcja \code|alloc_contig_range|.
 
 Pierwszym krokiem wykonywanym przez tę funkcję jest zmiana typu bloków
 stron na izolowany typ migracji.  Pomimo, że izolowane strony są
@@ -64,9 +62,7 @@ czym zleca migracje funkcji \code|migrate_pages|.
 Gdy strony są już wolne i~przechowywane na liście stron izolowanych,
 funkcja \code|alloc_contig_range| może usunąć je z~tej listy, na
 skutek czego alokator stron zupełnie nie zdaje sobie sprawy z~ich
-istnienia (co jest rzecz jasna równoważne z~alokacją tych stron).
-W~procesie tym, wszystkie strony których rząd jest niezerowy są
-dzielone na strony rzędu zerowego.
+istnienia (co jest równoważne z~alokacją tych stron).
 
 Aby zakończyć alokację wystarczy już przywrócić pierwotny typ bloku
 (gdyż na początku został on zmieniony na typ izolowany) i~zwrócić
@@ -81,19 +77,17 @@ struktura \code|cma| reprezentujące pojedynczy kontekst CMA.  Posiada
 ona następujące pola:
 
 \begin{tabular}{lll}
-\code|unsigned long|   & {\bf \code|base_pfn|} & Identyfikator początkowej strony w~regionie. \\
-\code|unsigned long|   & {\bf \code|count|}    & Liczba strony w~regionie. \\
-\code|unsigned long *| & {\bf \code|bitmap|}   & Bitmapa zajętych stron. \\
+{\bf \code|base_pfn|} & Identyfikator pierwszej strony w~regionie. \\
+{\bf \code|count|}    & Liczba strony w~regionie. \\
+{\bf \code|bitmap|}   & Bitmapa zajętych stron. \\
 \end{tabular}
 
 Pierwsze dwa identyfikują obszar w~pamięci fizycznej, gdzie znajduje
 się kontekst CMA, a~ostatnia jest mapą określającą, które ze stron
-zostały zaalokowane przez CMA.
-
-Bitmapa ta jest wykorzystywana przez funkcję
-\code|dma_alloc_from_contiguous|, która używa metody „pierwszy
-pasujący” do wyszukania obszaru stron niezaalokowanych przez CMA
-pasującego do żądania.  Po wybraniu obszaru, wołana jest funkcja
+zostały zaalokowane przez CMA.  Bitmapa jest wykorzystywana przez
+funkcję \code|dma_alloc_from_contiguous|, która używa metody „pierwszy
+pasujący” do wyszukania dostatecznie dużego obszaru niezaalokowanych
+przez CMA stron.  Po wybraniu obszaru, wołana jest funkcja
 \code|alloc_contig_range|, aby dany obszar zaalokować i~jeżeli się to
 powiedzie, oznacza obszar w~bitmapie jako zajęty i~zwraca wynik.
 
@@ -105,6 +99,5 @@ istnieją\footnote{W~istocie, jest ich dość sporo i~obecnie wraz
   w~Linuksie, jest jednak skomplikowany i~czasem trudno prześledzić
   wszystkie zależności i~interakcje pomiędzy komponentami, które mogą
   prowadzić do błędu alokacji.} i~z~tego powodu, funkcja
-\code|dma_alloc_from_contiguous| działa w~pętli w~ten sposób, że
-jeżeli alokacja jednego obszaru się nie powiedzie, w~następnej
-iteracji funkcja próbuje zaalokować kolejny.
+\code|dma_alloc_from_contiguous| działa w~pętli próbując alokować aż
+do skutku różne obszaru.

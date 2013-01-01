@@ -1,4 +1,3 @@
-%\documentclass[a4paper,onecolumn,oneside,11pt]{mwrep}
 \documentclass[runningheads,a4paper,twoside]{llncs}
 \usepackage[plmath,MeX]{polski}
 \usepackage[utf8]{inputenc}
@@ -94,9 +93,9 @@
 \author{Michał Nazarewicz}
 \date{\today}
 \institute{Instytut Informatyki Politechniki Warszawskiej,\\
-ul.\ Nowowiejska 15/19, 00-665 Warszawa, Polska\\
-\href{mailto:mina86@mina86.com}{\path|mina86@mina86.com|}\\
-\url{http://mina86.com/cma/}}
+\href{mailto:mina86@mina86.com}{\path|mina86@mina86.com|}}
+
+\addtolength{\textheight}{1cm}
 
 \begin{document}
 
@@ -107,19 +106,19 @@ ul.\ Nowowiejska 15/19, 00-665 Warszawa, Polska\\
 \maketitle
 
 \begin{abstract}
-Praca ta opisuje problemy w~alolkacji ciągłych fizycznie obszarów
-pamięci w~systemach opartych o~jądro Linuks, szczególnie widoczne
-w~tak zwanych systemach wbudowanych (np.\ telefonach komórkowych
+Praca opisuje problemy w~alolkacji ciągłych fizycznie obszarów pamięci
+w~systemach opartych o~jądro Linuks, szczególnie widoczne w~tak
+zwanych systemach wbudowanych (np.\ telefonach komórkowych
 i~tabletach), gdzie jednostka translacji adresów może być niedostępna
 dla wielu podzespołów takich jak aparat fotograficzny, czy dekoder
 wideo.
 
-Praca ta przedstawia również często stosowane rozwiązania tych
-problemów wykazując kłopoty z~nich wynikające, aby na koniec
-zaprezentować proponowane przeze mnie rozwiązanie w~postaci alokator
-pamięci ciągłej \ang{Contiguous Memory Allocator} (CMA), który pozwala
-przydzielać duże ciągłe fizycznie bufory, bez konieczności
-rezerwowania na wyłączność dużych obszarów przy starcie systemu.
+Praca przedstawia również często stosowane rozwiązania tych problemów
+wykazując kłopoty z~nich wynikające, aby na koniec zaprezentować
+proponowane przeze mnie rozwiązanie w~postaci alokator pamięci ciągłej
+\ang{Contiguous Memory Allocator} (CMA), który pozwala przydzielać
+duże ciągłe fizycznie bufory, bez konieczności rezerwowania na
+wyłączność dużych obszarów przy starcie systemu.
 
 \keywords{pamięć ciągła fizycznie, Linux, zarządzanie pamięcią}
 \end{abstract}

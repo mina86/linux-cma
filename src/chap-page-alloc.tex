@@ -1,46 +1,17 @@
 \section{Zapoznanie z~alokatorem stron}
 
 Ponieważ mechanizm CMA w~dużym stopniu integruje się z~podsystemem
-zarządzania pamięci, do jego zrozumienia potrzeba ogólnej wiedzy na
+zarządzania pamięcią, do jego zrozumienia potrzeba ogólnej wiedzy na
 temat tego w~jaki sposób jądro śledzi i~przydziela pamięć procesom
-i~sterownikom.
-
-Linux posiada wiele mechanizmów alokacji pamięci.  Począwszy od
-najprostszych w~użyciu funkcji \code|kmalloc| i \code|vmalloc|,
-poprzez mechanizmy puli pamięci, aż do alokatora czasu bootowania
-i~alokatorów pamięci dostępnej dla urządzeń zewnętrznych
+i~sterownikom.  Linux posiada wiele mechanizmów alokacji pamięci
+począwszy od najprostszych w~użyciu funkcji \code|kmalloc|
+i \code|vmalloc|, poprzez mechanizmy pul pamięci, aż do alokatora
+czasu bootowania (memblock) i~alokatorów pamięci DMA (DMA API)
 \autocite[rozdział 8]{bib:ldd3}.  Pomimo tak dużej liczby interfejsów,
 wiele z~nich sprowadza się do wywołania alokatora stron, który jest
-sercem podsystemu zarządzania pamięcią.
+sercem podsystemu.
 
 \subsection{Algorytm bliźniaków}
-
-Alokator stron implementuje algorytm bliźniaków (skąd też jego inna
-angielska nazwa: {\it buddy system} lub {\it buddy allocator}), który
-operuje na blokach o~rozmiarze $2^k$ jednostek.  W~przypadku Linuksa
-jednostką jest pojedyncza strona fizyczna, a~na $k$~narzucone jest
-ograniczenie $k < \mathrm{MAX\_ORDER}$.  \code|MAX_ORDER| zależy od
-architektury, na którą Linux jest kompilowany, ale zazwyczaj ma
-wartość $11$ (toteż na potrzeby tej pracy zakładam, iż $0 \le k \le
-10$).
-
-W~Linuksie, przez $k$ rozumie się rząd strony.  Strona rzędu 0 to
-pojedyncza strona fizyczna, strona rzędu 1 to dwie strony fizyczne
-itd.\ aż do strony rzędu 10, czy też strony maksymalnego rzędu, która
-składa się z~1024 stron fizycznych.  Ogólnie, strona rzędu $n$ składa
-się z~dwóch stron rzędu $n-1$.
-
-Funkcja \code|alloc_pages|, która jest interfejsem dla alokatora
-stron, przyjmuje jako argument właśnie rząd żądanej strony.  Wynikają
-stąd, iż alokator stron nie pozwala alokować obszarów:
-
-\begin{itemize}
-\item mniejszy niż jedna strona (4096 bajty),
-\item których rozmiar nie jest potęgą dwójki, oraz
-\item większych niż \unit[4]{MiB}, przez co nie nadaje się do
-  alokowania buforu dla pięciomegapikselowej kamery, czy nawet
-  pojedynczej ramki {\it full HD}.
-\end{itemize}
 
 \begin{wrapfigure}{o}[1.5cm]{0.3\textwidth}
 \begin{center}
@@ -51,14 +22,30 @@ stąd, iż alokator stron nie pozwala alokować obszarów:
   bliźniaków.}
 \end{wrapfigure}
 
-Jak zatem działa algorytm bliźniaków?  Alokator posiada listę wolnych
-stron, których rząd jest pomiędzy $0$ a~$10$.  W~Linuksie zrealizowane
-jest to poprzez 11 list dwukierunkowych, gdzie każda przeznaczona jest
-dla stron o~konkretnym rzędzie.
+Alokator stron implementuje algorytm bliźniaków, który operuje na
+blokach o~rozmiarze $2^k$ jednostek.  W~przypadku Linuksa jednostką
+jest pojedyncza strona fizyczna, a~na $k$~narzucone jest ograniczenie
+$k < \mathrm{MAX\_ORDER}$.  \code|MAX_ORDER| zależy od architektury,
+na którą Linux jest kompilowany, ale zazwyczaj ma wartość $11$, toteż
+na potrzeby tej pracy zakładam, iż $0 \le k \le 10$.
 
-Gdy sterownik chce zaalokować stronę rzędu $n$, alokator sprawdza
-odpowiednią listę.  Jeżeli jest ona pusta, przechodzi do listy ze
-stronami rzędu $n+1$, aż znajdzie wolną stronę (lub dojdzie do
+W~Linuksie, $k$ określa rząd strony -- strona rzędu 0 to pojedyncza
+strona fizyczna, strona rzędu 1 to dwie strony fizyczne itd.\ aż do
+strony rzędu 10, czy też strony maksymalnego rzędu, która składa się
+z~1024 stron fizycznych.
+
+Funkcja \code|alloc_pages|, która jest interfejsem dla alokatora
+stron, przyjmuje jako argument właśnie rząd żądanej strony.  Wynikają
+stąd, iż alokator stron nie pozwala alokować obszarów: (i) mniejszy
+niż jedna strona (4096 bajty), (ii) których rozmiar nie jest potęgą
+dwójki, oraz (iii) większych niż \unit[4]{MiB} (przez co nie nadaje
+się do alokowania buforu dla pięciomegapikselowej kamery, czy nawet
+pojedynczej ramki {\it full HD}).
+
+Alokator stron posiada 11 list dwukierunkowych, które przechowują
+wolne strony danego rzędu.  Gdy sterownik chce zaalokować stronę rzędu
+$n$, sprawdzana jest odpowiednia lista, a~jeżeli jest pusta lista dla
+rzędu $n+1$, aż do odnalezienia wolnej strony (lub osiągnięcia
 maksymalnego rzędu, co sygnalizuje nieudaną alokację).  Jeżeli
 uzyskana w~ten sposób strona ma rząd większy niż żądany, jest ona
 dzielona na pół, aż do osiągnięcia żądanego rozmiaru.  Strony, które
@@ -84,7 +71,7 @@ bliźniaczymi.  Cały proces ilustruje algorytm \ref{alg:buddy-alloc}.
     \While {$i \neq k$}
         \State $i \gets i - 1$
         \State podziel $p$ na pół na $p_1$ i $p_2$
-        \Comment{Strony $p_1$ i $p_2$ nazywamy stronami bliźniaczymi}
+        \Comment{$p_1$ i $p_2$ nazywamy stronami bliźniaczymi}
         \State $p \gets p_1$
         \State dodaj $p_2$ do listy stron rzędu $i$
     \EndWhile
@@ -152,26 +139,21 @@ właściwości można znaleźć na stronach 435--455
 
 \subsection{Migracja, typy migracji i~bloki stron}\label{sec:migratetype}
 
-Istotnym elementem alokatora stron pominiętym z~opisu w~poprzednim
-podrozdziale są typy migracji, których jest sześć: {\it unmovable},
-{\it reclaimable}, {\it movable}, {\it cma}, {\it reserve} oraz {\it
-  isolate}.
+Istotnym elementem alokatora stron są typy migracji, których jest
+sześć: {\it unmovable}, {\it reclaimable}, {\it movable}, {\it cma},
+{\it reserve} oraz {\it isolate}.
 
-\begin{itemize}
-\item Dla potrzeb tej pracy typy {\it unmovable}, {\it
-  reclaimable} i~{\it reserve} jak jeden typ -- typ nieruchomy.  To
-  uproszczenie wynika z~faktu, iż dla mechanizmu CMA istotne jest
-  tylko rozróżnienie pomiędzy stronami ruchomymi i~nieruchomymi.
-\item Strony które są typu ruchomego charakteryzują się tym, że ich
-  adres fizyczny nie jest istotny, w~związku z~czym mogą być
-  przeniesione w~inne miejsce pamięci RAM.
-\item Typ {\it cma} jest nowym typem dodanym dla potrzeb interfejsu
-  CMA i~jest opisany dokładniej w~podrozdziale \ref{sec:migrate-cma}.
-\item Typ {\it isolate} jest niejako pseudo-typem, gdyż jeżeli wolna
-  strona ma taki typ, nie może ona zostać zaalokowana.  Więcej na
-  temat sposobu w~jaki ten typ może być wykorzystywany opisuję
-  w~podrozdziale \ref{sec:alloc-contig-range}.
-\end{itemize}
+Dla potrzeb tej pracy typy {\it unmovable}, {\it reclaimable} i~{\it
+  reserve} są traktowane jak jeden typ -- typ nieruchomy.  To
+uproszczenie wynika z~faktu, iż dla mechanizmu CMA istotne jest tylko
+rozróżnienie pomiędzy stronami ruchomymi i~nieruchomymi.
+
+Typ {\it cma} jest nowym typem dodanym dla potrzeb interfejsu CMA
+i~jest opisany dokładniej w~podrozdziale \ref{sec:migrate-cma}.  Typ
+{\it isolate} jest niejako pseudo-typem, gdyż jeżeli wolna strona ma
+taki typ, nie może ona zostać zaalokowana.  Więcej na temat sposobu
+w~jaki ten typ może być wykorzystywany opisuję w~podrozdziale
+\ref{sec:alloc-contig-range}.
 
 Jednym z~przykładów stron ruchomych są strony anonimowe działających
 procesów.  Ponieważ program odwołują się do nich poprzez mapowania
@@ -184,18 +166,18 @@ Proces przenoszenia ruchomej strony nazywa się migracją
 i wykorzystywany jest między innymi przy obsłudze hot-swapu pamięci,
 a~także w~trackie procesu zagęszczania \autocite{bib:compaction,
   bib:supporting-large-contig-regions}, którego celem jest zwiększenie
-liczby dostępnych stron o~wysokich rzędach.
+liczby wolnych dużych stron.
 
 Najbardziej skomplikowanym krokiem migracji jest uaktualnienie odwołań
 do strony tak, aby wskazywały na nową stronę.  Ponieważ istnieje wiele
 rodzajów stron ruchomych (strony anonimowe, bufory dyskowe itp.), jest
 to krok specyficzny dla danej strony.
 
-Wołając funkcję \code|alloc_pages|, typ migracji strony jest
-przekazywany jako argument, co pozwala alokatorowi stron grupować
-strony tego samego typu.  Jest to istotne, gdyż mechanizm zagęszczania
-nie działa zbyt dobrze jeżeli ruchome strony przeplatają się
-z~pozostałymi stronami, które nie podlegają migracji.
+Wołając funkcję \code|alloc_pages|, typ migracji jest przekazywany
+jako argument, co pozwala alokatorowi grupować strony tego samego
+typu.  Jest to istotne, gdyż mechanizm zagęszczania nie działa zbyt
+dobrze jeżeli ruchome strony przeplatają się z~pozostałymi stronami,
+które nie podlegają migracji.
 
 Grupowanie realizowane jest poprzez podział pamięci na bloki
 składające się z~1024 stron (choć liczba ta zależy od architektury
@@ -219,16 +201,13 @@ migracji.
 
 \subsection{Zmiana typu migracji}\label{sec:type-change}
 
-Należy pamiętać, iż dla jądra zrealizowanie alokacji jest ważniejsze
-od trzymania stron o~tym samym typie migracji razem.  Dlatego dla
-każdego typu migracji istnieje lista zapasowych typów migracji.
-Jeżeli alokacja dla żądanego typu migracji nie powiedzie się, alokator
-stron będzie próbował z~kolejnymi typami z~list, tak jak to pokazuje
-algorytm \ref{alg:buddy-fallback}.
-
-Co więcej, jeżeli rząd żądanej strony jest dostatecznie duży, typ
-migracji wszystkich wolnych stron w~danym bloku zostaje zmieniano na
-ten zgodny z~wywołaniem funkcji \code|alloc_pages|.
+Dla jądra zrealizowanie alokacji jest ważniejsze od trzymania stron
+o~tym samym typie migracji razem, dlatego dla każdego typu migracji
+istnieje lista zapasowych typów -- jeżeli brak jest stron żądanego
+typu, alokator będzie próbował z~kolejnymi typami z~list, tak jak to
+pokazuje algorytm \ref{alg:buddy-fallback}.  Co więcej, jeżeli rząd
+strony jest dostatecznie duży, typ migracji danego bloku zostaje
+zmieniano na ten zgodny z~wywołaniem funkcji \code|alloc_pages|.
 
 Podczas zwalniania, gdy strona jest dodawana do listy wolnych stron
 (widoczne w~linii \ref{alg:buddy-free:add} algorytmu
@@ -236,6 +215,6 @@ Podczas zwalniania, gdy strona jest dodawana do listy wolnych stron
 determinowany jest poprzez typ migracji przypisany blokowi stron do
 którego dana strona należy.
 
-Istotne jest tutaj, aby zauważyć, iż bloki stron mogą zmieniać swój
-typ migracji, a~także, że nawet jeżeli blok ma dany typ migracji,
-strony o~innym typie migracji mogą być z~niego przydzielone.
+Istotne jest tutaj, iż bloki stron mogą zmieniać swój typ migracji,
+a~także, że nawet jeżeli blok ma dany typ migracji, strony o~innym
+typie migracji mogą być z~niego przydzielone.

@@ -4,9 +4,9 @@ W~celu zwiększenia efektywności działania oraz liczby udostępnianych
 funkcji, komputery a w~szczególności telefony komórkowe posiadają
 wiele wyspecjalizowanych podzespołów.  W~wielu przypadkach, procesor
 komunikuje się z~nimi poprzez bufory w pamięci operacyjnej,
-przekazując do urządzenia jedynie adresy gdzie dane się znajdują lub
-powinny być zapisane.  Dostęp do RAM-u poprzez takie podzespoły może
-się jednak wiązać z~wieloma ograniczeniami.
+przekazując do urządzenia jedynie adresy gdzie dane się znajdują.
+Dostęp do RAM-u poprzez takie podzespoły może się jednak wiązać
+z~wieloma ograniczeniami.
 
 \begin{figure}[tbp]
   \centering
@@ -35,22 +35,22 @@ się jednak wiązać z~wieloma ograniczeniami.
 Nowoczesne architektury przeznaczone do serwerów i~komputerów
 osobistych posiadają jednostkę zarządzania pamięcią (\ang{memory
   management unit}, MMU), która tłumaczy adresy logiczne na fizyczne.
-Dzięki temu, bufory, które z~punktu widzenia procesora są ciągłe, mogą
-w~rzeczywistości być podzielone na wiele stron rozrzuconych po pamięci
-fizycznej.  W~ten sposób, nawet jeżeli program alokuje
+Dzięki temu, bufory ciągłe z~punktu widzenia procesora, mogą
+w~rzeczywistości być podzielone na wiele części rozrzuconych po
+pamięci fizycznej.  W~ten sposób, nawet jeżeli program alokuje
 wielomegabajtowy obszar, system może zrealizować żądanie alokując
-wiele czterokibibajtowych stron i~nie przejmować się fragmentacją
-pamięci.
+czterokibibajtowe strony i~nie przejmować się fragmentacją pamięci.
 
-Niemniej, jak to przedstawia rysunek \subref*{fig:sys-with-mmu}, MMU
-przeważnie nie jest dostępny dla pozostałych układów znajdujących się
-w~urządzeniu, takich jak np.\ karta dźwiękowa, czy kontroler sieciowy.
-Także i~dla tych przypadków istnieje rozwiązanie w~postaci mechanizmu
-bezpośredniego dostępu do pamięci (\ang{Direct Memory Access}, DMA),
-którego celem jest odciążenie procesora od przesyłania danych.  Co
-prawda urządzenie nadal znajduje się w~przestrzeni adresów fizycznych,
-co ilustruje rysunek \subref*{fig:sys-with-dma}, ale dzięki układowi
-DMA nieciągłość buforów może zostać przed nim ukryta.
+Niemniej, jak to przedstawia rysunek \subref*{fig:sys-with-mmu},
+jednostka MMU nie jest zazwyczaj dostępny dla pozostałych układów
+znajdujących się w~urządzeniu, takich jak karta dźwiękowa, czy
+kontroler sieciowy.  Także i~dla tych przypadków istnieje rozwiązanie
+w~postaci mechanizmu bezpośredniego dostępu do pamięci (\ang{Direct
+  Memory Access}, DMA), którego celem jest odciążenie procesora od
+przesyłania danych.  Co prawda urządzenie nadal znajduje się
+w~przestrzeni adresów fizycznych, co ilustruje rysunek
+\subref*{fig:sys-with-dma}, ale dzięki układowi DMA nieciągłość
+buforów może zostać przed nim ukryta.
 
 Niestety mechanizm bezpośredniego dostępu do pomięci jest ograniczony
 do transferów sekwencyjnych.  Sprawdza się bardzo dobrze dla operacji
@@ -66,18 +66,18 @@ jednocześnie.\footnote{Jednym z~rodzajów ramek stosowanych do
 Oczywiście nie ma żadnych technologicznych przeszkód do zastosowania
 jednostki translacji adresów również dla podzespołów innych niż
 procesor, tak jak to przedstawia rysunek \subref*{fig:sys-with-iommu}.
-Istotnie istnieją platformy sprzętowe z~tzw.\ MMU wejścia/wyjścia
-(ang.\ IOMMU), który pozwala na budowanie dużych ciągłych buforów
-złożonych ze stosunkowo małych stron.  W~takich systemach, w~zasadzie
-nie ma (lub nie powinno być) konieczności alokowania
-wielomegabajtowych buforów.
+Istotnie istnieją platformy sprzętowe z~MMU wejścia/wyjścia
+(ang.\ IOMMU), który pozwala na budowanie dużych buforów złożonych ze
+stosunkowo małych stron.  W~takich systemach, w~zasadzie nie ma (lub
+nie powinno być) konieczności alokowania wielomegabajtowych ciągłych
+obszarów pamięci.
 
 Niestety, nawet jeżeli IOMMU jest dostępne na danej platformie, jego
 obecność może się wiązać z~dodatkowym kosztem wynikającym
 z~nieoptymalnego kodu \autocite{bib:price-of-safety} lub konieczności
 odczytywania mapowań z~pamięci
 \autocite{bib:mitigate-iotlb-bottleneck}.  Z~tego względu architekt
-platformy może zdecyduje się wyłączyć IOMMU i~rozwiązać problem
+platformy może zdecydować wyłączyć IOMMU i~rozwiązać problem
 „w~oprogramowaniu”.
 
 Z~uwagi na koszty i~ograniczenia zarówno kontrolerów DMA jak i~układów
@@ -85,25 +85,25 @@ MMU, w~wielu systemach wbudowanych, takich jak np.\ telefony
 komórkowe, takie mechanizmy są często niedostępne.  Jednocześnie,
 właśnie takie urządzenia posiadają dużo wyspecjalizowanych
 podzespołów, jak chociażby aparat fotograficzny, czy układ do
-szybkiego dekodowania obrazów JPEG.
+dekodowania obrazów JPEG.
 
 Powoduje to, że tego typu układy muszą operować bezpośrednio na
 adresach fizycznych i~w~konsekwencji, wszelkie stosowane przez nie
-bufory muszą być ciągłe w~pamięci fizycznej.  Niestety, Linux nie jest
-dobrze przystosowany do alokowania takich
-obszarów.\footnote{W~szczególności, Linux nie jest nawet w~stanie (bez
-  modyfikowania źródła) zarządzać obszarami większymi niż cztery
-  mebibajty (1024 strony), gdy tymczasem pięciomegapikselowa kamera
-  potrzebuje buforu o~rozmiarze 15 megabajtów, a~pojedyncza ramka {\it
-    full HD} (tj.\ 1920 $\times$ 1080) zajmuje ponad sześć megabajtów.}
+bufory muszą być ciągłe.  Niestety Linux nie jest dobrze przystosowany
+do alokowania takich obszarów.\footnote{W~szczególności, Linux nie
+  jest nawet w~stanie (bez modyfikowania źródła) zarządzać obszarami
+  większymi niż cztery mebibajty (1024 strony), gdy tymczasem
+  pięciomegapikselowa kamera potrzebuje buforu o~rozmiarze 15
+  megabajtów, a~pojedyncza ramka {\it full HD} (tj.\ 1920 $\times$
+  1080) zajmuje ponad sześć megabajtów.}
 
 
 \section{Możliwe rozwiązania}
 
-Ponieważ opisany powyżej problem jest znany od dawna, na przestrzeni
-lat powstało wiele rozwiązań programowych umożliwiających obejście
-trudność w~alokacji dużych obszarów.  W~tym podrozdziale opiszę je
-pokrótce oraz przedstawie ich ograniczenia.
+Ponieważ problem jest znany od dawna, na przestrzeni lat powstało
+wiele rozwiązań programowych umożliwiających obejście trudność
+w~alokacji dużych obszarów.  W~tym podrozdziale opiszę je pokrótce
+oraz przedstawie ich ograniczenia.
 
 \subsection{Przypisywanie pamięci na stałe}
 
@@ -113,23 +113,23 @@ konkretnych sterowników.
 
 Najłatwiejszym, acz niezbyt eleganckim sposobem jest wykorzystanie
 argumentu \code|mem| jądra.  Przekazany przez bootloader powoduje, że
-Linux nie stara się automatycznie wykryć dostępnej w~systemie pamięci
-RAM i~zamiast tego interpretuje przekazane informacje.  W~ten sposób,
+Linux nie stara się automatycznie wykryć dostępnej pamięci RAM
+i~zamiast tego interpretuje przekazane informacje.  W~ten sposób,
 możliwe jest ograniczenie widzianej przez system pamięci, tak że
 ukryte regiony mogą być wykorzystywane przez konkretne sterowniki.
 
 Bardziej eleganckim rozwiązaniem jest skorzystanie z~alokatora
 memblock, który jest aktywny zanim jądro zainicjuje wszystkie swoje
-podsystemy.  Jego zadaniem jest śledzenie wolnej pamięci zanim jeszcze
+podsystemy.  Jego zadaniem jest śledzenie wolnej pamięci zanim
 bardziej zaawansowany alokator stron będzie dostępny w~systemie.
 Wołany dostatecznie wcześnie, jest w~stanie zaalokowanie duże obszary
 pamięci, które potem można wykorzystać w~dowolny sposób.
 
 Niestety, o~ile tego typu rozwiązania mogą być wystarczające, jeżeli
-podzespoły wymagają stosunkowo małych buforów, przestaje się on
-skalować przy współczesnych systemach, gdyż wymaga rezerwacji wielu
-megabajtów pamięci, która przez większość czasu nie jest do niczego
-wykorzystywana.
+podzespoły wymagają stosunkowo małych buforów, przestają się skalować
+przy współczesnych systemach, gdyż wymagają rezerwacji wielu
+megabajtów, które przez większość czasu nie są do niczego
+wykorzystywane.
 
 \subsection{Pula pamięci fizycznej}
 
@@ -151,29 +151,27 @@ fizycznej nie tylko sterownikom działającym w~przestrzeni jądra, ale
 także programom działającym pod kontrolą systemu. Co więcej, dzięki
 integracji z~mechanizmem współdzielenia pamięci Systemu
 V~(tj.\ funkcjami \code|shmget|, \code|shmat|, \code|shmdt| itp.)
-wykorzystywanym między innymi przez system X~Window, PMM pozwalał to
-na dekodowanie obrazów i~strumieni wideo bezpośrednio do buforów
-z~których X11 odczytywał dane.  Dzięki temu, w~całym procesie dane nie
-były niepotrzebnie kopiowane z~jednego miejsca w~pamięci do drugiego,
-co minimalizowało użycie procesora i~szyny pamięci i~w~rezultacie
-przyśpieszało działanie systemu.
+wykorzystywanym między innymi przez X~Window, PMM pozwalał na
+dekodowanie obrazów i~strumieni wideo bezpośrednio do buforów
+dostępnych dla serwera X11.  Dzięki temu, w~całym procesie dane nie
+były niepotrzebnie kopiowane, co minimalizowało użycie procesora
+i~szyny pamięci i~w~rezultacie przyśpieszało działanie systemu.
 
 Jednakże, pamięć zarezerwowana przez PMM i~tak przez większość czasu
-była zupełnie nieużywana, a~więc marnowana.  Z~tego powodu, PMM
-w~formie zaprezentowanej na początku nie został przyjęty przez
-społeczność programistów Linuksa i~musiałem rozwijać inne rozwiązanie.
+była zupełnie nieużywana, a~więc marnowana.  Z~tego powodu, PMM nie
+został przyjęty przez społeczność programistów Linuksa i~musiałem
+rozwijać inne rozwiązanie.
 
 \subsection{Zarys Contiguous Memory Allocatora}
 
-Aby rozwiązać i~ten problem, {\it Contiguous Memory Allocator} (CMA)
-umożliwia systemowi używanie zarezerwowanej pamięci, o~ile żadne
-urządzenie jej w~danym momencie nie potrzebuje.
+W~ten sposób zrodził się alokator pamięci ciągłej, {\it Contiguous
+  Memory Allocator} (CMA), który umożliwia systemowi używanie
+zarezerwowanej pamięci, o~ile żadne urządzenie jej w~danym momencie
+nie potrzebuje.
 
 Pierwsze wersje alokatora CMA skupiały się w~dużej mierze na
-rozwiązywaniu problemu przypisywania różnych zarezerwowanych obszarów
-do różnych urządzeń, a~także umożliwianiu sterownikom alokowanie
-różnych buforów w~różnych obszarach pamięci.  Było to potrzebne, gdyż
-dekoder wideo (\ang{Multi-Format Codec}, lub MFC) stosowany na
+umożliwianiu sterownikom alokowania różnych buforów w~różnych
+obszarach pamięci.  Było to potrzebne, gdyż dekoder wideo stosowany na
 platformie S5PV110 wymagał, aby różne dane były przechowywane
 w~różnych bankach pamięci.  Pozwalało to na zwiększenie szybkości
 dostępu do tych danych dzięki zastosowaniu odczytu z~dwóch banków
@@ -181,7 +179,7 @@ pamięci jednocześnie.
 
 Z~czasem, coraz bardziej integrowałem mechanizm CMA z~kodem
 zarządzania pamięci w~Linuksie w~wyniku czego, pamięć rezerwowana przy
-starcie systemu, stała się dostępna dla reszty systemu, o~ile żaden
-sterownik jej nie używał \autocite{patch:cma-24}.  Takie rozwiązanie
-zostało ostatecznie zaakceptowane przez społeczność deweloperów
-Linuksa i~jest dostępne w~źródłach Linuksa począwszy od wersji 3.5.
+starcie, stała się dostępna dla reszty systemu, o~ile żaden sterownik
+jej nie używał \autocite{patch:cma-24}.  Takie rozwiązanie zostało
+ostatecznie zaakceptowane przez społeczność deweloperów Linuksa i~jest
+dostępne począwszy od wersji 3.5 jądra.
