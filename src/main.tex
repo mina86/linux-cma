@@ -139,7 +139,12 @@
 \pagestyle{uheadings}
 
 \newcommand*{\TODO}[1]{{\setlength{\fboxsep}{0pt}\footnotesize (\colorbox{red}{TODO}: #1)}}
-\newcommand*{\ang}[1]{ang.\ \textit{#1}}
+
+\makeatletter
+\def\ang@star{\textit}
+\newcommand*{\ang@nostar}[1]{ang.\ \ang@star{#1}}
+\newcommand*{\ang}{\@ifstar\ang@star\ang@nostar}
+\makeatother
 
 \usepackage{titling}
 \title{Alokacja ciągłych fizycznie obszarów pamięci w~systemie Linux}

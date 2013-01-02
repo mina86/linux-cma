@@ -3,7 +3,7 @@
 Tematem niniejszej pracy inżynierskiej jest sterownik dla jądra Linux,
 który pozwala w~efektywny sposób alokować duże obszary ciągłej
 fizycznie pamięci.  Opisanym mechanizmem jest stworzony przeze mnie
-menadżer ciągłej pamięci, \textit{Contiguous Memory Allocator} (CMA).
+menadżer ciągłej pamięci, \ang*{Contiguous Memory Allocator} (CMA).
 
 Podstawowym zastosowaniem dużych buforów, który brałem w~głównej
 mierze podczas pisania alokatora CMA, jest wykorzystanie ich
@@ -131,7 +131,7 @@ obszarów.\footnote{W~szczególności, Linux nie jest nawet w~stanie (bez
   modyfikowania źródła) zarządzać obszarami większymi niż cztery
   mebibajty (1024 strony), gdy tymczasem pięciomegapikselowa kamera
   potrzebuje buforu o~rozmiarze 15 megabajtów, a~pojedyncza ramka
-  \textit{full HD} (tj.\ 1920 $\times$ 1080) zajmuje ponad sześć
+  \ang*{full HD} (tj.\ 1920 $\times$ 1080) zajmuje ponad sześć
   megabajtów.}
 
 
@@ -175,10 +175,10 @@ pewną przestrzeń pamięci, ale zamiast na stałe przypisywać obszary do
 urządzeń, pozwala sterownikom alokować bufory, wtedy, gdy są one
 potrzebne.
 
-W~trakcie moich prac stworzyłem \textit{Physical Memory Manager} (PMM)
+W~trakcie moich prac stworzyłem \ang*{Physical Memory Manager} (PMM)
 \autocite{patch:pmm}, który implementuje dokładnie te założenia. W~tym
 podstawowym zastosowaniu, PMM nie przedstawia sobą nic nowego.  Już
-bowiem w~1996 roku Matt Welsh napisał pierwszą wersję patcha
+bowiem w~1996 roku Matt Welsh napisał pierwszą wersję dodatku
 \emph{bigphysarea} dla jądra 1.3.71, który był z~różnym zaangażowaniem
 utrzymywany i~przystosowywany aż do wersji 3.2 Linuksa
 \autocite{patch:bigphys}.
@@ -212,7 +212,7 @@ społeczność programistów Linuksa i~musiałem rozwijać inne rozwiązanie.
 
 \subsection{Zarys Contiguous Memory Allocatora}
 
-Aby rozwiązać i~ten problem, \textit{Contiguous Memory Allocator}
+Aby rozwiązać i~ten problem, \ang*{Contiguous Memory Allocator} (CMA)
 umożliwia systemowi używanie zarezerwowanej pamięci, o~ile żadne
 urządzenie jej w~danym momencie nie potrzebuje.
 
