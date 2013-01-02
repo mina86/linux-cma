@@ -328,16 +328,16 @@ diff --git a/arch/arm/plat-s5p/dev-mfc.c b/arch/arm/plat-s5p/dev-mfc.c
  				phys_addr_t lbase, unsigned int lsize)
  {
 	(*{\it [ \ldots ]}*)
-+	if (dma_declare_contiguous(&amp;s5p_device_mfc_r.dev, (*{\color{gray} $\hookleftarrow$}*)
++	if (dma_declare_contiguous(&s5p_device_mfc_r.dev, (*{\color{gray} $\hookleftarrow$}*)
 (*{\color{gray} $\hookrightarrow$}*)		rsize, rbase, 0))
 +		printk(KERN_ERR "Failed to reserve memory for MFC device (*{\color{gray} $\hookleftarrow$}*)
-(*{\color{gray} $\hookrightarrow$}*)			(\%u bytes at 0x\%08lx)\n",
-+		       rsize, (unsigned long) rbase); (*{\color{gray} $\hookleftarrow$}*)
-(*{\color{gray} $\hookrightarrow$}*)	(*{\it [ \ldots ]}*)
-+	if (dma_declare_contiguous(&amp;s5p_device_mfc_l.dev, (*{\color{gray} $\hookleftarrow$}*)
+(*{\color{gray} $\hookrightarrow$}*)			(%u bytes at 0x%08lx)\n",
++		       rsize, (unsigned long) rbase);
+	(*{\it [ \ldots ]}*)
++	if (dma_declare_contiguous(&s5p_device_mfc_l.dev, (*{\color{gray} $\hookleftarrow$}*)
 (*{\color{gray} $\hookrightarrow$}*)		lsize, lbase, 0))
 +		printk(KERN_ERR "Failed to reserve memory for MFC device (*{\color{gray} $\hookleftarrow$}*)
-(*{\color{gray} $\hookrightarrow$}*)			(\%u bytes at 0x\%08lx)\n",
+(*{\color{gray} $\hookrightarrow$}*)			(%u bytes at 0x%08lx)\n",
 +		       rsize, (unsigned long) rbase);
  }
 \end{lstlisting}
