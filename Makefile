@@ -34,6 +34,10 @@ build/%.eps: img/%.dia
 	@exec mkdir -p build
 	exec dia -l -t eps -e $@ $<
 
+build/%.eps: img/%.jpg
+	@exec mkdir -p build
+	exec convert $^ $@
+
 clean:
 	exec rm -fr -- build
 
