@@ -94,7 +94,7 @@ do alokowania takich obszarów.\footnote{W~szczególności, Linux nie
   jest nawet w~stanie (bez modyfikowania źródła) zarządzać obszarami
   większymi niż cztery mebibajty (1024 strony), gdy tymczasem
   pięciomegapikselowa kamera potrzebuje buforu o~rozmiarze 15
-  megabajtów, a~pojedyncza ramka {\it full HD} (tj.\ 1920 $\times$
+  megabajtów, a~pojedyncza ramka \textit{full HD} (tj.\ 1920 $\times$
   1080) zajmuje ponad sześć megabajtów.}
 
 
@@ -138,7 +138,7 @@ pewną przestrzeń pamięci, ale zamiast na stałe przypisywać obszary do
 urządzeń, pozwala sterownikom alokować bufory, wtedy, gdy są one
 potrzebne.
 
-W~trakcie moich prac stworzyłem {\it Physical Memory Manager} (PMM)
+W~trakcie moich prac stworzyłem \textit{Physical Memory Manager} (PMM)
 \autocite{patch:pmm}, który implementuje dokładnie te założenia. W~tym
 podstawowym zastosowaniu, PMM nie przedstawia sobą nic nowego.  Już
 bowiem w~1996 roku Matt Welsh napisał pierwszą wersję patcha
@@ -164,7 +164,7 @@ rozwijać inne rozwiązanie.
 
 \subsection{Zarys Contiguous Memory Allocatora}
 
-W~ten sposób zrodził się alokator pamięci ciągłej, {\it Contiguous
+W~ten sposób zrodził się alokator pamięci ciągłej, \textit{Contiguous
   Memory Allocator} (CMA), który umożliwia systemowi używanie
 zarezerwowanej pamięci, o~ile żadne urządzenie jej w~danym momencie
 nie potrzebuje.

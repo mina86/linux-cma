@@ -40,7 +40,7 @@ stąd, iż alokator stron nie pozwala alokować obszarów: (i) mniejszy
 niż jedna strona (4096 bajty), (ii) których rozmiar nie jest potęgą
 dwójki, oraz (iii) większych niż \unit[4]{MiB} (przez co nie nadaje
 się do alokowania buforu dla pięciomegapikselowej kamery, czy nawet
-pojedynczej ramki {\it full HD}).
+pojedynczej ramki \textit{full HD}).
 
 Alokator stron posiada 11 list dwukierunkowych, które przechowują
 wolne strony danego rzędu.  Gdy sterownik chce zaalokować stronę rzędu
@@ -140,18 +140,18 @@ właściwości można znaleźć na stronach 435--455
 \subsection{Migracja, typy migracji i~bloki stron}\label{sec:migratetype}
 
 Istotnym elementem alokatora stron są typy migracji, których jest
-sześć: {\it unmovable}, {\it reclaimable}, {\it movable}, {\it cma},
-{\it reserve} oraz {\it isolate}.
+sześć: \textit{unmovable}, \textit{reclaimable}, \textit{movable},
+\textit{cma}, \textit{reserve} oraz \textit{isolate}.
 
-Dla potrzeb tej pracy typy {\it unmovable}, {\it reclaimable} i~{\it
-  reserve} są traktowane jak jeden typ -- typ nieruchomy.  To
+Dla potrzeb tej pracy typy \textit{unmovable}, \textit{reclaimable}
+i~{\it reserve} są traktowane jak jeden typ -- typ nieruchomy.  To
 uproszczenie wynika z~faktu, iż dla mechanizmu CMA istotne jest tylko
 rozróżnienie pomiędzy stronami ruchomymi i~nieruchomymi.
 
-Typ {\it cma} jest nowym typem dodanym dla potrzeb interfejsu CMA
+Typ \textit{cma} jest nowym typem dodanym dla potrzeb interfejsu CMA
 i~jest opisany dokładniej w~podrozdziale \ref{sec:migrate-cma}.  Typ
-{\it isolate} jest niejako pseudo-typem, gdyż jeżeli wolna strona ma
-taki typ, nie może ona zostać zaalokowana.  Więcej na temat sposobu
+\textit{isolate} jest niejako pseudo-typem, gdyż jeżeli wolna strona
+ma taki typ, nie może ona zostać zaalokowana.  Więcej na temat sposobu
 w~jaki ten typ może być wykorzystywany opisuję w~podrozdziale
 \ref{sec:alloc-contig-range}.
 
