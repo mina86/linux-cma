@@ -276,7 +276,7 @@ zainicjowany, jak to opisanuje podrozdział
 \ref{sec:integrate-with-arch}.  Zadaniem funkcji
 \code|dma_declare_contiguous| przedstawionej w~wydruku
 \ref{lst:dma-declare-contiguous} jest żądanie pamięci z~alokatora
-czasu startu systemu, który nosi nazwę {\it memblock}.
+czasu startu systemu, który nosi nazwę \textit{memblock}.
 
 \begin{lstlisting}[float=tbhp,caption={Skrócony wydruk funkcji
     \code|dma_declare_contiguous| z Linuksa
@@ -324,9 +324,9 @@ wywołuje ona funkcję \code|cma_create_area|, która tworzy struktury
 przez alokator CMA.  Struktura \code|cma| posiada następujące pola:
 
 \begin{tabular}{lll}
-\code|unsigned long|   & {\bf \code|base_pfn|} & Identyfikator początkowej strony w~regionie. \\
-\code|unsigned long|   & {\bf \code|count|}    & Liczba strony w~regionie. \\
-\code|unsigned long *| & {\bf \code|bitmap|}   & Bitmapa zajętych stron. \\
+\code|unsigned long|   & \textbf{\code|base_pfn|} & Identyfikator początkowej strony w~regionie. \\
+\code|unsigned long|   & \textbf{\code|count|} & Liczba strony w~regionie. \\
+\code|unsigned long *| & \textbf{\code|bitmap|} & Bitmapa zajętych stron. \\
 \end{tabular}
 
 Pierwsze dwa identyfikują obszar w~pamięci fizycznej, gdzie znajduje

@@ -3,7 +3,7 @@
 Tematem niniejszej pracy inżynierskiej jest sterownik dla jądra Linux,
 który pozwala w~efektywny sposób alokować duże obszary ciągłej
 fizycznie pamięci.  Opisanym mechanizmem jest stworzony przeze mnie
-menadżer ciągłej pamięci, {\it Contiguous Memory Allocator} (lub CMA).
+menadżer ciągłej pamięci, \textit{Contiguous Memory Allocator} (CMA).
 
 Podstawowym zastosowaniem dużych buforów, który brałem w~głównej
 mierze podczas pisania alokatora CMA, jest wykorzystanie ich
@@ -130,8 +130,9 @@ dobrze przystosowany do alokowania takich
 obszarów.\footnote{W~szczególności, Linux nie jest nawet w~stanie (bez
   modyfikowania źródła) zarządzać obszarami większymi niż cztery
   mebibajty (1024 strony), gdy tymczasem pięciomegapikselowa kamera
-  potrzebuje buforu o~rozmiarze 15 megabajtów, a~pojedyncza ramka {\it
-    full HD} (tj.\ $1920 \times 1080$) zajmuje ponad sześć megabajtów.}
+  potrzebuje buforu o~rozmiarze 15 megabajtów, a~pojedyncza ramka
+  \textit{full HD} (tj.\ 1920 $\times$ 1080) zajmuje ponad sześć
+  megabajtów.}
 
 
 \section{Możliwe rozwiązania}
@@ -174,13 +175,13 @@ pewną przestrzeń pamięci, ale zamiast na stałe przypisywać obszary do
 urządzeń, pozwala sterownikom alokować bufory, wtedy, gdy są one
 potrzebne.
 
-W~trakcie moich prac stworzyłem {\it Physical Memory Manager} (lub
-PMM) \autocite{patch:pmm}, który implementuje dokładnie te
-założenia. W~tym podstawowym zastosowaniu, PMM nie przedstawia sobą nic
-nowego.  Już bowiem w~1996 roku Matt Welsh napisał pierwszą wersję
-patcha \emph{bigphysarea} dla jądra 1.3.71, który był z~różnym
-zaangażowaniem utrzymywany i~przystosowywany aż do wersji
-3.2 Linuksa \autocite{patch:bigphys}.
+W~trakcie moich prac stworzyłem \textit{Physical Memory Manager} (PMM)
+\autocite{patch:pmm}, który implementuje dokładnie te założenia. W~tym
+podstawowym zastosowaniu, PMM nie przedstawia sobą nic nowego.  Już
+bowiem w~1996 roku Matt Welsh napisał pierwszą wersję patcha
+\emph{bigphysarea} dla jądra 1.3.71, który był z~różnym zaangażowaniem
+utrzymywany i~przystosowywany aż do wersji 3.2 Linuksa
+\autocite{patch:bigphys}.
 
 PMM umożliwiał alokowanie dużych obszarów ciągłej pamięci fizycznej
 nie tylko sterownikom działającym w~przestrzeni jądra, ale także
@@ -211,7 +212,7 @@ społeczność programistów Linuksa i~musiałem rozwijać inne rozwiązanie.
 
 \subsection{Zarys Contiguous Memory Allocatora}
 
-Aby rozwiązać i~ten problem, {\it Contiguous Memory Allocator}
+Aby rozwiązać i~ten problem, \textit{Contiguous Memory Allocator}
 umożliwia systemowi używanie zarezerwowanej pamięci, o~ile żadne
 urządzenie jej w~danym momencie nie potrzebuje.
 

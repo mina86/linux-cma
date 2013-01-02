@@ -78,10 +78,10 @@ void dma_contiguous_reserve(phys_addr_t limit);
 \end{lstlisting}
 
 Wywołanie to musi nastąpić gdy podsystem alokacji pamięci czasu startu
-systemu (tj.\ {\it. memblock}) zostanie zainicjowany, ale przed
+systemu (tj.\ \textit{memblock}) zostanie zainicjowany, ale przed
 aktywowaniem alokatora stron.  Dla przykładu w~architekturze ARM
-dogodnym miejscem jest funkcja \code|arm_memblock_init|, a~x86
--- \code|setup_arch| zaraz po aktywowaniu memblock.
+dogodnym miejscem jest funkcja \code|arm_memblock_init|, a~x86 --
+\code|setup_arch| zaraz po aktywowaniu memblock.
 
 Argument \code|limit| określa górny adres pamięci fizycznej,
 którego zarezerwowany obszar CMA nie przekroczy.  Dzięki niemu regiony

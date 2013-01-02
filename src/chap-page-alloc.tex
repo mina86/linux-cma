@@ -18,10 +18,10 @@ Uproszczone zależności między tymi komponentami przedstawia rysunek
 \section{Algorytm bliźniaków}
 
 Alokator stron implementuje algorytm bliźniaków (skąd też jego inna
-angielska nazwa: {\it buddy system} lub {\it buddy allocator}), który
-operuje na blakach o~rozmiarze $2^k$ jednostek.  W~przypadku Linuksa
-jednostką jest pojedyncza strona fizyczna, a~na $k$~narzucone jest
-ograniczenie $k < \mathrm{MAX\_ORDER}$.  \code|MAX_ORDER| może
+angielska nazwa: \textit{buddy system} lub \textit{buddy allocator}),
+który operuje na blakach o~rozmiarze $2^k$ jednostek.  W~przypadku
+Linuksa jednostką jest pojedyncza strona fizyczna, a~na $k$~narzucone
+jest ograniczenie $k < \mathrm{MAX\_ORDER}$.  \code|MAX_ORDER| może
 zależeć od architektury, na którą Linux jest kompilowany, ale
 zazwyczaj ma wartość $11$ (toteż na potrzeby tej pracy zakładam, iż $0
 \le k \le 10$).
@@ -60,7 +60,7 @@ stąd następujące właściwości alokatora stron:
 \item Alokator stron nie jest w~stanie zaalokować obszaru większego
   niż \unit[4]{MiB}.  Z~tego powodu, nie nadaje się do alokowania
   ciągłego fizycznie buforu dla pięciomegapikselowej kamery, czy nawet
-  pojedynczej ramki {\it full HD}.
+  pojedynczej ramki \textit{full HD}.
 \end{itemize}
 
 \begin{figure}[tbp]
@@ -145,22 +145,24 @@ właściwości można znaleźć na stronach 435--455
 
 Kolejnym istotnym elementem alokatora stron pominiętym z~opisu
 w~poprzednim podrozdziale są typy migracji (\ang{migratetype}),
-których jest sześć: {\it unmovable}, {\it reclaimable}, {\it movable},
-{\it cma}, {\it reserve} oraz {\it isolate}).
+których jest sześć: \textit{unmovable}, \textit{reclaimable},
+\textit{movable}, \textit{cma}, \textit{reserve} oraz
+\textit{isolate}).
 
 \begin{itemize}
-\item Dla potrzeb tej pracy traktuję typy {\it unmovable}, {\it
-  reclaimable} i~{\it reserve} jak jeden typ -- typ nieruchomy.  To
-  uproszczenie wynika z~faktu, iż dla mechanizmu CMA istotne jest
-  tylko rozróżnienie pomiędzy stronami ruchomymi i~nieruchomymi.
+\item Dla potrzeb tej pracy traktuję typy \textit{unmovable},
+  \textit{reclaimable} i~\textit{reserve} jak jeden typ -- typ
+  nieruchomy.  To uproszczenie wynika z~faktu, iż dla mechanizmu CMA
+  istotne jest tylko rozróżnienie pomiędzy stronami ruchomymi
+  i~nieruchomymi.
 \item Strony które są typu ruchomego charakteryzują się tym, że ich
   adres fizyczny nie jest istotny, w~związku z~czym mogą być
   przeniesione w~inne miejsce pamięci RAM.
-\item Typ {\it cma} jest nowym typem dodanym dla potrzeb interfejsu
+\item Typ \textit{cma} jest nowym typem dodanym dla potrzeb interfejsu
   CMA i~jest opisany dokładniej w~podrozdziale \ref{sec:migrate-cma}.
-\item Typ {\it isolate} jest niejako pseudo-typem, gdyż jeżeli wolna
-  strona ma taki typ, nie może ona zostać zaalokowana.  Więcej na
-  temat sposobu w~jaki ten typ może być wykorzystywany opisuję
+\item Typ \textit{isolate} jest niejako pseudo-typem, gdyż jeżeli
+  wolna strona ma taki typ, nie może ona zostać zaalokowana.  Więcej
+  na temat sposobu w~jaki ten typ może być wykorzystywany opisuję
   w~podrozdziale \ref{sec:alloc-contig-range}.
 \end{itemize}
 
@@ -377,8 +379,8 @@ algorytm \ref{alg:buddy-alloc} nie znajdzie żadnej wolnej strony
 aktywowana jest tzw.\ wolna ścieżka (\ang{slow path}), która
 wykorzystuje różne mechanizmy odzyskiwania pamięci (np.\ poprzez
 zwalnianie buforów dyskowych, czy w~najgorszym przypadku zabiciu
-jednego z~działających procesów, czego dokonuje {\it out-of-memory
-  killer} lub OOM {\it killer}) \autocite[rozdział 17]{bib:utlk}.
+jednego z~działających procesów, czego dokonuje \textit{out-of-memory
+  killer} lub OOM \textit{killer}) \autocite[rozdział 17]{bib:utlk}.
 
 Istnieje jeszcze wiele innych aspektów takich -- jak chociażby
 alokacja w~kontekście atomowym (np.\ w~trakcie obsługi przerwania),
