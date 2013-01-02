@@ -215,7 +215,7 @@ wypadku, bufor zostanie zwolniony i~funkcja zwróci \code|true|.  Ta
 zwracana wartość może zostać wykorzystana przez DMA API aby rozróżnić,
 czy dany bufor jest buforem CMA, czy też nie.
 
-Wydruk \ref{lst:dma-integration} pokazuje fragment patcha, który
+Wydruk \ref{lst:dma-integration} pokazuje fragment kodu, który
 integruje mechanizm CMA z~podsystemem DMA architektury x86.
 
 \begin{lstlisting}[float=bht,caption={Integracja alokatora CMA z~podsystemem DMA
@@ -307,7 +307,7 @@ Drugi to \emph{rozmiar w~bajtach}.  Trzeci to adres gdzie region ma
 się zaczynać lub zero, jeżeli nie ma to znaczenia.  Ostatni argument,
 \code|limit|, ma takie samo znaczenie jak w~przypadku funkcji
 \code|dma_contiguous_reserve|.  Dla przykładu, wydruk
-\ref{lst:s5p-priv-region} pokazuje fragment patcha dodającego prywatne
+\ref{lst:s5p-priv-region} pokazuje fragment kodu dodającego prywatne
 konteksty do dwóch urządzeń.
 
 Istnieje limit „prywatnych” regionów CMA, konkretnie
