@@ -56,6 +56,11 @@
     \begin{tabular}{p{5cm} p{12cm}}
     \begin{minipage}{5cm}
     \center
+    \IfFileExists{bsc-photo.eps}{
+      \includegraphics[width=4.5cm]{bsc-photo.eps}
+    }{
+      \includegraphics[width=4.5cm]{build/photo.eps}
+    }
     \end{minipage}
     &
     \begin{minipage}{12cm}
@@ -77,8 +82,11 @@
         {\large\bfseries Życiorys}\par\bigskip
     \end{center}
 
-    \indent
-    Nazywam się \theauthor \dots \TODO{do wypełnienia}
+    \IfFileExists{bsc-bio.tex}{\indent\input{bsc-bio}}{
+      \begin{center}
+        $\ddot\smile$
+      \end{center}
+    }
     \par
     \vspace{2\baselineskip}
     \hfill\parbox{15em}{{\small\dotfill}\\[-.3ex]
@@ -105,17 +113,26 @@
         {\large\bfseries Streszczenie}\par\bigskip
     \end{center}
 
-    {\itshape Praca ta prezentuje sposób alokacji dużych obszarów
-      ciągłej fizycznie pamięci w~systemach opartych na jądrze Linux.
-      Zastosowanie w~procesorach jednostek zarządzania pamięcią
-      pozwala na uniknięcie konieczności takich alokacji, jednak
-      w~systemach wbudowanych poszczególne komponenty są często
-      pozbawiony jednostki translacji adresów pamięci, przez co muszą
-      operować bezpośrednio na adresach fizycznych.  Aby temu
-      zaradzić, stworzyłem alokator pamięci ciągłej (ang. {\it
-        Contiguous Memory Allocator}, CMA), który pozwala przydzielać
-      duże ciągłe fizycznie obszary pamięci, bez konieczności
-      rezerwowania na wyłączność dużych obszarów przy starcie systemu.}
+    {\itshape Wiele podzespołów komputera, a~szczególnie
+      tzw.\ systemów wbudowanych, jest zazwyczaj podłączonych
+      bezpośrednio do magistrali systemowej, przez co muszą operować
+      adresami fizycznymi.  Równocześnie mechanizmy bezpośredniego
+      dostępu do pamięci (\ang{Direct Memory Access}, DMA) są
+      ograniczone do transferów sekwencyjnych.  Stwarza to potrzebę,
+      alokowania dużych ciągłych fizycznie obszarów pamięci do
+      wykorzystania w~takich układach.
+
+      Dotychczas stosowane w~systemach bazujących na jądrze Linux
+      rozwiązania wiążą się z~rezerwowaniem dużego obszaru pamięci,
+      który wyjęty spod kontroli Linuksa przestaje być użyteczny dla
+      jądra i~w~rezultacie wykorzystywany nieefektywnie.
+
+      Praca opisuje stworzony przeze mnie alokator pamięci ciągłej,
+      \ang{Contiguous Memory Allocator} (CMA), który rozwiązuje ten
+      problem poprzez zastosowanie mechanizmu migracji, który pozwala
+      przenosić zajęte strony i~w~ten sposób tworzyć długie sekwencje
+      wolnych stron.}
+
     \vspace*{1\baselineskip}
 
     \noindent{\bf Słowa kluczowe}: {\itshape alokacja pamięci, Linux,
@@ -128,15 +145,21 @@
     \noindent{\bf Title}: {\itshape \theengishtitle}\par
     \vspace*{1\baselineskip}
 
-    {\itshape This thesis describes a~way to allocate large physically
-      contiguous memory regions in Linux-based systems.  Memory
-      management units allows to avoid the need of such allocations,
-      but in embedded systems, individual components often lack an
-      address translation unit and thus need to operate directly on
-      physical addresses.  To address this issue, I~have created
-      a~Contiguous Memory Allocator (or CMA) which allows to allocate
-      big physically contiguous memory regions without the need to
-      reserve memory for exclusive use during system start.}
+    {\itshape Many computer components, especially in a~so called
+      embedde system, are attached directly to the system bus and thus
+      need to operate on physical addresses.  At the same time, Direct
+      Memory Access (DMA) is limited to sequential transfers only.
+      This creates a need to allocate big physically contiguous memory
+      buffers to be used with such components.
+
+      Solutions previously used in Linux-based systems boil down to
+      reserving big memory area which removed from Linux control
+      cannot be used by the kernel and is used inefficiently.
+
+      This work describes Contiguous Memory Allocator (CMA) -- an
+      allocator written by me which solves the problem by using
+      migration, which makes it possible to move allocated pages and
+      thus create a~long sequence of free pages.}
     \vspace*{1\baselineskip}
 
     \noindent{\bf Key words}: {\itshape memory allocation, Linux,

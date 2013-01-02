@@ -1,5 +1,8 @@
 LATEX := latex -halt-on-error -file-line-error -output-directory=build
 
+TEXINPUTS := .:$(HOME)/bsc/:
+export TEXINPUTS
+
 all: mnazarew_bsc.pdf
 
 
@@ -37,6 +40,7 @@ build/%.eps: img/%.dia
 build/%.eps: img/%.jpg
 	@exec mkdir -p build
 	exec convert $^ $@
+
 
 clean:
 	exec rm -fr -- build
