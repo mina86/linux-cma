@@ -133,8 +133,8 @@
 
 \renewcommand*{\chaptermark}[1]{\markboth{\scshape\small\bfseries \
 #1}{\small\bfseries \ #1}}
-\renewcommand*{\sectionmark}[1]{\markboth{\scshape\small\bfseries\thesection.\
-#1}{\small\bfseries\thesection.\ #1}}
+\renewcommand*{\sectionmark}[1]{\markboth{\scshape\small\bfseries\ifHeadingNumbered\thesection.\ \fi
+#1}{\small\bfseries\ifHeadingNumbered\thesection.\ \fi #1}}
 \newcommand*{\headrulewidth}{0.5pt}
 \newcommand*{\footrulewidth}{0.pt}
 \pagestyle{uheadings}
