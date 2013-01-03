@@ -1,0 +1,253 @@
+\chapter{Ewolucja Contiguous Memory Allocatora}
+
+Z~uwagi na skomplikowany charakter problemu, moje prace nad alokacją
+dużych ciągłych fizycznie obszarów pamięci trwały dość długo.  Od
+interfejsu \textit{Physical Memory Manager} (PMM)
+\autocite{patch:pmm}, aż do wersji \textit{Contiguous Memory
+  Allocatora} CMA, która została ostatecznie dołączona do oficjalnego
+wydania Linuksa \autocite{patch:cma-24} minęło prawie trzy lata i~choć
+część opóźnienia wynikało również z~faktu, że równocześnie pracowałem
+nad podsystemem USB Linuksa, dużo czasu było wymagane, gdyż musiałem
+zrozumieć kod zarządzania pamięcią jądra oraz zadowolić wszystkich
+zainteresowanych deweloperów Linuksa.  W~rozdziale tym opiszę proces,
+który doprowadził do powstania CMA w~obecnej formie począwszy od
+interfejsu PMM.
+
+
+\section{Physical Memory Manager}\label{sec:evo-pmm}
+
+PMM został wysłany na listę dyskusyjną jądra Linux w~maju 2009 roku
+\autocite{patch:pmm}.  Z~punktu widzenia alokacji pamięci nie był
+rewolucyjny, gdyż opierał się na rezerwacji puli pamięci, z~której
+sterowniki mogły później alokować bufory.  To co wyróżniało PMM
+spośród podobnych rozwiązań to kilka dodatkowych interfejsów, które
+udostępniał.
+
+Po pierwsze, umożliwiał alokowanie pamięci fizycznej nie tylko
+sterownikom działającym w~przestrzeni jądra, ale także programom
+działającym pod kontrolą systemu.  W~ten sposób, aplikacja mogła
+zaalokować pamięć i~przekazać ją dekoderowi JPEG, który umieszczał
+zdekodować plik bezpośrednio w~buforach dostępnych dla
+aplikacji. W~ten sposób, kod odpowiedzialny za interakcję
+z~przestrzenią użytkownika był umieszczony w~jednym miejscu tworząc
+jednolity interfejs i~brak konieczności powtarzania implementacji
+w~kodach sterowników.
+
+Co więcej, ponieważ dowolny bufor PMM, mógł zostać przekazany do
+sterownika, aplikacja była w~stanie budować potoki.  Dla przykładu, po
+zdekodowaniu obrazka JPEG, mógł on zostać przekazany do układu
+skalującego, a~następnie jednostki, która go obróciła.  Istotne jest,
+iż w~takim potoku, dane nigdy nie były niepotrzebnie kopiowane
+z~jednego bufora w~drugi -- za każdym razem dokonywana była na nich
+jakaś operacja.
+
+PMM integrował się również z~mechanizmem współdzielenia pamięci
+Systemu V~(tj.\ rodziną funkcji \code|shmget|, \code|shmat|,
+\code|shmdt| itp.) wykorzystywanym między innymi przez system X~Window
+do umożliwienia współdzielenia map bitowych pomiędzy klientem
+i~serwerem (działającymi na tej samej maszynie) bez konieczności
+przysłania danych przez gniazdo sieciowe.  Dzięki temu aplikacja mogła
+przekazać obrazek przetworzony w~sprzętowym potoku bezpośrednio do
+serwera X11 bez konieczności kopiowania danych między buforami.
+
+Wszystkie operacje PMM działały w~czasie \BigO{\log n} co powodowało,
+że PMM skalował się nawet do tysięcy buforów i~wystarczał dla potrzeb
+takich aplikacji jak odtwarzacz wideo, czy program do nagrywania
+obrazu z~kamery.  Pierwotna wersja korzystała z~algorytmu „najlepszy
+pasujący”, ale był on wyodrębniony od reszty kodu, tak iż był łatwy do
+podmienienia, jeżeli zaistniałaby taka potrzeba.
+
+Głównymi zastrzeżeniami odnośnie PMM było rezerwowanie na wyłączność
+pamięci, a~także brak mechanizmów, które byłyby w~stanie zapobiec
+problemom z~fragmentacją dostępnej puli.  Niemniej, pomimo, że kod nie
+trafił do oficjalnego wydania Linuksa, był on z~powodzeniem stosowany
+w~drzewie utrzymywanym przez Samsunga.
+
+
+\section{Contiguous Memory Allocator}
+
+PMM okazał się wystarczający do wielu zastosowań jednak konieczność
+utrzymywania go poza oficjalnymi wydaniami Linuksa stawała się
+uciążliwa.  Co więcej, z~czasem zidentyfikowane zostały kolejne
+wymagania funkcjonalne, które zmusiły mnie do wznowienia prac nad
+problemem.  W~ten sposób rozpocząłem pracę nad mechanizmem CMA, który
+na przełomie dwudziestu miesięcy przeszedł przez 24 rewizje zanim
+został dołączony do Linuksa 3.5.
+
+\subsection{Wersje 1--5: Początki}\label{sec:evo-cma}
+
+Pierwsza wersja CMA, opublikowana\footnote{\autocite{patch:cma-24}
+  posiada odnośniki do wszystkich wersji CMA, dlatego jeżeli czytelnik
+  jest zainteresowany konkretną wersją, odsyłam do tej pozycji.}
+w~lipcu 2010 roku, była w~głównej mierze szkieletem do zarządzania
+różnymi regionami pamięci i~przypisywania tych regionów do różnych
+sterowników.
+
+Rdzeń CMA nie posiadał żadnego alokatora i~zamiast tego udostępniał
+prosty interfejs do tworzenia i~podłączania różnych algorytmów.
+Opublikowana wersja posiadała, podobnie jak PMM, prosty alokator
+korzystający z~metody „najlepszy pasujący”, ale dzięki swojej
+architekturze, CMA pozwalał podmienić go w~bardzo prosty sposób.
+
+Interfejs parametrów przekazywanych do jądra przez program rozruchowy
+pozwalał określać jakie regiony pamięci należy zarezerwować oraz które
+sterowniki powinny mieć do nich dostęp.  Głównym zastosowaniem był
+tutaj dekoder wideo (\ang{Multi-Format Codec}, MFC), który wymagał,
+aby różne dane były przechowywane w~różnych bankach pamięci.
+Pozwalało to na zwiększenie szybkości dostępu do tych danych dzięki
+zastosowaniu odczytu z~dwóch banków pamięci jednocześnie.  Dzięki
+infrastrukturze CMA sterownik dla MFC nie musiał być świadom na jakiej
+platformie działał, gdyż ewentualne mapowanie pomiędzy typami żądań
+i~bankami pamięci odbywało się w~CMA.
+
+Ponadto, dzięki odczytywaniu konfiguracji z~parametrów jądra, proste
+było testowanie, bez konieczności ponownej kompilacji jądra, różnych
+konfiguracji regionów, takich jak rozmiar i minimalne wyrównania
+alokowanych buforów, ale również listy sterowników korzystających
+z~poszczególnych regionów, a~nawet użytego algorytmu alokacji.
+Ułatwiało to dobór parametrów, które najlepiej pasują dla konkretnego
+zastosowania systemu.
+
+Kod parsujący parametry jądra okazał się dość kontrowersyjny.
+Zarzucano mu, iż jest zbyt skomplikowany, tak same zresztą jak sam
+format parametrów.  Co więcej, na liście dyskusyjnej pojawiły się
+głosy sugerujące, iż przynajmniej część konfiguracji powinno dać się
+zmienić w~trakcie działania systemu.  Z~tych powodów, kolejna wersja
+CMA uprościła format parametrów, a~także dodała interfejs sysfs, który
+pozwalał zmieniać przypisanie sterowników do regionów w~trakcie
+działania systemu.
+
+Ten fragment DMA był dalej upraszczany w~trzeciej i~czwartej wersji
+CMA.  Interfejs tekstowy stał się całkowicie opcjonalny i~dostępny
+tylko jeżeli włączone zostają odpowiednie opcje kompilacji jądra.
+
+Z~mniejszych zmian, druga wersja zmieniła sposób wczytywania
+algorytmów alokowania -- w~odróżnieniu od poprzedniej wersji, możliwe
+się stało budowanie algorytmów jako modułów -- a~także dodała
+możliwość operowania na prywatnych regionach dostępnych tylko dla
+danego sterownika (funkcja ta została zasugerowana przez Jonathana
+Corbeta).
+
+\subsection{Wersje 6--9: Współdzielenie pamięci}
+
+Aż do wersji piątej wysłanej, CMA bazował na idei rezerwowania na
+wyłączność obszaru pamięci, który nie jest zupełnie używany, jeżeli
+żadne urządzenie go nie wykorzystuje.  W~wersja szóstej, rozpocząłem
+prace nad implementacją mechanizmu migracji, który pozwalał na
+współdzielenie pamięci CMA z~systemem.
+
+Początkowo implementacja bazował na kodzie Kamezawa'y Hiroyuki ---
+który bazował na infrastrukturze umożliwiającym usuwanie (dodawanie)
+kości RAM z~(do) komputera baz konieczności jego wyłączania
+(\ang{memory hot-plugging}) --- i~nie należał do bardzo stabilnych.
+Kolejne wersje CMA przynosiły iteracyjne poprawki zwiększające
+stabilność i~niezawodność alokacji.
+
+Szósta wersja  dodała również operacja przypinania zaalokowanych
+buforów (\ang{pinning}), którą zasugerował Johan Mossberg.  Interfejs
+ten miał umożliwiać przenoszenie buforów CMA jeżeli żadne urządzenie
+z~nich w~danej chwili nie korzysta, co zmniejszyłoby fragmentację
+regionów CMA.
+
+Z~czasem stawało się oczywiste, iż pisząc CMA powinienem się skupić na
+najistotniejszym aspekcie alokatora, gdyż nie uda się od razu
+rozwiązać wszystkich problemów.  Dlatego w~wersji siódmej usunąłem
+z~CMA mechanizm przypisywania regionów CMA do sterowników.  Począwszy
+od tego wydania, problem ten miał być rozwiązany poza kodem CMA.
+Zmiana ta zmniejszyła implementację, a~co za tym idzie, uprościła jej
+utrzymywanie i~rozwój.
+
+\subsection{Wersje 10--16: Integracja z~DMA API}
+
+W~trakcie współpracy ze społecznością programistów Linuksa nad
+poprzednimi wersjami CMA okazało się oczywiste, że alokator musi si
+bardziej integrować z~DMA API jądra, które jest standardowym
+interfejsem, który sterowniki mogą wykorzystywać, by alokować bufory
+DMA.
+
+Dlatego w~wersji dziesiątej CMA, Marek Szyprowski, opiekun DMA API dla
+architektury ARM, dodał poprawki modyfikujące interfejs DMA ARM-a tak,
+aby korzystał z~CMA.  Osobiście byłem w~mniejszym stopniu zaangażowany
+w~te zmiany pracując raczej głębiej w~podsystemie zarządzania
+pamięcią.
+
+Na skutek tej integracji funkcje CMA przeznaczone dla sterowników
+stały się niepotrzebne i~w~związku z~tym usunięte.  Począwszy od
+wersji dziesiątej, sterowniki powinny korzystać z~DMA API i~nie
+powinny być nawet świadome obecności CMA w~systemie.  Pociągnęło to za
+sobą również usunięcie mechanizmu przypinania buforów, jednak nie był
+on do niczego używany i~stanowił raczej teoretyczny pomysł, więc jego
+usunięcie nie miało żadnych negatywnych skutków.
+
+Kolejne wydania CMA aż do wersji 16 skupiały się w~głównej mierze na
+stabilizacji interfejsu pomiędzy CMA a~DMA API, a~także małych
+iteracyjnych poprawkach do kodu alokatora.
+
+\subsection{Wersje 17--24: Bazowanie na kodzie zagęszczania}
+
+Po rozmowach z~Melem Gormanem doszedłem do wniosku, że CMA powinna
+bazować na mechanizmie zagęszczania \autocite{bib:compaction,
+  bib:supporting-large-contig-regions}, a~nie jak w~poprzednich
+wersjach na interfejsie wymiany pamięci RAM bez wyłączania komputera.
+W~związku z~tym, w~wersji 17 przepisałem podstawowe funkcji alokujące
+pamięć.
+
+Interfejs CMA jak w~zasadzie się ustabilizował i nie pozostało już nic
+innego niż na bieżąco wyszukiwać i~poprawiać błędy w~implementacji.
+Z~czasem mechanizm CMA budził coraz większe zainteresowanie i~coraz
+więcej osób przeglądało jego kod, co tylko pomogło w~naprawianiu
+wszelkich problemów.
+
+W~kwietniu 2012 roku 24 wersja alokatora CMA została wydana, która
+uzyskała pozytywne opinie od Arnda Bergmanna, Mela Gormana i Kamezawa
+Hiroyuki i~była przetestowana przez kilka innych osób.  W~tym momencie
+mechanizm CMA było dostatecznie stabilne i~niezawodne, aby Andrew
+Morton (opiekun drzewa \code|-mm|) dołączył go do swojego drzewa.
+
+\section{Współpraca ze społecznością Linuksa}
+
+Alokator CMA był pierwszym tak dużym i~skomplikowanym projektem, który
+starałem się dołączyć do oficjalnego wydania Linuksa.  Moje
+wcześniejsze kontrybucje trafiały do podsystemu USB i~były mniejsze
+i~znacznie mniej inwazyjne.
+
+Na przykładzie mechanizmów PMM i~CMA można zauważyć, że współpraca
+z~programistami Linuksa może być ciężka -- czasami wręcz wątpiłem, czy
+mój kod kiedykolwiek trafi do jądra -- ale przeważnie powoduje, że
+akceptowany staje się tylko kod najwyższej jakości.
+
+Pomimo niezaprzeczalnych trudności, w~szczególności na początku
+tworzenia CMA, muszę przyznać, iż praca nad dużym projektem wolnego
+oprogramowania i~ostateczna akceptacja poprawki w~jądrze, były warte
+wielu wieczorów przesiedzianych szukając szczególnie nieuchwytnych
+blędów w~kodzie.
+
+\begin{table}[htbp]
+\begin{center}
+\begin{tabular}{lll}
+Osoba             & Afiliacja                & Tag \\
+\hline
+Arnd Bergmann     & IBM                      & Acked \\
+Mel Gorman        & IBM, później Novell Inc. & Acked \\
+Kamezawa Hiroyuki & Fujitsu Ltd.             & Reviewed \\
+Barry Song        & CSR plc                  & Tested \\
+Benjamin Gaignard & ST-Ericsson              & Tested \\
+Ohad Ben-Cohen    & Wizery Ltd.              & Tested \\
+Rob Clark         & Texas Instruments Inc.   & Tested \\
+\end{tabular}
+\end{center}
+\caption{Afiliacje osób, które były wymienione w~łatkach ostatniej
+  wersji CMA.  Tag oznacza co to osoby zrobiły: Acked oznacza, że
+  osoba przejrzała kod i~nie zauważyła w~nim żadnych błędów; Reviewed
+  oznacza, że osoba wykonała dogłębną analizę kodu; a~Tested oznacza,
+  że osoba przetestowała kod.}
+\label{tab:cma-ppl}
+\end{table}
+
+Warto również zwrócić uwagę, że komentowało i~sugerowało poprawki do
+CMA dużo osób powiązanych z~różnymi firmami (tabela \ref{tab:cma-ppl}
+przedstawia afiliacje niektórych z~takich osób), a~pomimo to,
+współpraca przebiegała bez większych przeszkód.  Szczególnie
+atrakcyjne w~społeczności programistów Linuksa jest to, że nie ma
+znaczenia dla kogo dana osoba pracuje, ale tylko techniczne aspekty
+kodu, który tworzy.

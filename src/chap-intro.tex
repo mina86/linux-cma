@@ -149,11 +149,12 @@ rezerwacja przy starcie systemu pewnego regionu pamięci na potrzeby
 konkretnych sterowników.
 
 Najłatwiejszym, acz niezbyt eleganckim sposobem jest wykorzystanie
-argumentu \code|mem| jądra.  Przekazany przez bootloader powoduje, że
-Linux nie stara się automatycznie wykryć dostępnej w~systemie pamięci
-RAM i~zamiast tego interpretuje przekazane informacje.  W~ten sposób,
-możliwe jest ograniczenie widzianej przez system pamięci, tak że
-ukryte regiony mogą być wykorzystywane przez konkretne sterowniki.
+argumentu \code|mem| jądra.  Przekazany przez program rozruchowy
+powoduje, że Linux nie stara się automatycznie wykryć dostępnej
+w~systemie pamięci RAM i~zamiast tego interpretuje przekazane
+informacje.  W~ten sposób, możliwe jest ograniczenie widzianej przez
+system pamięci, tak że ukryte regiony mogą być wykorzystywane przez
+konkretne sterowniki.
 
 Bardziej eleganckim rozwiązaniem jest skorzystanie z~alokatora
 memblock, który jest aktywny zanim jądro zainicjuje wszystkie swoje
@@ -168,7 +169,7 @@ skalować przy współczesnych systemach, gdyż wymaga rezerwacji wielu
 megabajtów pamięci, która przez większość czasu nie jest do niczego
 wykorzystywana.
 
-\subsection{Pula pamięci fizycznej}
+\subsection{Pula pamięci fizycznej}\label{sec:intro-pmm}
 
 Bardziej skomplikowanym rozwiązaniem jest mechanizm, który rezerwuje
 pewną przestrzeń pamięci, ale zamiast na stałe przypisywać obszary do
@@ -179,36 +180,16 @@ W~trakcie moich prac stworzyłem \ang*{Physical Memory Manager} (PMM)
 \autocite{patch:pmm}, który implementuje dokładnie te założenia. W~tym
 podstawowym zastosowaniu, PMM nie przedstawia sobą nic nowego.  Już
 bowiem w~1996 roku Matt Welsh napisał pierwszą wersję dodatku
-\emph{bigphysarea} dla jądra 1.3.71, który był z~różnym zaangażowaniem
+\ang*{bigphysarea} dla jądra 1.3.71, który był z~różnym zaangażowaniem
 utrzymywany i~przystosowywany aż do wersji 3.2 Linuksa
 \autocite{patch:bigphys}.
 
-PMM umożliwiał alokowanie dużych obszarów ciągłej pamięci fizycznej
-nie tylko sterownikom działającym w~przestrzeni jądra, ale także
-programom działającym pod kontrolą systemu.  W~ten sposób, aplikacja
-mogła zaalokować pamięć, tak aby (dla przykładu) dekoder JPEG mógł
-zdekodować plik graficzny i~umieścić go w~buforach bezpośrednio
-dostępnych dla aplikacji.  W~ten sposób, kod odpowiedzialny za
-mapowanie zaalokowanych obszarów był umieszczony wewnątrz PMM
-i poszczególne sterowniki nie musiały się tym problemem zajmować.
-
-Co więcej, PMM został zintegrowany z~mechanizmem współdzielenia
-pamięci Systemu V~(tj.\ funkcjami \code|shmget|, \code|shmat|,
-\code|shmdt| itp.) wykorzystywanym między innymi przez system X~Window
-do umożliwienia współdzielenia map bitowych pomiędzy klientem
-i~serwerem (działającymi na tej samej maszynie) bez konieczności
-przysłania danych przez gniazdo sieciowe.
-
-Pozwalało to na dekodowanie obrazów i~strumieni wideo bezpośrednio do
-buforów z~których X11 odczytywał dane.  Dzięki temu, w~całym procesie
-dane nie były niepotrzebnie kopiowane z~jednego miejsca w~pamięci do
-drugiego, co minimalizowało użycie procesora i~szyny pamięci
-i~w~rezultacie przyśpieszało działanie systemu.
-
-Jednakże, pamięć zarezerwowana przez PMM i~tak przez większość czasu
-była zupełnie nieużywana, a~więc marnowana.  Z~tego powodu, PMM
-w~formie zaprezentowanej na początku nie został przyjęty przez
-społeczność programistów Linuksa i~musiałem rozwijać inne rozwiązanie.
+PMM posiadał jednak wiele dodatkowych funkcji opisanych w~podrozdziale
+\ref{sec:evo-pmm}, których próżno szukać w~\ang*{bigphysarea}, czy
+w~innych dostępnych poprawkach do jądra.  Niemniej, pomimo swoich
+dodatkowych funkcji, nie rozwiązywał do końca problemu nieefektywnego
+wykorzystania pamięci, przez co nie został przyjęty przez społeczność
+programistów Linuksa i~musiałem rozwijać inne rozwiązanie.
 
 \subsection{Zarys Contiguous Memory Allocatora}
 
@@ -219,17 +200,13 @@ urządzenie jej w~danym momencie nie potrzebuje.
 W~swoich początkowych wersjach, również mechanizm CMA działał na
 założeniach podobnych do PMM -- rezerwował przy starcie systemu
 pamięć, którą potem zarządzał pozwalając sterownikom i~programom na
-alokowanie obszarów ciągłych fizycznie \autocite{patch:cma-4}.
+alokowanie obszarów ciągłych fizycznie \autocite{patch:cma-1}.
 
 Wynika to z~faktu, iż pierwsze wersje alokatora CMA skupiały się
 w~dużej mierze na rozwiązywaniu problemu przypisywania różnych
 zarezerwowanych obszarów do różnych urządzeń, a~także umożliwianiu
-sterownikom alokowanie różnych buforów w~różnych obszarach pamięci.
-Było to potrzebne, gdyż dekoder wideo (\ang{Multi-Format Codec}, lub
-MFC) stosowany na platformie S5PV110 wymagał, aby różne dane były
-przechowywane w~różnych bankach pamięci.  Pozwalało to na zwiększenie
-szybkości dostępu do tych danych dzięki zastosowaniu odczytu z~dwóch
-banków pamięci jednocześnie.
+sterownikom alokowanie różnych buforów w~różnych obszarach pamięci, co
+opisałem w~podrozdziale \ref{sec:evo-cma}.
 
 Z~czasem, coraz bardziej integrowałem mechanizm CMA z~kodem
 zarządzania pamięci w~Linuksie w~wyniku czego, pamięć rezerwowana przy

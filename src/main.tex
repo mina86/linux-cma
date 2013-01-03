@@ -147,6 +147,9 @@
 \newcommand*{\ang}{\@ifstar\ang@star\ang@nostar}
 \makeatother
 
+% \operatorname gave error thus \mathrm
+\newcommand{\BigO}[1]{\ensuremath{\mathrm{\mathcal{O}}\left(#1\right)}}
+
 \usepackage{titling}
 \title{Alokacja ciągłych fizycznie obszarów pamięci w~systemie Linux}
 \author{Michał Nazarewicz}
@@ -168,6 +171,7 @@
 \setcounter{page}{1}
 
 \input{src/chap-intro}
+\input{src/chap-evolution}
 \input{src/chap-usage}
 \input{src/chap-page-alloc}
 \input{src/chap-implementation}
