@@ -1,7 +1,7 @@
 \chapter{Sposób użycia interfesju CMA}\label{sec:cma-usage}
 
-Pomimo, że idea mechanizmu CMA jest stosunkowo prosta, urósł on do
-raczej skomplikowanego kawałka kodu, który integruje się dość głęboko
+Idea mechanizmu CMA jest stosunkowo prosta, jednak urósł on do raczej
+skomplikowanego kawałka kodu, który integruje się dość głęboko
 z~systemem zarządzania pamięci jądra Linuksa.  Pomimo tego, jego
 użycie nie jest szczególnie trudne, a~w~wielu przypadkach autor
 sterownika, który chciałby korzystać z~alokatora CMA nie musi niczego
@@ -83,21 +83,20 @@ aktywowaniem alokatora stron.  Dla przykładu w~architekturze ARM
 dogodnym miejscem jest funkcja \code|arm_memblock_init|, a~x86 --
 \code|setup_arch| zaraz po aktywowaniu memblock.
 
-Argument \code|limit| określa górny adres pamięci fizycznej,
-którego zarezerwowany obszar CMA nie przekroczy.  Dzięki niemu regiony
-CMA mogą zostać ograniczone do adresów dostępnych dla urządzeń
-w~systemie.  Przykładowo w~architekturze ARM argument ten przyjmuje
-wartość zmiennych \code|arm_dma_limit| lub
-\code|arm_lowmem_limit|, którakolwiek jest mniejsza,
-a~w~procesorach 64-bitowych może zaistnieć potrzeba ograniczenia do
-32-bitowych adresów.  Jeżeli wartością tego argumentu jest zero, na
-kontekst CMA nie jest narzucany żaden limit.
+Argument \code|limit| określa górny adres pamięci fizycznej, którego
+zarezerwowany obszar CMA nie przekroczy.  Dzięki niemu regiony CMA
+mogą zostać ograniczone do adresów dostępnych dla urządzeń w~systemie.
+Przykładowo w~architekturze ARM argument ten przyjmuje wartość
+zmiennych \code|arm_dma_limit| lub \code|arm_lowmem_limit|,
+którakolwiek jest mniejsza.  W~procesorach 64-bitowych może zaistnieć
+potrzeba ograniczenia do 32-bitowych adresów.  Jeżeli wartością tego
+argumentu jest zero, na kontekst CMA nie jest narzucany żaden limit.
 
-Ilość zarezerwowanej pamięci zależy od argumentu \code|cma|
-(który określa rozmiar regionu w~bajtach) przekazywanego do jądra
-w~trakcie startu, lub, jeżeli argumentu tego nie ma, ustawień
-kompilacji jądra.  W~trakcie konfiguracji kompilacji jądra można
-wybrać jeden z~czterech sposobów określania rozmiaru:
+Ilość zarezerwowanej pamięci zależy od argumentu \code|cma| (który
+określa rozmiar regionu w~bajtach) przekazywanego do jądra w~trakcie
+startu, lub, jeżeli argumentu tego nie ma, ustawień kompilacji jądra.
+W~trakcie konfiguracji jądra można wybrać jeden z~czterech sposobów
+określania rozmiaru:
 
 \begin{enumerate}
 \item stały rozmiar wyrażony w~bajtach,
@@ -118,25 +117,21 @@ prywatnych kontekstów.  Prywatne regiony opisane są w~podrozdziale
 \subsection{Poprawki specyficzne dla architektury}
 
 Na niektórych architekturach może zaistnieć przeprowadzenia dodatkowej
-obróbki zarezerwowanych regionów pamięci.
-
-Przykładowo, z~uwagi na brak gwarancji spójności pamięci RAM i~pamięci
-podręcznej procesora na architekturze ARM
-\autocite[podrozdział B5.5]{bib:arm-arch-reference}, wymagane
-jest aby strony, z~których korzystają urządzenia, były mapowane jako
-niepodlegające buforowaniu (\ang{noncacheable}).  Co więcej,
-specyfikacja architektury mówi, że jeżeli dana strona jest mapowana
-z~różnymi parametrami buforowania (\ang{cacheability}), efekt
+obróbki zarezerwowanych regionów pamięci.  Przykładowo, z~uwagi na
+brak gwarancji spójności pamięci RAM i~pamięci podręcznej procesora na
+architekturze ARM \autocite[podrozdział B5.5]{bib:arm-arch-reference},
+wymagane jest aby strony, z~których korzystają urządzenia, były
+mapowane jako niepodlegające buforowaniu (\ang{noncacheable}).  Co
+więcej, specyfikacja architektury mówi, że jeżeli dana strona jest
+mapowana z~różnymi parametrami buforowania (\ang{cacheability}), efekt
 działania systemu nie jest zdefiniowany.
 
 Dlatego w~architekturze ARM, kod integrujący CMA z~DMA API zmienia
 mapowanie strony na niechachewalne na czas, gdy jest ona używana przez
-urządzenie.
-
-Z~drugiej strony, aby przyśpieszyć translację adresów, jądro stara się
-stosować tak zwane wielkie strony.  Pozwala to zmapować \unit[2]{MiB}
-pamięci (512 normalnych stron o~rozmiarze \unit[4]{KiB}) poprzez jeden
-wpis w~tablicy mapowania.
+urządzenie.  Z~drugiej strony, aby przyśpieszyć translację adresów,
+jądro stara się stosować tak zwane wielkie strony.  Pozwala to
+zmapować \unit[2]{MiB} pamięci (512 normalnych stron o~rozmiarze
+\unit[4]{KiB}) poprzez jeden wpis w~tablicy mapowania.
 
 Niestety, takie mapowanie uniemożliwia zmianę parametrów mapowania
 pojedynczej strony.  Z~uwagi na to, regiony CMA są przygotowane w~ten
@@ -151,9 +146,9 @@ Aby to umożliwić, dla każdego kontekstu CMA, zawołana zostanie funkcja:
 void dma_contiguous_early_fixup(phys_addr_t base, unsigned long size);
 \end{lstlisting}
 
-Nie jest ona zaimplementowana przez kod CMA i~musi zostać dostarczona
-wraz z~kod danej architektury -- jej deklaracja powinna znaleźć się
-w~pliku nagłówkowym \code|asm/dma-contiguous.h|.  Jeżeli
+Nie jest ona zaimplementowana przez alokator CMA i~musi zostać
+dostarczona wraz z~kodem danej architektury.  Jej deklaracja powinna
+znaleźć się w~pliku nagłówkowym \code|asm/dma-contiguous.h|.  Jeżeli
 funkcjonalność ta nie jest konieczna, wystarczy dostarczyć pustą
 implementację.
 
@@ -161,8 +156,8 @@ Należy pamiętać, że funkcja ta jest wołana dość wcześnie w~trakcie
 startu systemu, zatem wiele podsystemów może jeszcze nie być
 dostępnych, a~w~szczególności funkcja \code|kmalloc| nie będzie
 działać.  Co więcej, może ona zostać wywołana kilkakrotnie, dla
-różnych regionów CMA, ale nie więcej niż \code|MAX_CMA_AREAS|
-razy (domyślnie 8).
+różnych regionów CMA, ale nie więcej niż \code|MAX_CMA_AREAS| razy
+(domyślnie osiem).
 
 \subsection{Integracja z~podsystemem DMA}\label{sec:usage-integrate}
 
@@ -180,21 +175,19 @@ struct page *dma_alloc_from_contiguous(
 Pierwszym argumentem jest urządzenie na rzecz którego odbywa się
 alokacja.  Drugim jest \emph{liczba stron} do zaalokowania.
 
-Trzeci argument to wyrównanie alokacji wyrażone w~rzędzie strony, lub
-innymi słowy, jeżeli bufor ma być wyrównany do $a$ bajtów, parametr
+Trzeci argument to wyrównanie alokacji wyrażone jako~rzęd strony.
+Innymi słowy jeżeli bufor ma być wyrównany do $a$ bajtów, parametr
 \code|align| powinien przyjąć wartość $\log_2 a - \log_2
-\mathrm{PAGE\_SIZE}$ (lub dla stron o~rozmiarze \unit[4096]{KiB}:
-$\log_2 a - 12$).  Jeżeli żadne wyrównanie nie jest wymagane, należy
-zwyczajnie przekazać zero -- zmniejszy to również problem
-z~fragmentacją.  Warto zauważyć, że na wartość argumentu
-\code|align| nałożone jest ograniczenie
-\code|CONFIG_CMA_ALIGNMENT|, który jest ustawiane w~trakcie
-kompilacji jądra.  Jego domyślną wartością jest osiem (co oznacza
-wyrównanie do 256 stron).
+\mathrm{PAGE\_SIZE}$ (co dla stron o~rozmiarze \unit[4096]{KiB}
+oznacza $\log_2 a - 12$).  Jeżeli żadne wyrównanie nie jest wymagane,
+należy zwyczajnie przekazać zero -- zmniejszy to również problem
+z~fragmentacją.  Warto zauważyć, że na wartość argumentu \code|align|
+nałożone jest z~góry ograniczenie \code|CONFIG_CMA_ALIGNMENT|.  Jego
+domyślną wartością jest osiem (co oznacza wyrównanie do 256 stron).
 
-Funkcja \code|dma_alloc_from_contiguous| zwraca wskaźnik na
-pierwszą stronę spośród serii \code|count| zaalokowanych stron,
-lub \code|NULL| w~przypadku nieudanej alokacji.
+Funkcja \code|dma_alloc_from_contiguous| zwraca wskaźnik na pierwszą
+stronę spośród serii \code|count| zaalokowanych stron lub \code|NULL|
+w~przypadku nieudanej alokacji.
 
 Do zwolnienia bufora wykorzystywana jest funkcja:
 
@@ -209,14 +202,18 @@ Argumenty \code|dev| i \code|count| mają takie samo
 znaczenie jak w~funkcji \code|dma_alloc_from_contiguous|,
 a~argument \code|pages| jest wartością zwróconą przez tę funkcję.
 
-Jeżeli dany bufor nie był zaalokowany poprzez alokator CMA, funkcja
-\code|dma_release_from_contiguous| zwróci \code|false|.  W~przeciwnym
-wypadku, bufor zostanie zwolniony i~funkcja zwróci \code|true|.  Ta
-zwracana wartość może zostać wykorzystana przez DMA API aby rozróżnić,
-czy dany bufor jest buforem CMA, czy też nie.
+Jeżeli dany bufor nie był zaalokowany poprzez interfejs CMA, funkcja
+zwróci \code|false|, w~przeciwnym wypadku, bufor zostanie zwolniony
+i~funkcja zwróci \code|true|.  Zwracana wartość może zostać
+wykorzystana, aby rozróżnić, czy dany bufor był buforem CMA, czy też
+nie.
 
 Wydruk \ref{lst:dma-integration} pokazuje fragment kodu, który
-integruje mechanizm CMA z~podsystemem DMA architektury x86.
+integruje mechanizm CMA z~podsystemem DMA architektury x86.  Warto
+zwrócić uwagę, jak w~funkcji \code|dma_generic_free_coherent| wartość
+zwracana przez \code|dma_release_from_contiguous| jest wykorzystana,
+aby podjąć decyzję, czy należy zwolnić bufor korzystając z~funkcji
+\code|free_pages|.
 
 \begin{lstlisting}[float=bht,caption={Integracja alokatora CMA z~podsystemem DMA
       architektury x86.},label=lst:dma-integration]
@@ -249,19 +246,14 @@ diff --git a/arch/x86/kernel/pci-dma.c b/arch/x86/kernel/pci-dma.c
 +
 \end{lstlisting}
 
-\paragraph{Alokacje w~kontekście atomowym} \hspace{0pt} \\
-
-Należy pamiętać, iż funkcja \code|dma_alloc_from_contiguous|
-nie może zostać wywołana w~kontekście atomowym (np.\ z~procedury
-obsługi przerwania), a~jednocześnie dopuszczalne jest wywołanie
-\code|dma_alloc_coherent| z~kontekstu atomowego.  Z~tego
-powodu, subsystem DMA musi posiadać inny mechanizm przeznaczony dla
-takich alokacji.
-
-Najprostszym rozwiązaniem jest zarezerwowanie pewnego, stosunkowo
-niewielkiego, obszaru pamięci, przeznaczonego do alokacji w~kontekście
-atomowym.  Istniejące architektury muszą posiadać tego typu
-mechanizmy.
+Funkcja \code|dma_alloc_from_contiguous| nie może zostać wywołana
+w~kontekście atomowym (np.\ z~procedury obsługi przerwania),
+a~jednocześnie dopuszczalne jest wywołanie \code|dma_alloc_coherent|
+z~takiego kontekstu.  Z~tego powodu, podsystem DMA musi posiadać inny
+mechanizm przeznaczony dla takich alokacji.  Najprostszym rozwiązaniem
+jest zarezerwowanie pewnego, stosunkowo niewielkiego, obszaru pamięci,
+przeznaczonego do alokacji w~kontekście atomowym.  Istniejące
+architektury muszą posiadać tego typu mechanizmy.
 
 
 \section{Regiony CMA dla poszczególnych urządzeń}\label{sec:priv-regions}
@@ -270,17 +262,14 @@ Po dokonaniu zmian opisanych w~powyższym podrozdziale, sterowniki
 urządzeń powinny już działać.  Korzystając z~interfesju DMA odwołują
 się bowiem do alokatora CMA.
 
-Jednak niektóre urządzenia mogą mieć specyficzne wymagania.  Dla
-przykładu, wielo-formatowy koder multimedialny (\ang{Multi-format
-  codec}, MFC) znajdujący się na platformie S5PV110 wymaga, aby bufory
-na różne dane, znajdowały się w~różnych bankach pamięci (co pozwala na
-dostęp do danych przez dwa kanały zwiększając tym sposobem
-przepustowość pamięci).  Ponadto, zależnie od istniejących na
-platformie urządzeń, wskazane może być izolowanie pewnych grup
-urządzeń.  Dla przykładu mieszanie alokacji dla stosunkowo małych
-tekstur dla koprocesora graficznego z~alokacjami dużych buforów
-przeznaczonych dla kamery, może przyczynić się do zwiększenia
-fragmentacji regionu CMA.
+Jednak niektóre urządzenia mogą mieć specyficzne wymagania.
+Wspomniany już w~podrozdziale \ref{sec:evo-cma} koder multimedialny
+wymaga, aby bufory na różne dane, znajdowały się w~różnych bankach
+pamięci.  Ponadto, zależnie od istniejących na platformie urządzeń,
+wskazane może być izolowanie pewnych grup urządzeń.  Dla przykładu
+mieszanie alokacji dla stosunkowo małych tekstur dla koprocesora
+graficznego z~alokacjami dużych buforów przeznaczonych dla kamery,
+może przyczynić się do zwiększenia fragmentacji.
 
 Funkcja \code|dma_declare_contiguous| tworzy domyślny kontekst CMA,
 ale istnieje możliwość przypisania różnych regionów do różnych
@@ -289,8 +278,6 @@ urządzeń.  Istnieje mapowanie wiele-do-jednego pomiędzy strukturą
 może zostać przypisany do danego urządzenia, ale jeżeli urządzenie ma
 korzystać z~wielu kontekstów CMA konieczne jest stworzenie kilku
 struktur \code|device|.
-
-\paragraph{Przypisywanie regionu CMA do pojedynczego urządzenia} \hspace{0pt} \\
 
 Aby przypisać region CMA do urządzenia wystarczy wywołać funkcję:
 
@@ -310,12 +297,11 @@ się zaczynać lub zero, jeżeli nie ma to znaczenia.  Ostatni argument,
 \ref{lst:s5p-priv-region} pokazuje fragment kodu dodającego prywatne
 konteksty do dwóch urządzeń.
 
-Istnieje limit „prywatnych” regionów CMA, konkretnie
-\code|CONFIG_CMA_AREAS|, którego domyślna wartość to siedem.
-Jeżeli limit ten zostanie przekroczony, funkcja
-\code|dma_declare_contiguous| zacznie zwracać
-\code|-ENOSPC|.  Jednakże, jeżeli istnieje taka potrzeba, nic nie
-stoi na przeszkodzie aby ten limit zwiększyć w~trakcie kompilacji
+Istnieje limit liczby „prywatnych” regionów CMA.  Konkretnie może być
+ich co najwyżej \code|CONFIG_CMA_AREAS| (domyślnie siedem).  Jeżeli
+limit ten zostanie przekroczony, funkcja \code|dma_declare_contiguous|
+zacznie zwracać \code|-ENOSPC|.  Jeżeli istnieje taka potrzeba, nic
+nie stoi na przeszkodzie aby ten limit zwiększyć w~trakcie kompilacji
 jądra.
 
 % For some reason, breaklines=true does not work, so I'm breaking the
@@ -342,16 +328,14 @@ diff --git a/arch/arm/plat-s5p/dev-mfc.c b/arch/arm/plat-s5p/dev-mfc.c
  }
 \end{lstlisting}
 
-\paragraph{Przypisywanie jednego regionu CMA do wielu urządzeń} \hspace{0pt} \\
-
 Odrobinę bardziej skomplikowane jest przypisanie tego samego kontekstu
 do kilku urządzeń.  Obecny interfejs CMA nie udostępnia funkcji, która
 by na to pozwalała, ale i~tak nie jest to szczególnie trudne do
 osiągnięcia.  Wystarczy zastosować metodę opisaną powyżej, aby
 przypisać region do jednego urządzenia, a~następnie skopiować ten
 region do drugiego urządzenia.  Całą sekwencja powinna zostać wykonana
-jako \code|postcore_initcall|.  Poniższy kod pokazuje jak taki
-efekt może zostać osiągnięty:
+jako \code|postcore_initcall|.  Poniższy kod pokazuje jak taki efekt
+może zostać osiągnięty:
 
 \begin{lstlisting}
 static int __init foo_set_up_cma_areas(void) {
@@ -361,8 +345,6 @@ static int __init foo_set_up_cma_areas(void) {
 }
 postcore_initcall(foo_set_up_cma_areas);
 \end{lstlisting}
-
-\paragraph{Brak domyślnego regionu} \hspace{0pt} \\
 
 Warto zauważyć, że nic nie stoi na przeszkodzie, aby nie tworzyć
 domyślnego kontekstu CMA.  Oczywiście, jeżeli nie zostanie on

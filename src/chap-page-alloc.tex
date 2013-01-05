@@ -2,7 +2,7 @@
 
 Ponieważ mechanizm CMA w~dużym stopniu integruje się z~podsystemem
 zarządzania pamięci (\ang{memory management} lub w~skrócie mm), do
-jego zrozumienia potrzeba ogólnej wiedzy na temat tego w~jaki sposób
+jego zrozumienia potrzeba ogólnej wiedzy na temat tego, w~jaki sposób
 jądro śledzi i~przydziela pamięć procesom i~sterownikom.
 
 Linux posiada wiele mechanizmów alokacji pamięci.  Począwszy od
@@ -19,14 +19,14 @@ Uproszczone zależności między tymi komponentami przedstawia rysunek
 
 Alokator stron implementuje algorytm bliźniaków (skąd też jego inna
 angielska nazwa: \ang*{buddy system} lub \ang*{buddy allocator}),
-który operuje na blakach o~rozmiarze $2^k$ jednostek.  W~przypadku
+który operuje na blokach o~rozmiarze $2^k$ jednostek.  W~przypadku
 Linuksa jednostką jest pojedyncza strona fizyczna, a~na $k$~narzucone
 jest ograniczenie $k < \mathrm{MAX\_ORDER}$.  \code|MAX_ORDER| może
 zależeć od architektury, na którą Linux jest kompilowany, ale
 zazwyczaj ma wartość $11$ (toteż na potrzeby tej pracy zakładam, iż $0
 \le k \le 10$).
 
-\begin{wrapfigure}{o}[1.5cm]{0.3\textwidth}
+\begin{wrapfigure}{o}[1cm]{0.3\textwidth}
 \begin{center}
 \includegraphics[width=0.25\textwidth]{build/alloc-free-cycle.eps}
 \end{center}
@@ -35,12 +35,11 @@ zazwyczaj ma wartość $11$ (toteż na potrzeby tej pracy zakładam, iż $0
   bliźniaków.}
 \end{wrapfigure}
 
-W~Linuksie, przez $k$ rozumie się rząd strony (\ang{page order}).
+W~Linuksie przez $k$ rozumie się rząd strony (\ang{page order}).
 Strona rzędu 0 to pojedyncza strona fizyczna, strona rzędu 1
 (\ang{1-order page}) to dwie strony fizyczne itd.\ aż do strony rzędu
 10, czy też strony maksymalnego rzędu (\ang{max order page}), która
-składa się z~1024 stron fizycznych.  Ogólnie, strona rzędu $n$ składa
-się z~dwóch stron rzędu $n-1$.
+składa się z~1024 stron fizycznych.
 
 Funkcja \code|alloc_pages|, która jest interfejsem dla alokatora
 stron, przyjmuje jako argument właśnie rząd żądanej strony.  Wynikają
@@ -77,13 +76,13 @@ jest to poprzez 11 list dwukierunkowych, gdzie każda przeznaczona jest
 dla stron o~konkretnym rzędzie.
 
 Gdy sterownik chce zaalokować stronę rzędu $n$, alokator sprawdza
-odpowiednią listę.  Jeżeli jest ona pusta, przechodzi do listy ze
-stronami rzędu $n+1$, aż znajdzie wolną stronę (lub dojdzie do
-maksymalnego rzędu, co sygnalizuje nieudaną alokację.  Jeżeli uzyskana
-w~ten sposób strona ma rząd większy niż żądany, jest ona dzielona na
-pół, aż do osiągnięcia żądanego rozmiaru.  Strony, które powstały na
-skutek podziału większej strony na pół, nazywamy stronami
-bliźniaczymi.  Cały proces ilustruje algorytm \ref{alg:buddy-alloc}
+odpowiednią listę.  Jeżeli jest pusta, przechodzi do listy ze stronami
+rzędu $n+1$, aż znajdzie wolną stronę (lub dojdzie do maksymalnego
+rzędu, co sygnalizuje nieudaną alokację).  Jeżeli uzyskana w~ten
+sposób strona ma rząd większy niż żądany, jest dzielona na pół, aż do
+osiągnięcia oczekiwanego rozmiaru.  Strony, które powstały na skutek
+takiego podziału nazywamy stronami bliźniaczymi.  Cały proces
+ilustruje algorytm \ref{alg:buddy-alloc}
 
 \begin{algorithm}
 \caption[Alokacja strony w~algorytmie bliźniaków.]{Alokacja strony
@@ -143,34 +142,31 @@ właściwości można znaleźć na stronach 435--455
 
 \section{Migracja i~typy migracji}\label{sec:migratetype}
 
-Kolejnym istotnym elementem alokatora stron pominiętym z~opisu
-w~poprzednim podrozdziale są typy migracji (\code|migratetype|),
-których jest sześć: \ang*{unmovable}, \ang*{reclaimable},
-\ang*{movable}, \ang*{cma}, \ang*{reserve} oraz \ang*{isolate}).
+Kolejnym istotnym elementem alokatora stron są typy migracji
+(\code|migratetype|), których jest sześć: \ang*{unmovable},
+\ang*{reclaimable}, \ang*{movable}, \ang*{cma}, \ang*{reserve} oraz
+\ang*{isolate}).
 
-\begin{itemize}
-\item Dla potrzeb tej pracy traktuję typy \ang*{unmovable},
-  \ang*{reclaimable} i~\ang*{reserve} jak jeden typ -- typ
-  nieruchomy.  To uproszczenie wynika z~faktu, iż dla mechanizmu CMA
-  istotne jest tylko rozróżnienie pomiędzy stronami ruchomymi
-  i~nieruchomymi.
-\item Strony które są typu ruchomego charakteryzują się tym, że ich
-  adres fizyczny nie jest istotny, w~związku z~czym mogą być
-  przeniesione w~inne miejsce pamięci RAM.
-\item Typ \ang*{cma} jest nowym typem dodanym dla potrzeb interfejsu
-  CMA i~jest opisany dokładniej w~podrozdziale \ref{sec:migrate-cma}.
-\item Typ \ang*{isolate} jest niejako pseudo-typem, gdyż jeżeli
-  wolna strona ma taki typ, nie może ona zostać zaalokowana.  Więcej
-  na temat sposobu w~jaki ten typ może być wykorzystywany opisuję
-  w~podrozdziale \ref{sec:alloc-contig-range}.
-\end{itemize}
+Dla potrzeb tej pracy traktuję typy \ang*{unmovable},
+\ang*{reclaimable} i~\ang*{reserve} jak jeden typ -- typ nieruchomy.
+To uproszczenie wynika z~faktu, iż dla mechanizmu CMA istotne jest
+tylko rozróżnienie pomiędzy stronami ruchomymi i~nieruchomymi.
 
-Jednym z~przykładów stron ruchomych są strony anonimowe działających
-procesów.  Ponieważ program odwołują się do nich poprzez mapowania
-wirtualne, o~ile tablice translacji zostaną uaktualnione, zawartość
-strony może być przeniesiona w~dowolne inne miejsce.  Podobnie wygląda
-sprawa z~buforami dyskowymi i~wieloma innymi strukturami, którymi
-zarządza jądro.
+Typ \ang*{cma} jest nowym typem dodanym dla potrzeb interfejsu CMA
+i~jest opisany dokładniej w~podrozdziale \ref{sec:migrate-cma}.  Typ
+\ang*{isolate} jest niejako pseudo-typem, gdyż jeżeli wolna strona ma
+taki typ, nie może ona zostać zaalokowana.  Więcej na temat sposobu
+w~jaki ten typ może być wykorzystywany opisuję w~podrozdziale
+\ref{sec:alloc-contig-range}.
+
+Strony ruchome charakteryzują się tym, że ich adres fizyczny nie jest
+istotny, w~związku z~czym mogą być przeniesione w~inne miejsce pamięci
+RAM.  Jednym z~przykładów są strony anonimowe działających procesów.
+Ponieważ program odwołują się do nich poprzez mapowania wirtualne,
+o~ile tablice translacji zostaną uaktualnione, zawartość strony może
+być przeniesiona w~dowolne inne miejsce.  Podobnie wygląda sprawa
+z~buforami dyskowymi i~wieloma innymi strukturami, którymi zarządza
+jądro.
 
 Proces przenoszenia ruchomej strony nazywa się migracją
 i wykorzystywany jest między innymi przy obsłudze hot-swapu pamięci,
@@ -205,7 +201,7 @@ posiadała, żadnych nieaktualnych wpisów.
 Wołając funkcję \code|alloc_pages|, typ migracji strony jest
 przekazywany jako argument, co pozwala alokatorowi stron grupować
 strony tego samego typu.  Jest to istotne, gdyż mechanizm zagęszczania
-nie działa zbyt dobrze jeżeli ruchome strony przelatają się
+nie działa zbyt dobrze jeżeli ruchome strony przeplatają się
 z~pozostałymi stronami, które nie podlegają migracji.
 
 
@@ -230,24 +226,22 @@ i~wykorzystane w~graficznej reprezentacji na rysunku \ref{fig:pages}.
 \label{fig:pages}
 \end{figure}
 
-Każdy blok stron (\ang{pageblock}) ma przypisany typ migracji,
-a~alokator stron posiada oddzielne listy wolnych stron dla każdego
-typu migracji.  Zatem patrząc na algorytm \ref{alg:buddy-alloc} należy
-zdawać sobie sprawę, iż rozpatruje on listy wolnych stron danego typu
-migracji.
+Każdy blok stron ma przypisany typ migracji, a~alokator stron posiada
+oddzielne listy wolnych stron dla każdego typu migracji.  Zatem
+patrząc na algorytm \ref{alg:buddy-alloc} należy zdawać sobie sprawę,
+iż rozpatruje on listy wolnych stron danego typu migracji.
 
 \section{Zmiana typu migracji}\label{sec:type-change}
 
-Należy pamiętać, iż dla jądra zrealizowanie alokacji jest ważniejsze
-od trzymania stron o~tym samym typie migracji razem.  Dlatego dla
-każdego typu migracji istnieje lista zapasowych (\ang{fallback}) typów
-migracji.  Jeżeli alokacja dla żądanego typu migracji nie powiedzie
-się, alokator stron będzie próbował z~kolejnymi typami z~list, tak jak
-to pokazuje algorytm \ref{alg:buddy-fallback}
-
-Co więcej, jeżeli rząd żądanej strony jest dostatecznie duży, typ
-migracji wszystkich wolnych stron w~danym bloku zostaje zmieniano na
-ten zgodny z~wywołaniem funkcji \code|alloc_pages|.
+Dla jądra zrealizowanie alokacji jest ważniejsze od trzymania stron
+o~tym samym typie migracji razem.  Dlatego dla każdego typu migracji
+istnieje lista zapasowych (\ang{fallback}) typów migracji.  Jeżeli
+alokacja dla żądanego typu migracji nie powiedzie się, alokator stron
+będzie próbował z~kolejnymi typami z~list, tak jak to pokazuje
+algorytm \ref{alg:buddy-fallback} Co więcej, jeżeli rząd żądanej
+strony jest dostatecznie duży, typ migracji wszystkich wolnych stron
+w~danym bloku zostaje zmieniano na ten zgodny z~wywołaniem funkcji
+\code|alloc_pages|.
 
 \begin{algorithm}
 \caption[Alokacja z~uwzględnieniem typu migracji.]{Alokacja strony
@@ -368,9 +362,9 @@ Co więcej, pamięć jest również podzielona na węzły (\ang{nodes}),
 które odpowiadają wezłom w~systemach z~niejednolitym dostępem do
 pamięci (\ang{Non-Uniform Memory Access} lub NUMA)
 \autocite[podrozdział 8.1.2]{bib:utlk}.  Ponieważ w~architekturach
-tego typu czas dostępu do pamięci zależy od jej miejsca względem
+tego typu czas dostępu do pamięci zależy od jej położenia względem
 procesora, istotne jest alokowanie buforów blisko procesora, który
-bódzie z~nich korzystał.
+będzie z~nich korzystał.
 
 Niniejszy rozdział przemilczał również co się dzieje jeżeli podczas
 alokacji wolna pamięć nie może zostać odnaleziona.  Otóż jeżeli
@@ -381,10 +375,10 @@ zwalnianie buforów dyskowych, czy w~najgorszym przypadku zabiciu
 jednego z~działających procesów, czego dokonuje \ang*{out-of-memory
   killer} lub OOM \ang*{killer}) \autocite[rozdział 17]{bib:utlk}.
 
-Istnieje jeszcze wiele innych aspektów takich -- jak chociażby
+Istnieje jeszcze wiele innych aspektów -- takich jak chociażby
 alokacja w~kontekście atomowym (np.\ w~trakcie obsługi przerwania),
 tzw.\ wskaźniki poziamu wody (\ang{watermarks}), które kontrolują jak
 duży wolnej pamięci jest w~systemie -- które wprowadzają dodatkową
 komplikację do podsystemu zarządzania pamięcią, jednak ponieważ nie
 mają one wpływu na mechanizm CMA, wychodzą poza zakres niniejszej
-pracy w~związku z~czym są całkowicie ignorowane.
+pracy.
