@@ -15,6 +15,14 @@ wiele z~nich sprowadza się do wywołania alokatora stron (\ang{page
 Uproszczone zależności między tymi komponentami przedstawia rysunek
 \ref{fig:allocators-base}.
 
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=\textwidth]{build/linux-allocators--base.eps}
+  \caption[Alokatory dostępne w~jądrze Linux.]{Relacje między kilkoma
+    najistotniejszymi alokatorami pamięci dostępnymi w~Linuksie.}
+  \label{fig:allocators-base}
+\end{figure}
+
 \section{Algorytm bliźniaków}
 
 Alokator stron implementuje algorytm bliźniaków (skąd też jego inna
@@ -25,15 +33,6 @@ jest ograniczenie $k < \mathrm{MAX\_ORDER}$.  \code|MAX_ORDER| może
 zależeć od architektury, na którą Linux jest kompilowany, ale
 zazwyczaj ma wartość $11$ (toteż na potrzeby tej pracy zakładam, iż $0
 \le k \le 10$).
-
-\begin{wrapfigure}{o}[1cm]{0.3\textwidth}
-\begin{center}
-\includegraphics[width=0.25\textwidth]{build/alloc-free-cycle.eps}
-\end{center}
-\caption[Zarządzanie pamięcią w~algorytmie bliźniaków]{Graficzna
-  reprezentacja cyklu alokacji i~zwalniania buforów w~algorytmie
-  bliźniaków.}
-\end{wrapfigure}
 
 W~Linuksie przez $k$ rozumie się rząd strony (\ang{page order}).
 Strona rzędu 0 to pojedyncza strona fizyczna, strona rzędu 1
@@ -62,18 +61,19 @@ stąd następujące właściwości alokatora stron:
   pojedynczej ramki \ang*{full HD}.
 \end{itemize}
 
-\begin{figure}[tbp]
-  \centering
-  \includegraphics[width=\textwidth]{build/linux-allocators--base.eps}
-  \caption[Alokatory dostępne w~jądrze Linux.]{Relacje między kilkoma
-    najistotniejszymi alokatorami pamięci dostępnymi w~Linuksie.}
-  \label{fig:allocators-base}
-\end{figure}
-
 Jak zatem działa algorytm bliźniaków?  Alokator posiada listę wolnych
 stron, których rząd jest pomiędzy $0$ a~$10$.  W~Linuksie zrealizowane
 jest to poprzez 11 list dwukierunkowych, gdzie każda przeznaczona jest
 dla stron o~konkretnym rzędzie.
+
+\begin{wrapfigure}{o}[1cm]{0.3\textwidth}
+\begin{center}
+\includegraphics[width=0.25\textwidth]{build/alloc-free-cycle.eps}
+\end{center}
+\caption[Zarządzanie pamięcią w~algorytmie bliźniaków]{Graficzna
+  reprezentacja cyklu alokacji i~zwalniania buforów w~algorytmie
+  bliźniaków.}
+\end{wrapfigure}
 
 Gdy sterownik chce zaalokować stronę rzędu $n$, alokator sprawdza
 odpowiednią listę.  Jeżeli jest pusta, przechodzi do listy ze stronami
@@ -84,7 +84,12 @@ osiągnięcia oczekiwanego rozmiaru.  Strony, które powstały na skutek
 takiego podziału nazywamy stronami bliźniaczymi.  Cały proces
 ilustruje algorytm \ref{alg:buddy-alloc}
 
-\begin{algorithm}
+Przy zwalnianiu, dopóki to możliwe, strona jest łączona ze swoją
+bliźniaczą stroną, dzięki czemu strony są dodawane do listy wolnych
+stron o~dużym rzędzie.  Proces ten ilustruje algorytm
+\ref{alg:buddy-free}
+
+\begin{algorithm}[p]
 \caption[Alokacja strony w~algorytmie bliźniaków.]{Alokacja strony
   rzędu $k$ w~algorytmie bliźniaków.}
 \label{alg:buddy-alloc}
@@ -112,12 +117,7 @@ ilustruje algorytm \ref{alg:buddy-alloc}
 \end{algorithmic}
 \end{algorithm}
 
-Przy zwalnianiu, dopóki to możliwe, strona jest łączona ze swoją
-bliźniaczą stroną, dzięki czemu strony są dodawane do listy wolnych
-stron o~dużym rzędzie.  Proces ten ilustruje algorytm
-\ref{alg:buddy-free}
-
-\begin{algorithm}
+\begin{algorithm}[p]
 \caption[Zwalnianie strony w~algorytmie bliźniaków.]{Zwalnianie strony
   $p$ rzędu $k$ w algorytmie bliźniaków.}
 \label{alg:buddy-free}
@@ -130,6 +130,19 @@ stron o~dużym rzędzie.  Proces ten ilustruje algorytm
         \State $p~\gets$ strona powstała w~wyniku połączenia $p$ i~$p'$ \label{alg:buddy-free:join}
     \EndWhile
     \State dodaj $p$ do listy wolnych stron rzędu $k$ \label{alg:buddy-free:add}
+\EndProcedure
+\end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}[p]
+\caption[Migracja strony.]{Migracja strony $p$.}
+\label{alg:migrate}
+\begin{algorithmic}[1]
+\Procedure{MigratePage}{$p$}
+    \State $p' \gets$ \Call{AllocPage}{$0$}
+    \State skopiuj zawartość $p$ do $p'$
+    \State uaktualnij odwołania do $p$ tak aby wskazywały na $p'$
+    \State \Call{FreePage}{$p$, $0$}
 \EndProcedure
 \end{algorithmic}
 \end{algorithm}
@@ -173,19 +186,6 @@ i wykorzystywany jest między innymi przy obsłudze hot-swapu pamięci,
 a~także w~trackie procesu zagęszczania \autocite{bib:compaction,
   bib:supporting-large-contig-regions}, którego celem jest zwiększenie
 liczby dostępnych stron o~wysokich rzędach.
-
-\begin{algorithm}
-\caption[Migracja strony.]{Migracja strony $p$.}
-\label{alg:migrate}
-\begin{algorithmic}[1]
-\Procedure{MigratePage}{$p$}
-    \State $p' \gets$ \Call{AllocPage}{$0$}
-    \State skopiuj zawartość $p$ do $p'$
-    \State uaktualnij odwołania do $p$ tak aby wskazywały na $p'$
-    \State \Call{FreePage}{$p$, $0$}
-\EndProcedure
-\end{algorithmic}
-\end{algorithm}
 
 Najbardziej skomplikowanym krokiem migracji -- zilustrowanej poprzez
 algorytm \ref{alg:migrate} -- jest uaktualnienie odwołań do strony
@@ -243,7 +243,7 @@ strony jest dostatecznie duży, typ migracji wszystkich wolnych stron
 w~danym bloku zostaje zmieniano na ten zgodny z~wywołaniem funkcji
 \code|alloc_pages|.
 
-\begin{algorithm}
+\begin{algorithm}[p]
 \caption[Alokacja z~uwzględnieniem typu migracji.]{Alokacja strony
   rzędu $k$ z~uwzględnieniem typu migracji $m$}
 \label{alg:buddy-fallback}
@@ -273,30 +273,7 @@ w~danym bloku zostaje zmieniano na ten zgodny z~wywołaniem funkcji
 \end{algorithmic}
 \end{algorithm}
 
-Podczas zwalniania, gdy strona jest dodawana do listy wolnych stron
-(wideczne w~linii \ref{alg:buddy-free:add} algorytmu
-\ref{alg:buddy-free}) typ migracji listy, na którą strona trafia
-determinowany jest poprzez typ migracji przypisany blokowi stron do
-którego dana strona należy.
-
-Istotne jest tutaj, aby zauważyć, iż bloki stron mogą zmieniać swój
-typ migracji, a~także, że nawet jeżeli blok ma dany typ migracji,
-strony o~innym typie migracji mogą być z~niego przydzielone.
-
-
-\section{Listy PCP}\label{sec:pcp-lists}
-
-Ostatnim istotnym, z~punktu widzenia mechanizmu CMA, aspektem
-alokatora stron są listy PCP (\ang{per CPU pages})
-\autocite[podrozdział 8.1.8]{bib:utlk}.  Ponieważ listy wolnych stron
-są współdzielone w~obrębie całego systemu dostęp do nich musi być
-synchronizowany pomiędzy wszystkimi procesorami.  Aby uniknąć kosztów
-związanych z~synchronizacją, każdy procesor posiada swoje prywatne
-listy PCP, na których znajdują się wolne strony rzędu 0.  Biorąc
-również i~ten aspekt pod uwagę, alokacja przyjmuje postać
-przedstawianą w~algorytmie \ref{alg:buddy-pcp}
-
-\begin{algorithm}
+\begin{algorithm}[p]
 \caption[Alokacja z~uwzględnieniem list PCP.]{Alokacja strony rzędu
   $k$ z~typem migracji $m$ z~uwzględnieniem list PCP.}
 \label{alg:buddy-pcp}
@@ -330,6 +307,28 @@ przedstawianą w~algorytmie \ref{alg:buddy-pcp}
 \end{algorithmic}
 \end{algorithm}
 
+Podczas zwalniania, gdy strona jest dodawana do listy wolnych stron
+(wideczne w~linii \ref{alg:buddy-free:add} algorytmu
+\ref{alg:buddy-free}) typ migracji listy, na którą strona trafia
+determinowany jest poprzez typ migracji przypisany blokowi stron do
+którego dana strona należy.
+
+Istotne jest tutaj, aby zauważyć, iż bloki stron mogą zmieniać swój
+typ migracji, a~także, że nawet jeżeli blok ma dany typ migracji,
+strony o~innym typie migracji mogą być z~niego przydzielone.
+
+
+\section{Listy PCP}\label{sec:pcp-lists}
+
+Ostatnim istotnym, z~punktu widzenia mechanizmu CMA, aspektem
+alokatora stron są listy PCP (\ang{per CPU pages})
+\autocite[podrozdział 8.1.8]{bib:utlk}.  Ponieważ listy wolnych stron
+są współdzielone w~obrębie całego systemu dostęp do nich musi być
+synchronizowany pomiędzy wszystkimi procesorami.  Aby uniknąć kosztów
+związanych z~synchronizacją, każdy procesor posiada swoje prywatne
+listy PCP, na których znajdują się wolne strony rzędu 0.  Biorąc
+również i~ten aspekt pod uwagę, alokacja przyjmuje postać
+przedstawianą w~algorytmie \ref{alg:buddy-pcp}
 
 \section{Inne aspekty alokatora stron}
 

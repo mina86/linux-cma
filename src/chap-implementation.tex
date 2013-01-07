@@ -58,7 +58,7 @@ pozbawiony sprawdzania błędów oraz komentarzy) kod źródłowy funkcji
 \code|alloc_contig_range| znajdującej się w~Linuksie 3.5.  Jest ona
 bardziej skomplikowana, niżby to wynikało z~powyższego opisu.
 
-\begin{lstlisting}[float=tbhp,caption=Skrócony wydruk funkcji
+\begin{lstlisting}[float=tb,caption=Skrócony wydruk funkcji
     \code|alloc_conting_range| z Linuksa 3.5.,label=lst:alloc-contig-range]
 int alloc_contig_range(unsigned long start, unsigned long end,
 		       unsigned migratetype)
@@ -157,7 +157,7 @@ z~zakresu $\left<\mathrm{start}, \mathrm{end}\right)$ nie zostaną
 zwolnione.
 
 
-\begin{lstlisting}[float=tbhp,caption={Skrócony wydruk funkcji
+\begin{lstlisting}[float=tb,caption={Skrócony wydruk funkcji
     \code|__alloc_conting_migrate_range| z Linuksa 3.5.},label=lst:alloc-contig-migrate-range]
 static int __alloc_contig_migrate_range(unsigned long start, unsigned long end)
 {
@@ -218,7 +218,7 @@ pytanie należy szukać w~funkcji \code|dma_alloc_from_contiguous|,
 której skróconą wersję przedstawia wydruk
 \ref{lst:dma-alloc-from-contiguous}.
 
-\begin{lstlisting}[float=tbhp,caption={Skrócony wydruk funkcji
+\begin{lstlisting}[float=tb,caption={Skrócony wydruk funkcji
     \code|dma_alloc_from_contiguous| z Linuksa
     3.5.},label=lst:dma-alloc-from-contiguous]
 struct page *dma_alloc_from_contiguous(struct device *dev, int count,
@@ -271,7 +271,7 @@ zainicjowany, jak to opisanuje podrozdział
 \ref{lst:dma-declare-contiguous} jest żądanie pamięci z~alokatora
 czasu startu systemu, który nosi nazwę \ang*{memblock}.
 
-\begin{lstlisting}[float=tbhp,caption={Skrócony wydruk funkcji
+\begin{lstlisting}[float=tb,caption={Skrócony wydruk funkcji
     \code|dma_declare_contiguous| z Linuksa
     3.5.},label=lst:dma-declare-contiguous]
 int __init dma_declare_contiguous(struct device *dev, unsigned long size,
