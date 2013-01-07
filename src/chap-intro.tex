@@ -107,10 +107,14 @@ wielomegabajtowych buforów.
 
 Niestety, nawet jeżeli układ IOMMU jest dostępny, jego obecność może
 się wiązać z~dodatkowym kosztem wynikającym z~nieoptymalnego kodu
-\autocite{bib:price-of-safety} lub konieczności odczytywania mapowań
-z~pamięci \autocite{bib:mitigate-iotlb-bottleneck}.  Z~tego względu
-architekt platformy może zdecydować się wyłączyć IOMMU i~rozwiązać
-problem „w~oprogramowaniu”.
+(\textcite{bib:price-of-safety} pokazuje zwiększenie zużycia procesora
+wynikające z~nieoptymalnego mapowania o~15-30\%) lub konieczności
+odczytywania mapowań z~pamięci
+(\textcite{bib:mitigate-iotlb-bottleneck} pokazuje, że przy
+nieoptymalnych odczytach, czas dostępu do pamięci w~buforach rzędu
+\unit[1]{MiB} może wynieść nawet 45\%).  Z~tego względu architekt
+platformy może zdecydować się wyłączyć IOMMU i~rozwiązać problem
+„w~oprogramowaniu”.
 
 \subsection{Podsumowanie}
 
