@@ -208,13 +208,18 @@ starałem się dołączyć do oficjalnego wydania Linuksa.  Moje
 wcześniejsze kontrybucje trafiały do podsystemu USB i~były mniejsze
 i~znacznie mniej inwazyjne.
 
-Na przykładzie mechanizmów PMM i~CMA można zauważyć, że współpraca
-z~programistami Linuksa może być ciężka --- czasami wręcz wątpiłem, czy
-mój kod kiedykolwiek trafi do jądra --- ale przeważnie powoduje, że
-akceptowany staje się tylko kod najwyższej jakości.
+Było to cenne doświadczenie, które nauczyło mnie, iż często istotne
+jest tworzenie kodu, który skutecznie rozwiązuje najistotniejszy
+problem zamiast częściowo poruszać wiele różnych zagadnień.  Śledząc
+drogę jaką przeszedł mechanizm CMA łatwo zauważyć, jak jego zakres się
+zmniejszał w~zamian zwiększając jakość rozwiązania.
 
-Pomimo niezaprzeczalnych trudności, w~szczególności na początku
-tworzenia CMA, muszę przyznać, iż praca nad dużym projektem wolnego
+Co więcej, prace nad mechanizmami PMM i~CMA pokazują, że współpraca
+z~programistami Linuksa może być ciężka --- czasami wręcz wątpiłem,
+czy mój kod kiedykolwiek trafi do jądra --- ale przeważnie powoduje,
+że akceptowany staje się tylko kod najwyższej jakości.  Pomimo
+niezaprzeczalnych trudności, w~szczególności na początku tworzenia
+CMA, muszę przyznać, iż praca nad dużym projektem wolnego
 oprogramowania i~ostateczna akceptacja poprawki w~jądrze, były warte
 wielu wieczorów przesiedzianych szukając szczególnie nieuchwytnych
 blędów w~kodzie.
@@ -233,18 +238,17 @@ Ohad Ben-Cohen    & Wizery Ltd.              & Tested \\
 Rob Clark         & Texas Instruments Inc.   & Tested \\
 \end{tabular}
 \end{center}
-\caption{Afiliacje osób, które były wymienione w~łatkach ostatniej
-  wersji CMA.  Tag oznacza co to osoby zrobiły: Acked oznacza, że
-  osoba przejrzała kod i~nie zauważyła w~nim żadnych błędów; Reviewed
+\caption{Afiliacje osób, które były wymienione w~ostatniej wersji CMA.
+  Tag określa jaki był wkład danej osoby: Acked oznacza, że osoba
+  przejrzała kod i~nie zauważyła w~nim żadnych błędów; Reviewed
   oznacza, że osoba wykonała dogłębną analizę kodu; a~Tested oznacza,
   że osoba przetestowała kod.}
 \label{tab:cma-ppl}
 \end{table}
 
-Warto również zwrócić uwagę, że komentowało i~sugerowało poprawki do
-CMA dużo osób powiązanych z~różnymi firmami (tabela \ref{tab:cma-ppl}
-przedstawia afiliacje niektórych z~takich osób), a~pomimo to,
-współpraca przebiegała bez większych przeszkód.  Szczególnie
-atrakcyjne w~społeczności programistów Linuksa jest to, że nie ma
-znaczenia dla kogo dana osoba pracuje, ale tylko techniczne aspekty
-kodu, który tworzy.
+Warto też zwrócić uwagę, że komentowało i~sugerowało poprawki do CMA
+dużo osób powiązanych z~różnymi firmami (tabela \ref{tab:cma-ppl}
+przedstawia afiliacje niektórych z~takich osób), a~pomimo to, nie
+wpływało to na opinię o~kodzie.  Szczególnie atrakcyjne w~społeczności
+programistów Linuksa jest to, że nie ma znaczenia dla kogo dana osoba
+pracuje, ale tylko techniczne aspekty kodu, który tworzy.
