@@ -1,0 +1,123 @@
+\chapter{Dalsze prace}
+
+W~skomplikowanych systemach, nawet jeżeli jakiś istniejący problem
+zostanie rozwiązany, przeważnie jest znaleźć wiele aspektów, które
+można ulepszyć.  Nie inaczej jest z~alokatorem CMA, którego dodanie
+w~czerwcu 2012 r.\ do Linuksa 3.5, w~żadnym stopniu nie oznacza
+zakończenia nad nim prac.
+
+\section{Zmiany wprowadzone po wydaniu Linuksa 3.5}
+
+Linux jest dynamicznie rozwijającym się projektem wolnego
+oprogramowania z~dość stabilnym harmonogramem wydawania nowych wersji
+--- średnio 2-3 miesiące\footnote{Konkretnie, z~pośród 35 wydań
+  Linuksa od 2.6.13 aż do 3.7, jedynie trzy potrzebowały więcej niż 92
+  dni, konkretnie wersja 2.6.18 (94 dni), 2.6.24 (107 dni) i~3.1 (94
+  dni).}.  W~połączeniu z~faktem, że alokator CMA budzi coraz większe
+zainteresowanie, powoduje to, iż gdy już znalazł się w~oficjalnym
+wydaniu, więcej osób zaczęło publikować poprawki.
+
+\textcite{patch:cma-discard} zaimplementował usprawnienie, które
+w~istotny sposób skraca czas alokacji pamięci.  W~swoich testach
+zauważył przyśpieszenie alokacji \unit[10]{MiB} z~\unit[146]{ms} do
+zaledwie \unit[7]{ms}.  Pomysł polega na odrzucaniu stron które można
+w~prosty sposób odzyskać.  Najprostszym przykładem są tutaj bufory
+dyskowe --- ich zawartość można przywrócić ponownie odczytując dane
+z~nośnika.
+
+\section{Możliwe dalsze prace}
+
+Nie spoczywając na laurach, obecnie rozważam kilka kolejnych
+usprawnień.  Począwszy od stosunkowo prostych i~nieinwazyjnych, aż po
+bardziej drastyczne zmiany w~kodzie, które częściowo zmieniają
+zachowanie alokatora.
+
+\subsection{Algorytm doboru stron}
+
+Istotnym ulepszeniem może się okazać zmiana algorytmu doboru zakresu
+stron (omówionego w~podrozdziale \ref{sec:alloc-from-contig}).  Metoda
+„pierwszy pasujący” jest prosta w~zaimplementowaniu, ale chociażby
+algorytm „najlepszy pasujący” mógłby zmniejszyć fragmentacje pamięci.
+
+Co istotniejsze, funkcja \code|dma_alloc_from_contiguous| nie
+uwzględnienia, które strony wymagają migracji.  Może to powodować, iż
+alokator będzie dokonywał migracji, którym można było zapobiec.  Na
+chwilę obecną nie wiadomo jednak, czy zysk z~nowego algorytmu nie
+zostałby przysłonięty kosztami wynikającymi z~jego złożoności jak
+i~możliwą większą fragmentacją.
+n
+\subsection{Strony, których nie można przenieść}
+
+Innym dość uciążliwym problemem, z~którym CMA musi sobie radzić, jest,
+fakt iż nie zawsze istnieje możliwość migracji pewnych stron
+ruchomych.  Może to być spowodowane brakiem funkcji migrującej lub
+chwilowym wykorzystaniem strony w~kontekście wymagającym stałego
+adresu fizycznego.
+
+Do pierwszej kategorii należą np.\ strony wykorzystywane przez wiele
+systemów plików.  Nawet w~bardzo popularnym i~powszechnie używanym
+systemie plików ext4, stron dziennika nie da się przenieść.
+Naprawienie tego problemu jest niestety dość skomplikowane.  Wymaga to
+bowiem wyszukania fragmentów, które powodują taki stan rzeczy,
+a~znajdują się one w~wielu różnych podsystemach jądra i~aby dodać
+brakujące funkcje migrujące należy choć w~podstawowym stopniu zapoznać
+się z~kodem.
+
+Druga kategoria to sytuacje, gdy strona została unieruchomiona na
+czas, gdy wykonywany jest na niej transfer DMA (lub inna operacja
+wymagająca stałego adresu fizycznego).  Przykładowo, w~sytuacji gdy
+dane są kopiowane pomiędzy pamięcią a~dyskiem twardym.  Jednym
+z~rozważanych przeze mnie rozwiązań było migrowanie strony poza region
+CMA zanim zostanie ona unieruchomiona.  Niestety unieruchamianie stron
+jest dość częstym zjawiskiem i~kopiowanie danych za każdym razem
+prowadziłoby do znacznej degradacji wydajności systemu.
+
+
+\subsection{Ograniczenie dozwolonych rodzajów stron}
+
+Możliwą zmianą, która w~największym stopniu wpływa na mechanizm CMA
+jest ograniczenie wykorzystywania regionów CMA tylko do stron
+przeznaczonych dla funkcji, które zawsze można migrować.
+
+Ciekawym przykładem jest tutaj zRam \autocite{patch:zram}, który jest
+mechanizmem, pozwalającym na tworzenie partycji wymiany w~pamięci RAM.
+Z~pozoru może się to wydawać dziwnym rozwiązaniem, ale istotnym
+elementem jest kompresja danych.  Dzięki niej, po przeniesieniu stron
+do takiej „partycji wymiany” zajmują one mniej miejsca w~pamięci.
+Jednym z~zastosowań zRam są systemy wbudowane, które posiadają dyski
+flash, które (z~uwagi na ograniczoną liczbę zapisów na medium) nie
+nadają się do wykorzystania jako partycje wymiany.
+
+Pamięć transcendentna \autocite{bib:transcendent} (działająca
+w~przestrzeni jądra) i mechanizm \code|POSIX_FADV_VOLATILE|
+\autocite{bib:fadv-volatile} (działający w~przestrzeni użytkownika)
+również posiadają ciekawe właściwości.  W~obu przypadkach, ideą jest
+oznaczenie pewnych danych jako ulotne, co oznacza, że w~sytuacji, gdy
+brakuje wolnej pamięci w~systemie, jądro może takie dane zwyczajnie
+porzucić.
+
+Jednym z~flagowych zastosowań jest pamięć podręczna przeglądarek
+internetowych.  Przechowywanie danych w~pamięci przeglądarki może
+w~znacznym stopniu poprawić doświadczenie użytkownika, ale z~drugiej
+strony większe zużycie pamięci może spowolnić resztę środowiska.
+Dzięki zastosowaniu \code|POSIX_FADV_VOLATILE| jądro może zdecydować,
+aby usunąć dane z~pamięci podręcznej przeglądarki.  Oczywiście z~puntu
+widzenia CMA, możliwość usunięcia danych z~pamięci jest bardzo
+kusząca.
+
+W~przypadku takich rozwiązań problemem może być zbytnie ograniczenie
+zastosowania stron z~regionów CMA.  Jeżeli niewiele rodzajów danych
+może korzystać z~zarezerwowanej pamięci to może to prowadzić do
+nieefektywnego jej wykorzystania, co sprowadza CMA z~powrotem do
+punktu wyjścia.
+
+\subsection{Podsumowanie}
+
+Droga przed alokatorem CMA jest otwarta i~istnieje wiele aspektów nad
+które można ulepszać, a~dzięki coraz większemu gronu osób
+zainteresowanych tym kodem, można pokusić się o~predykcję, iż
+mechanizm CMA będzie się rozwijał.  Równocześnie kolejne osoby
+wykazuje zainteresowanie korzystania z~niego w~systemach znacznie
+różniących się od platform, dla których był projektowany
+(tj.\ telefonów komórkowych), takich jak zarządcy maszyn wirtualnych
+jaki i~oprogramowanie samolotów.

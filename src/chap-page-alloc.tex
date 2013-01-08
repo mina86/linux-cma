@@ -191,7 +191,8 @@ Najbardziej skomplikowanym krokiem migracji -- zilustrowanej poprzez
 algorytm \ref{alg:migrate} -- jest uaktualnienie odwołań do strony
 tak, aby wskazywały na nową stronę $p'$.  Ponieważ istnieje wiele
 rodzajów stron ruchomych (strony anonimowe, bufory dyskowe itp.), jest
-to krok specyficzny dla danej strony.
+to krok specyficzny dla danej strony i~jest wykonywany przez
+przypisaną stronie funkcję migrującą (\code|migratepage|).
 
 Przykładowo dla stron anonimowych wiąże się to z~uaktualnieniem
 tablicy translacji adresów tak, aby wskazywały w~nowe miejsce, a~także
