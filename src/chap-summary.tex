@@ -14,8 +14,8 @@ r.\ usprawnienie, które w~istotny sposób skraca czas alokacji.
 W~swoich testach zauważył przyśpieszenie alokacji \unit[10]{MiB}
 z~\unit[146]{ms} do zaledwie \unit[7]{ms}.  Pomysł polega na
 odrzucaniu stron które można w~prosty sposób odzyskać.  Najprostszym
-przykładem są tutaj bufory dyskowe -- ich zawartość można przywrócić
-ponownie odczytując dane z~nośnika.
+przykładem są tutaj bufory dyskowe\,---\,ich zawartość można
+przywrócić ponownie odczytując dane z~nośnika.
 
 Innym możliwym usprawnieniem CMA jest ulepszenie algorytmu doboru
 zakresu stron.  Obecnie stosowana metoda „pierwszy pasujący” nie

@@ -29,7 +29,7 @@ $k < \mathrm{MAX\_ORDER}$.  \code|MAX_ORDER| zależy od architektury,
 na którą Linux jest kompilowany, ale zazwyczaj ma wartość $11$, toteż
 na potrzeby tej pracy zakładam, iż $0 \le k \le 10$.
 
-W~Linuksie, $k$ określa rząd strony -- strona rzędu 0 to pojedyncza
+W~Linuksie, $k$ określa rząd strony\,---\,strona rzędu 0 to pojedyncza
 strona fizyczna, strona rzędu 1 to dwie strony fizyczne itd.\ aż do
 strony rzędu 10, czy też strony maksymalnego rzędu, która składa się
 z~1024 stron fizycznych.
@@ -144,7 +144,7 @@ sześć: \textit{unmovable}, \textit{reclaimable}, \textit{movable},
 \textit{cma}, \textit{reserve} oraz \textit{isolate}.
 
 Dla potrzeb tej pracy typy \textit{unmovable}, \textit{reclaimable}
-i~{\it reserve} są traktowane jak jeden typ -- typ nieruchomy.  To
+i~{\it reserve} są traktowane jak jeden typ\,---\,typ nieruchomy.  To
 uproszczenie wynika z~faktu, iż dla mechanizmu CMA istotne jest tylko
 rozróżnienie pomiędzy stronami ruchomymi i~nieruchomymi.
 
@@ -203,7 +203,7 @@ migracji.
 
 Dla jądra zrealizowanie alokacji jest ważniejsze od trzymania stron
 o~tym samym typie migracji razem, dlatego dla każdego typu migracji
-istnieje lista zapasowych typów -- jeżeli brak jest stron żądanego
+istnieje lista zapasowych typów\,---\,jeżeli brak jest stron żądanego
 typu, alokator będzie próbował z~kolejnymi typami z~list, tak jak to
 pokazuje algorytm \ref{alg:buddy-fallback}.  Co więcej, jeżeli rząd
 strony jest dostatecznie duży, typ migracji danego bloku zostaje

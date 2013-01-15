@@ -24,11 +24,11 @@ albo wolne, albo ruchome.  Ponieważ (jak opisałem w~podrozdziale
 \ref{sec:type-change}) jądro dopuszcza alokacje nieruchomych stron
 z~bloków ruchomych, a~także posiada mechanizm na skutek którego bloki
 zmieniają swój typ, aby mechanizm CMA mógł działać poprawnie, należało
-stworzyć nowy typ migracji -- nazwanym po prostu typem migracji cma --
-który posiada dwie bardzo istotne cechy: (i) z~bloków oznaczonych
-typem cma mogą być alokowane tylko strony ruchome, oraz (ii) blok
-oznaczony typem cma nie zmienia swojego typu (na skutek działania
-alokatora stron).
+stworzyć nowy typ migracji\,---\,nazwanym po prostu typem migracji
+cma\,---\,który posiada dwie bardzo istotne cechy: (i) z~bloków
+oznaczonych typem cma mogą być alokowane tylko strony ruchome, oraz
+(ii) blok oznaczony typem cma nie zmienia swojego typu (na skutek
+działania alokatora stron).
 
 O~ile pierwsza właściwość jest stosunkowo prosta do osiągnięcia,
 zagwarantowanie niezmienności typu bloku stron wymagało
