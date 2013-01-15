@@ -11,7 +11,7 @@ build/deps: find-deps.sh $(wildcard src/*.tex)
 build/cma-sdi.dvi: src/main.tex
 build/cma-sdi.dvi: $(wildcard src/*.tex)
 
-include build/deps
+-include build/deps
 
 
 %.pdf: build/%.dvi
