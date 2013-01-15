@@ -77,7 +77,7 @@ obecność może się wiązać z~dodatkowym kosztem wynikającym
 z~nieoptymalnego kodu \autocite{bib:price-of-safety} lub konieczności
 odczytywania mapowań z~pamięci
 \autocite{bib:mitigate-iotlb-bottleneck}.  Z~tego względu architekt
-platformy może zdecydować wyłączyć IOMMU i~rozwiązać problem
+platformy może zdecydować, aby wyłączyć IOMMU i~rozwiązać problem
 „w~oprogramowaniu”.
 
 Z~uwagi na koszty i~ograniczenia zarówno kontrolerów DMA jak i~układów
@@ -112,11 +112,11 @@ rezerwacja przy starcie systemu pewnego regionu pamięci na potrzeby
 konkretnych sterowników.
 
 Najłatwiejszym, acz niezbyt eleganckim sposobem jest wykorzystanie
-argumentu \code|mem| jądra.  Przekazany przez bootloader powoduje, że
-Linux nie stara się automatycznie wykryć dostępnej pamięci RAM
-i~zamiast tego interpretuje przekazane informacje.  W~ten sposób,
-możliwe jest ograniczenie widzianej przez system pamięci, tak że
-ukryte regiony mogą być wykorzystywane przez konkretne sterowniki.
+argumentu \code|mem| jądra.  Przekazany przez program startujący
+powoduje, że Linux nie stara się automatycznie wykryć dostępnej
+pamięci RAM i~zamiast tego interpretuje przekazane informacje.  W~ten
+sposób, możliwe jest ograniczenie widzianej przez system pamięci, tak
+że ukryte regiony mogą być wykorzystywane przez konkretne sterowniki.
 
 Bardziej eleganckim rozwiązaniem jest skorzystanie z~alokatora
 memblock, który jest aktywny zanim jądro zainicjuje wszystkie swoje
@@ -135,7 +135,7 @@ wykorzystywane.
 
 Bardziej skomplikowanym rozwiązaniem jest mechanizm, który rezerwuje
 pewną przestrzeń pamięci, ale zamiast na stałe przypisywać obszary do
-urządzeń, pozwala sterownikom alokować bufory, wtedy, gdy są one
+urządzeń, pozwala sterownikom alokować bufory wtedy, gdy są one
 potrzebne.
 
 W~trakcie moich prac stworzyłem \textit{Physical Memory Manager} (PMM)
@@ -155,7 +155,7 @@ wykorzystywanym między innymi przez X~Window, PMM pozwalał na
 dekodowanie obrazów i~strumieni wideo bezpośrednio do buforów
 dostępnych dla serwera X11.  Dzięki temu, w~całym procesie dane nie
 były niepotrzebnie kopiowane, co minimalizowało użycie procesora
-i~szyny pamięci i~w~rezultacie przyśpieszało działanie systemu.
+i~szyny pamięci przyśpieszając działanie systemu.
 
 Jednakże, pamięć zarezerwowana przez PMM i~tak przez większość czasu
 była zupełnie nieużywana, a~więc marnowana.  Z~tego powodu, PMM nie

@@ -6,7 +6,7 @@ temat tego w~jaki sposób jądro śledzi i~przydziela pamięć procesom
 i~sterownikom.  Linux posiada wiele mechanizmów alokacji pamięci
 począwszy od najprostszych w~użyciu funkcji \code|kmalloc|
 i \code|vmalloc|, poprzez mechanizmy pul pamięci, aż do alokatora
-czasu bootowania (memblock) i~alokatorów pamięci DMA (DMA API)
+czasu startu systemu (memblock) i~alokatorów pamięci DMA (DMA API)
 \autocite[rozdział 8]{bib:ldd3}.  Pomimo tak dużej liczby interfejsów,
 wiele z~nich sprowadza się do wywołania alokatora stron, który jest
 sercem podsystemu.
@@ -36,7 +36,7 @@ z~1024 stron fizycznych.
 
 Funkcja \code|alloc_pages|, która jest interfejsem dla alokatora
 stron, przyjmuje jako argument właśnie rząd żądanej strony.  Wynikają
-stąd, iż alokator stron nie pozwala alokować obszarów: (i) mniejszy
+stąd, iż alokator stron nie pozwala alokować obszarów: (i) mniejszych
 niż jedna strona (4096 bajty), (ii) których rozmiar nie jest potęgą
 dwójki, oraz (iii) większych niż \unit[4]{MiB} (przez co nie nadaje
 się do alokowania buforu dla pięciomegapikselowej kamery, czy nawet
@@ -181,7 +181,7 @@ które nie podlegają migracji.
 
 Grupowanie realizowane jest poprzez podział pamięci na bloki
 składające się z~1024 stron (choć liczba ta zależy od architektury
-i~opcji konfiguracyjnych jądra), jak to pokazuje rysunku
+i~opcji konfiguracyjnych jądra), jak to pokazuje rysunek
 \ref{fig:pages}.  Każdy blok stron ma przypisany typ migracji,
 a~alokator stron posiada oddzielne listy wolnych stron dla każdego
 typu migracji.  Analizując algorytm \ref{alg:buddy-alloc} należy zatem
@@ -207,7 +207,7 @@ istnieje lista zapasowych typów -- jeżeli brak jest stron żądanego
 typu, alokator będzie próbował z~kolejnymi typami z~list, tak jak to
 pokazuje algorytm \ref{alg:buddy-fallback}.  Co więcej, jeżeli rząd
 strony jest dostatecznie duży, typ migracji danego bloku zostaje
-zmieniano na ten zgodny z~wywołaniem funkcji \code|alloc_pages|.
+zmieniany na ten zgodny z~wywołaniem funkcji \code|alloc_pages|.
 
 Podczas zwalniania, gdy strona jest dodawana do listy wolnych stron
 (widoczne w~linii \ref{alg:buddy-free:add} algorytmu

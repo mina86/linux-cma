@@ -1,7 +1,7 @@
 \section{Implementacja i~sposób działania mechanizmu CMA}
 
 Podstawowym założeniem alokatora CMA jest umożliwienie alokowania
-dużych obszarów ciągłych fizycznie bez konieczneści rezerwacji na
+dużych obszarów ciągłych fizycznie bez konieczności rezerwacji na
 wyłączność dużej ilości pamięci.  Aby to umożliwić, interfejs CMA
 korzysta z~mechanizmu migracji stron opisanego pokrótce w~podrozdziale
 \ref{sec:migratetype}.  Ogólny zarys alokacji z~regionów CMA
@@ -19,7 +19,7 @@ rozdział opisze ją w~większych szczegółach.
 
 Migracja jest możliwa tylko dla stron ruchomych.  Niestety, przed
 zaimplementowaniem alokatora CMA, Linux nie posiadał mechanizmu, który
-pozwalałby zagwarantować istnienia dużego obszaru, w~którym strony są
+pozwalałby zagwarantować istnienie dużego obszaru, w~którym strony są
 albo wolne, albo ruchome.  Ponieważ (jak opisałem w~podrozdziale
 \ref{sec:type-change}) jądro dopuszcza alokacje nieruchomych stron
 z~bloków ruchomych, a~także posiada mechanizm na skutek którego bloki
@@ -38,8 +38,8 @@ zmiana nie nastąpi.
 
 \subsection{Alokowanie wybranego obszaru pamięci}\label{sec:alloc-contig-range}
 
-Posiadając gwarancję, że dany zakres składa się jedynie z wolne
-i~ruchome stron, można przystąpić do jego alokacji.  Drugim krokiem
+Posiadając gwarancję, że dany zakres składa się jedynie z wolnych
+i~ruchomych stron, można przystąpić do jego alokacji.  Drugim krokiem
 implementowania alokatora CMA było zatem stworzenie funkcji, która
 dostaje jako argument zakres stron, a~następnie migruje wszystkie
 zajęte strony, a~wolne usuwa z~listy wolnych stron.  Właśnie to czyni
@@ -50,13 +50,13 @@ stron na izolowany typ migracji.  Pomimo, że izolowane strony są
 przechowywane na liście wolnych stron i~są pod kontrolą alokatora
 stron, nie są one używano do zaspokajania żądań alokacji.  W~ten
 sposób, funkcja \code|alloc_contig_range| uzyskuje gwarancje, że
-w~trakcie jej działania strony, na których operuje nie zostaną
-zaalokowane dla innych wątków jądra.
+strony, na których operuje nie zostaną zaalokowane dla innych wątków
+jądra.
 
 W~dalszej części wołana jest kolejna stworzona przeze mnie funkcja
 \code|__alloc_contig_migrate_range|, której zadaniem jest
 zidentyfikowanie i~zmigrowanie wszystkich zajętych stron z~podanego
-zakresu.  Funkcja ta szukac stron, które mogą zostać zmigrowane, po
+zakresu.  Funkcja ta szuka stron, które mogą zostać zmigrowane, po
 czym zleca migracje funkcji \code|migrate_pages|.
 
 Gdy strony są już wolne i~przechowywane na liście stron izolowanych,
@@ -92,12 +92,12 @@ przez CMA stron.  Po wybraniu obszaru, wołana jest funkcja
 powiedzie, oznacza obszar w~bitmapie jako zajęty i~zwraca wynik.
 
 Aby nie załączać zbyt wielu szczegółów, poprzedni podrozdział nie
-opisuje sytuacji, w~których alokacja może się nie powieść, ale takie
+opisuje sytuacji, w~których alokacja się nie powodzi, które niestety
 istnieją\footnote{W~istocie, jest ich dość sporo i~obecnie wraz
-  z~innymi deweloperami Linuksa staram się wyszukać i~wyeliminowaniem
+  z~innymi deweloperami Linuksa staram się wyszukać i~wyeliminować
   takie sytuacji.  Linux, a~szczególnie zarządzanie pamięcią
   w~Linuksie, jest jednak skomplikowany i~czasem trudno prześledzić
   wszystkie zależności i~interakcje pomiędzy komponentami, które mogą
-  prowadzić do błędu alokacji.} i~z~tego powodu, funkcja
-\code|dma_alloc_from_contiguous| działa w~pętli próbując alokować aż
-do skutku różne obszaru.
+  prowadzić do błędu alokacji.}.  Z~tego powodu funkcja
+\code|dma_alloc_from_contiguous| działa w~pętli i próbuje alokować
+różne obszaru pamięci aż do skutku lub wyczerpania możliwych obszarów.
