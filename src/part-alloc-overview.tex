@@ -21,13 +21,13 @@
     \item Najczęściej stosowany alokator.
     \item Ciągłe fizycznie obszary $\le$
       \unit[4]{MiB}\textcolor{gray}{$^\dagger$}.
-    \item Kożysta z~alokatora stron.
+    \item Koszysta z~alokatora stron.
     \end{itemize}
 
   \item \code{vmalloc}
     \begin{itemize}
-    \item Alokacjie nieciągłe fizycznie.
-    \item Kożysta z~alokatora stron.
+    \item Alokacje nieciągłe fizycznie.
+    \item Koszysta z~alokatora stron.
     \end{itemize}
 
   \item \code{kmem_cache}
@@ -48,10 +48,10 @@
   \frametitle{Alokator czasu startu systemu}
 
   \begin{itemize}
-  \item Memblock jest aktwny przy starcie systemu.
+  \item Memblock jest aktywny przy starcie systemu.
   \item Przechowuje listę dostępnych obszarów pamięci RAM.
   \item Prosty interfejs do alokowania buforów.
-  \item Mażliwe jests rezerwowanie dużych bloków.
+  \item Możliwe jest rezerwowanie dużych bloków.
   \item Pozostała wolna pamięć jest przekazywana do alokatora stron.
   \end{itemize}
 \end{frame}

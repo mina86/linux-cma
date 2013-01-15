@@ -20,7 +20,7 @@
   \item DMA API umożliwia alokowanie buforów DMA.
   \item Implementacja zależna od architektury.
   \item Funkcje DMA API danej architektury muszą być zmodyfikowane
-    i~wołać CMA.
+    by wołać CMA.
   \end{itemize}
 \end{frame}
 
@@ -45,10 +45,7 @@
     \begin{itemize}
     \item Dostępne typy migracji nie gwarantują ciągłości.
     \end{itemize}
-  \item Nowy typ migracji:
-    \begin{itemize}
-    \item \code{MIGRATE_CMA}
-    \end{itemize}
+  \item Nowy typ migracji: \textit{cma}.
   \item Blok stron tego typu:
     \begin{itemize}
     \item nigdy nie zmienia typu, oraz
