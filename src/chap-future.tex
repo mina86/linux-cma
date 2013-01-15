@@ -9,20 +9,20 @@ zakończenia nad nim prac.
 \section{Zmiany wprowadzone po wydaniu Linuksa 3.5}
 
 Linux jest dynamicznie rozwijającym się projektem wolnego
-oprogramowania z~dość stabilnym harmonogramem wydawania nowych wersji
---- średnio 2-3 miesiące\footnote{Konkretnie, z~pośród 35 wydań
-  Linuksa od 2.6.13 aż do 3.7, jedynie trzy potrzebowały więcej niż 92
-  dni, konkretnie wersja 2.6.18 (94 dni), 2.6.24 (107 dni) i~3.1 (94
-  dni).}.  W~połączeniu z~faktem, że alokator CMA budzi coraz większe
-zainteresowanie, powoduje to, iż gdy już znalazł się w~oficjalnym
-wydaniu, więcej osób zaczęło publikować poprawki.
+oprogramowania z~dość stabilnym harmonogramem wydawania nowych
+wersji\,---\,średnio 2-3 miesiące\footnote{Konkretnie, z~pośród 35
+  wydań Linuksa od 2.6.13 aż do 3.7, jedynie trzy potrzebowały więcej
+  niż 92 dni, konkretnie wersja 2.6.18 (94 dni), 2.6.24 (107 dni)
+  i~3.1 (94 dni).}.  W~połączeniu z~faktem, że alokator CMA budzi
+coraz większe zainteresowanie, powoduje to, iż gdy już znalazł się
+w~oficjalnym wydaniu, więcej osób zaczęło publikować poprawki.
 
 \textcite{patch:cma-discard} zaimplementował usprawnienie, które
 w~istotny sposób skraca czas alokacji pamięci.  W~swoich testach
 zauważył przyśpieszenie alokacji \unit[10]{MiB} z~\unit[146]{ms} do
 zaledwie \unit[7]{ms}.  Pomysł polega na odrzucaniu stron które można
 w~prosty sposób odzyskać.  Najprostszym przykładem są tutaj bufory
-dyskowe --- ich zawartość można przywrócić ponownie odczytując dane
+dyskowe\,---\,ich zawartość można przywrócić ponownie odczytując dane
 z~nośnika.
 
 \section{Możliwe dalsze prace}

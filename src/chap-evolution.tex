@@ -36,7 +36,7 @@ Co więcej, ponieważ dowolny bufor PMM, mógł zostać przekazany do
 sterownika, aplikacja była w~stanie budować potoki.  Dla przykładu, po
 zdekodowaniu obrazka JPEG, mógł on zostać przekazany do układu
 skalującego, a~następnie jednostki, która go obróciła.  Istotne jest,
-iż w~takim potoku, dane nigdy nie były niepotrzebnie kopiowane --- za
+iż w~takim potoku, dane nigdy nie były niepotrzebnie kopiowane\,---\,za
 każdym razem dokonywana była na nich jakaś operacja.
 
 PMM integrował się również z~mechanizmem współdzielenia pamięci
@@ -120,8 +120,8 @@ CMA.  Interfejs tekstowy stał się całkowicie opcjonalny i~dostępny
 tylko jeżeli włączone zostają odpowiednie opcje kompilacji jądra.
 
 Z~mniejszych zmian, druga wersja zmieniła sposób wczytywania
-algorytmów alokowania --- w~odróżnieniu od poprzedniej wersji, możliwe
-się stało budowanie algorytmów jako modułów --- a~także dodała
+algorytmów alokowania\,---\,w~odróżnieniu od poprzedniej wersji, możliwe
+się stało budowanie algorytmów jako modułów\,---\,a~także dodała
 możliwość operowania na prywatnych regionach dostępnych tylko dla
 danego sterownika (funkcja ta została zasugerowana przez Jonathana
 Corbeta).
@@ -134,12 +134,12 @@ wyłączność obszaru pamięci, który nie jest zupełnie używany, jeżeli
 prace nad implementacją mechanizmu migracji, który pozwalał na
 współdzielenie pamięci CMA z~systemem.
 
-Początkowo implementacja bazował na kodzie Kamezawa'y Hiroyuki ---
-który bazował na infrastrukturze umożliwiającym usuwanie (dodawanie)
-kości RAM z~(do) komputera baz konieczności jego wyłączania
-(\ang{memory hot-plugging}) --- i~nie należał do bardzo stabilnych.
-Kolejne wersje CMA przynosiły iteracyjne poprawki zwiększające
-stabilność i~niezawodność alokacji.
+Początkowo implementacja bazował na kodzie Kamezawa'y
+Hiroyuki\,---\,który bazował na infrastrukturze umożliwiającym
+usuwanie (dodawanie) kości RAM z~(do) komputera baz konieczności jego
+wyłączania (\ang{memory hot-plugging})\,---\,i~nie należał do bardzo
+stabilnych.  Kolejne wersje CMA przynosiły iteracyjne poprawki
+zwiększające stabilność i~niezawodność alokacji.
 
 Szósta wersja  dodała również operacja przypinania zaalokowanych
 buforów (\ang{pinning}), którą zasugerował Johan Mossberg.  Interfejs
@@ -215,8 +215,8 @@ drogę jaką przeszedł mechanizm CMA łatwo zauważyć, jak jego zakres się
 zmniejszał w~zamian zwiększając jakość rozwiązania.
 
 Co więcej, prace nad mechanizmami PMM i~CMA pokazują, że współpraca
-z~programistami Linuksa może być ciężka --- czasami wręcz wątpiłem,
-czy mój kod kiedykolwiek trafi do jądra --- ale przeważnie powoduje,
+z~programistami Linuksa może być ciężka\,---\,czasami wręcz wątpiłem,
+czy mój kod kiedykolwiek trafi do jądra\,---\,ale przeważnie powoduje,
 że akceptowany staje się tylko kod najwyższej jakości.  Pomimo
 niezaprzeczalnych trudności, w~szczególności na początku tworzenia
 CMA, muszę przyznać, iż praca nad dużym projektem wolnego
