@@ -82,12 +82,12 @@ rzędu, co sygnalizuje nieudaną alokację).  Jeżeli uzyskana w~ten
 sposób strona ma rząd większy niż żądany, jest dzielona na pół, aż do
 osiągnięcia oczekiwanego rozmiaru.  Strony, które powstały na skutek
 takiego podziału nazywamy stronami bliźniaczymi.  Cały proces
-ilustruje algorytm \ref{alg:buddy-alloc}
+ilustruje algorytm \ref{alg:buddy-alloc}.
 
 Przy zwalnianiu, dopóki to możliwe, strona jest łączona ze swoją
 bliźniaczą stroną, dzięki czemu strony są dodawane do listy wolnych
 stron o~dużym rzędzie.  Proces ten ilustruje algorytm
-\ref{alg:buddy-free}
+\ref{alg:buddy-free}.
 
 \begin{algorithm}[p]
 \caption[Alokacja strony w~algorytmie bliźniaków.]{Alokacja strony
@@ -239,7 +239,7 @@ o~tym samym typie migracji razem.  Dlatego dla każdego typu migracji
 istnieje lista zapasowych (\ang{fallback}) typów migracji.  Jeżeli
 alokacja dla żądanego typu migracji nie powiedzie się, alokator stron
 będzie próbował z~kolejnymi typami z~list, tak jak to pokazuje
-algorytm \ref{alg:buddy-fallback} Co więcej, jeżeli rząd żądanej
+algorytm \ref{alg:buddy-fallback}.  Co więcej, jeżeli rząd żądanej
 strony jest dostatecznie duży, typ migracji wszystkich wolnych stron
 w~danym bloku zostaje zmieniano na ten zgodny z~wywołaniem funkcji
 \code|alloc_pages|.
@@ -329,7 +329,7 @@ synchronizowany pomiędzy wszystkimi procesorami.  Aby uniknąć kosztów
 związanych z~synchronizacją, każdy procesor posiada swoje prywatne
 listy PCP, na których znajdują się wolne strony rzędu 0.  Biorąc
 również i~ten aspekt pod uwagę, alokacja przyjmuje postać
-przedstawianą w~algorytmie \ref{alg:buddy-pcp}
+przedstawianą w~algorytmie \ref{alg:buddy-pcp}.
 
 \section{Inne aspekty alokatora stron}
 

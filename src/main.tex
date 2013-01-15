@@ -61,7 +61,9 @@
 \usepackage[chapter]{algorithm}
 \renewcommand*{\ALG@name}{Algorytm}
 \renewcommand*{\listalgorithmname}{Spis algorytmów}
-\renewcommand*{\thealgorithm}{\arabic{chapter}.\arabic{algorithm}.}
+
+\usepackage{caption}
+\captionsetup[algorithm]{labelfont=rm,labelsep=colon}
 
 \usepackage[noend]{algpseudocode}
 \renewcommand*{\algorithmicrequire}{\textbf{Wymaga:}}
