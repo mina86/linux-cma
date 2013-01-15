@@ -8,6 +8,14 @@
 \usepackage{csquotes}
 \setcounter{tocdepth}{3}
 
+\renewcommand{\subparagraph}{}  % titlesec did not work without this
+                                % definition and I~don't use
+                                % subparagraphs anyway.
+\usepackage{titlesec}
+\titlelabel{\thetitle.\quad}
+\usepackage{caption}
+\captionsetup[algorithm]{labelfont=rm,labelsep=colon}
+
 \DeclareQuoteStyle{polish}
 	{\quotedblbase}{\textquotedblright}
 	{\quotesinglbase}{\textquoteright}
