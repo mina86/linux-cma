@@ -43,15 +43,19 @@ CMA zanim zostanie ona unieruchomiona, ale niestety sytuacja taka jest
 na tyle powszechna, że degradacja wydajności byłaby zbyt duża.
 
 Innymi możliwymi rozwiązaniami jest ograniczenie wykorzystywania
-regionów CMA tylko do stron przeznaczonych dla takich funkcji jak zRam
-\autocite{patch:zram}, pamięć transcendentna
-\autocite{bib:transcendent}, czy mechanizm \code|POSIX_FADV_VOLATILE|
-\autocite{bib:fadv-volatile}.  Gdyby to zrobić, istniałaby większa
-gwarancja, iż dane można przenieść, a~w~przypadku dwóch ostatnich
-mechanizmów, dane można by zwyczajnie odrzucić.  Z~drugiej strony
-w~znacznym stopniu zmniejszyłoby to użyteczność stron z~regionu CMA,
-potencjalnie do tego stopnia, iż przez większość czasu nie byłyby one
-zupełnie wykorzystywane.
+regionów CMA tylko do funkcji takich jak:
+
+\begin{itemize}
+\item mechanizm zRam \autocite{patch:zram}, który umożliwia tworzenie
+  kompresowanego pliku wymiany w~pamięci, oraz
+\item pamięć transcendentna \autocite{bib:transcendent} i interfejs
+  \code|POSIX_FADV_VOLATILE|, które dają jądru możliwość odrzucenia
+  wybranych danych zwalniając tym samym dane strony pamięci.
+\end{itemize}
+
+Z~drugiej strony w~znacznym stopniu zmniejszyłoby to użyteczność stron
+z~regionu CMA, potencjalnie do tego stopnia, iż przez większość czasu
+nie byłyby one zupełnie wykorzystywane.
 
 Widać, że droga przed alokatorem CMA jest otwarta i~istnieje wiele
 aspektów, które można ulepszać, a~dzięki coraz większemu gronu osób
