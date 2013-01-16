@@ -48,9 +48,10 @@ $n$, sprawdzana jest odpowiednia lista, a~jeżeli jest pusta lista dla
 rzędu $n+1$, aż do odnalezienia wolnej strony (lub osiągnięcia
 maksymalnego rzędu, co sygnalizuje nieudaną alokację).  Jeżeli
 uzyskana w~ten sposób strona ma rząd większy niż żądany, jest ona
-dzielona na pół, aż do osiągnięcia żądanego rozmiaru.  Strony, które
-powstały na skutek podziału większej strony na pół, nazywamy stronami
-bliźniaczymi.  Cały proces ilustruje algorytm \ref{alg:buddy-alloc}.
+dzielona na pół, aż do osiągnięcia oczekiwanego rozmiaru.  Strony,
+które powstały na skutek podziału większej strony na pół, nazywamy
+stronami bliźniaczymi.  Cały proces ilustruje algorytm
+\ref{alg:buddy-alloc}.
 
 \begin{algorithm}[p]
 \caption[Alokacja strony w~algorytmie bliźniaków.]{Alokacja strony
@@ -169,15 +170,16 @@ a~także w~trackie procesu zagęszczania \autocite{bib:compaction,
 liczby wolnych dużych stron.
 
 Najbardziej skomplikowanym krokiem migracji jest uaktualnienie odwołań
-do strony tak, aby wskazywały na nową stronę.  Ponieważ istnieje wiele
-rodzajów stron ruchomych (strony anonimowe, bufory dyskowe itp.), jest
-to krok specyficzny dla danej strony.
+do strony tak, aby wskazywały na nową lokalizację.  Ponieważ istnieje
+wiele rodzajów stron ruchomych (strony anonimowe, bufory dyskowe
+itp.), jest to krok specyficzny dla danej strony.
 
-Wołając funkcję \code|alloc_pages|, typ migracji jest przekazywany
-jako argument, co pozwala alokatorowi grupować strony tego samego
-typu.  Jest to istotne, gdyż mechanizm zagęszczania nie działa zbyt
-dobrze jeżeli ruchome strony przeplatają się z~pozostałymi stronami,
-które nie podlegają migracji.
+Wołając funkcję \code|alloc_pages| (która jest centralnym interfejsem
+alokatora stron), typ migracji jest przekazywany jako argument, co
+pozwala alokatorowi grupować strony tego samego typu.  Jest to
+istotne, gdyż mechanizm zagęszczania nie działa zbyt dobrze jeżeli
+ruchome strony przeplatają się z~pozostałymi stronami, które nie
+podlegają migracji.
 
 Grupowanie realizowane jest poprzez podział pamięci na bloki
 składające się z~1024 stron (choć liczba ta zależy od architektury

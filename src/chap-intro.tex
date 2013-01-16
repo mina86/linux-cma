@@ -1,7 +1,7 @@
 \section{Opis problemu}
 
 W~celu zwiększenia efektywności działania oraz liczby udostępnianych
-funkcji, komputery a w~szczególności telefony komórkowe posiadają
+funkcji, komputery, a w~szczególności telefony komórkowe, posiadają
 wiele wyspecjalizowanych podzespołów.  W~wielu przypadkach, procesor
 komunikuje się z~nimi poprzez bufory w pamięci operacyjnej,
 przekazując do urządzenia jedynie adresy gdzie dane się znajdują.
@@ -34,8 +34,8 @@ z~wieloma ograniczeniami.
 
 Nowoczesne architektury przeznaczone do serwerów i~komputerów
 osobistych posiadają jednostkę zarządzania pamięcią (\ang{memory
-  management unit}, \acc{MMU}), która tłumaczy adresy logiczne na fizyczne.
-Dzięki temu, bufory ciągłe z~punktu widzenia procesora, mogą
+  management unit}, \acc{MMU}), która tłumaczy adresy logiczne na
+fizyczne.  Dzięki temu, bufory ciągłe z~punktu widzenia procesora mogą
 w~rzeczywistości być podzielone na wiele części rozrzuconych po
 pamięci fizycznej.  W~ten sposób, nawet jeżeli program alokuje
 wielomegabajtowy obszar, system może zrealizować żądanie alokując
@@ -61,16 +61,16 @@ jednocześnie.\footnote{Jednym z~rodzajów ramek stosowanych do
   w~starszych standardach takich jak MPEG-2 może odwoływać się do
   jednej poprzedzającej i~jednej następującej klatki, a w~przypadku
   nowszego standardu H.264, może zależeć od więcej niż dwóch innych
-  ramek.}
+  ramek.  Przy kodowaniu wymagania na pamięć są jeszcze większe.}
 
 Oczywiście nie ma żadnych technologicznych przeszkód do zastosowania
 jednostki translacji adresów również dla podzespołów innych niż
 procesor, tak jak to przedstawia rysunek \subref*{fig:sys-with-iommu}.
-Istotnie istnieją platformy sprzętowe z~\acc{MMU} wejścia/wyjścia
-(ang.\ \acc{IOMMU}), który pozwala na budowanie dużych buforów złożonych ze
-stosunkowo małych stron.  W~takich systemach, w~zasadzie nie ma (lub
-nie powinno być) konieczności alokowania wielomegabajtowych ciągłych
-obszarów pamięci.
+Istotnie istnieją platformy sprzętowe z~układem \acc{MMU}
+wejścia/wyjścia (\acc{IOMMU}), który pozwala budować duże bufory
+złożony ze stosunkowo małych stron.  W~takich systemach, w~zasadzie
+nie ma (lub nie powinno być) konieczności alokowania
+wielomegabajtowych ciągłych obszarów pamięci.
 
 Niestety, nawet jeżeli \acc{IOMMU} jest dostępne na danej platformie, jego
 obecność może się wiązać z~dodatkowym kosztem wynikającym
@@ -78,24 +78,24 @@ z~nieoptymalnego kodu \autocite{bib:price-of-safety} lub konieczności
 odczytywania mapowań z~pamięci
 \autocite{bib:mitigate-iotlb-bottleneck}.  Z~tego względu architekt
 platformy może zdecydować, aby wyłączyć \acc{IOMMU} i~rozwiązać problem
-„w~oprogramowaniu”.
+programowo.
 
 Z~uwagi na koszty i~ograniczenia zarówno kontrolerów \acc{DMA} jak
 i~układów \acc{MMU}, w~wielu systemach wbudowanych, takich jak
-np.\ telefony komórkowe, takie mechanizmy są często niedostępne.
+np.\ telefony komórkowe, tego typu mechanizmy są często niedostępne.
 Jednocześnie, właśnie takie urządzenia posiadają dużo
 wyspecjalizowanych podzespołów, jak chociażby aparat fotograficzny,
 czy układ do dekodowania obrazów \acc{JPEG}.
 
-Powoduje to, że tego typu układy muszą operować bezpośrednio na
-adresach fizycznych i~w~konsekwencji, wszelkie stosowane przez nie
-bufory muszą być ciągłe.  Niestety Linux nie jest dobrze przystosowany
-do alokowania takich obszarów.\footnote{W~szczególności, Linux nie
-  jest nawet w~stanie (bez modyfikowania źródła) zarządzać obszarami
+Powoduje to, że takie układy muszą operować bezpośrednio na adresach
+fizycznych i~w~konsekwencji, wszelkie stosowane przez nie bufory muszą
+być ciągłe.  Niestety Linux nie jest dobrze przystosowany do
+alokowania takich obszarów.\footnote{W~szczególności, Linux nie jest
+  nawet w~stanie (bez modyfikowania źródła) zarządzać obszarami
   większymi niż cztery mebibajty (1024 strony), gdy tymczasem
   pięciomegapikselowa kamera potrzebuje buforu o~rozmiarze 15
-  megabajtów, a~pojedyncza ramka \textit{full \acc{HD}} (tj.\ 1920 $\times$
-  1080) zajmuje ponad sześć megabajtów.}
+  megabajtów, a~pojedyncza ramka \textit{full \acc{HD}} (tj.\ 1920
+  $\times$ 1080) zajmuje ponad sześć megabajtów.}
 
 
 \section{Możliwe rozwiązania}
@@ -103,7 +103,7 @@ do alokowania takich obszarów.\footnote{W~szczególności, Linux nie
 Ponieważ problem jest znany od dawna, na przestrzeni lat powstało
 wiele rozwiązań programowych umożliwiających obejście trudność
 w~alokacji dużych obszarów.  W~tym podrozdziale opiszę je pokrótce
-oraz przedstawie ich ograniczenia.
+oraz przedstawię ich ograniczenia.
 
 \subsection{Przypisywanie pamięci na stałe}
 
@@ -114,9 +114,10 @@ konkretnych sterowników.
 Najłatwiejszym, acz niezbyt eleganckim sposobem jest wykorzystanie
 argumentu \code|mem| jądra.  Przekazany przez program startujący
 powoduje, że Linux nie stara się automatycznie wykryć dostępnej
-pamięci \acc{RAM} i~zamiast tego interpretuje przekazane informacje.  W~ten
-sposób, możliwe jest ograniczenie widzianej przez system pamięci, tak
-że ukryte regiony mogą być wykorzystywane przez konkretne sterowniki.
+pamięci \acc{RAM} i~zamiast tego interpretuje dostarczone informacje.
+W~ten sposób, możliwe jest ograniczenie widzianej przez system
+pamięci, tak że ukryte regiony mogą być wykorzystywane przez konkretne
+sterowniki.
 
 Bardziej eleganckim rozwiązaniem jest skorzystanie z~alokatora
 memblock, który jest aktywny zanim jądro zainicjuje wszystkie swoje
@@ -125,11 +126,11 @@ bardziej zaawansowany alokator stron będzie dostępny w~systemie.
 Wołany dostatecznie wcześnie, jest w~stanie zaalokowanie duże obszary
 pamięci, które potem można wykorzystać w~dowolny sposób.
 
-Niestety, o~ile tego typu rozwiązania mogą być wystarczające, jeżeli
+Niestety o~ile tego typu rozwiązania mogą być wystarczające, jeżeli
 podzespoły wymagają stosunkowo małych buforów, przestają się skalować
 przy współczesnych systemach, gdyż wymagają rezerwacji wielu
 megabajtów, które przez większość czasu nie są do niczego
-wykorzystywane.
+wykorzystywane, a~więc marnowane.
 
 \subsection{Pula pamięci fizycznej}
 
@@ -138,12 +139,13 @@ pewną przestrzeń pamięci, ale zamiast na stałe przypisywać obszary do
 urządzeń, pozwala sterownikom alokować bufory wtedy, gdy są one
 potrzebne.
 
-W~trakcie moich prac stworzyłem \textit{Physical Memory Manager} (\acc{PMM})
-\autocite{patch:pmm}, który implementuje dokładnie te założenia. W~tym
-podstawowym zastosowaniu, \acc{PMM} nie przedstawia sobą nic nowego.  Już
-bowiem w~1996 roku Matt Welsh napisał pierwszą wersję patcha
-\emph{bigphysarea} dla jądra 1.3.71, który był z~różnym zaangażowaniem
-utrzymywany i~przystosowywany aż do wersji 3.2 Linuksa
+W~trakcie moich prac stworzyłem menadżer pamięci fizycznej,
+ang.\ \textit{Physical Memory Manager} (\acc{PMM})
+\autocite{patch:pmm}, który implementuje dokładnie te założenia.
+W~tym podstawowym zastosowaniu, \acc{PMM} nie przedstawia sobą niczego
+nowego.  Już bowiem w~1996 roku Matt Welsh napisał pierwszą wersję
+alokatora \emph{bigphysarea} dla jądra 1.3.71, który był z~różnym
+zaangażowaniem utrzymywany i~przystosowywany aż do wersji 3.2 Linuksa
 \autocite{patch:bigphys}.
 
 Mechanizm \acc{PMM} umożliwiał jednak alokowanie dużych obszarów
@@ -158,14 +160,14 @@ w~całym procesie dane nie były niepotrzebnie kopiowane, co
 minimalizowało użycie procesora i~szyny pamięci przyśpieszając
 działanie systemu.
 
-Jednakże, pamięć zarezerwowana przez \acc{PMM} i~tak przez większość czasu
-była zupełnie nieużywana, a~więc marnowana.  Z~tego powodu, \acc{PMM} nie
-został przyjęty przez społeczność programistów Linuksa i~musiałem
-rozwijać inne rozwiązanie.
+Jednakże, pamięć zarezerwowana przez \acc{PMM} i~tak przez większość
+czasu była zupełnie nieużywana.  Z~tego powodu, \acc{PMM} nie został
+przyjęty przez społeczność programistów Linuksa i~musiałem rozwijać
+inne rozwiązanie.
 
 \subsection{Zarys Contiguous Memory Allocatora}
 
-W~ten sposób zrodził się alokator pamięci ciągłej, \textit{Contiguous
+W~ten sposób zrodził się alokator pamięci ciągłej, ang.\ \textit{Contiguous
   Memory Allocator} (\acc{CMA}), który umożliwia systemowi używanie
 zarezerwowanej pamięci, o~ile żadne urządzenie jej w~danym momencie
 nie potrzebuje.
@@ -174,9 +176,9 @@ Pierwsze wersje alokatora \acc{CMA} skupiały się w~dużej mierze na
 umożliwianiu sterownikom alokowania różnych buforów w~różnych
 obszarach pamięci.  Było to potrzebne, gdyż dekoder wideo stosowany na
 platformie S5PV110 wymagał, aby różne dane były przechowywane
-w~różnych bankach pamięci.  Pozwalało to na zwiększenie szybkości
-dostępu do tych danych dzięki zastosowaniu odczytu z~dwóch banków
-pamięci jednocześnie.
+w~różnych bankach pamięci.  Pozwalało to zwiększyć szybkość dostępu do
+danych dzięki zastosowaniu odczytu z~dwóch banków pamięci
+jednocześnie.
 
 Z~czasem, coraz bardziej integrowałem mechanizm \acc{CMA} z~kodem
 zarządzania pamięci w~Linuksie w~wyniku czego, pamięć rezerwowana przy
