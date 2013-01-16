@@ -94,6 +94,7 @@
 \sloppy
 
 \newcommand*{\ang}[1]{ang.\ \textit{#1}}
+\newcommand{\acc}[1]{\textsc{\lowercase{#1}}}
 \newcommand{\keywords}[1]{\par\addvspace\baselineskip
 \noindent\textbf{Słowa kluczowe:}\enspace\ignorespaces#1}
 
@@ -124,7 +125,7 @@ wideo.
 Praca przedstawia również często stosowane rozwiązania tych problemów
 wykazując kłopoty z~nich wynikające, aby na koniec zaprezentować
 proponowane przeze mnie rozwiązanie w~postaci alokator pamięci ciągłej
-\ang{Contiguous Memory Allocator} (CMA), który pozwala przydzielać
+\ang{Contiguous Memory Allocator} (\acc{CMA}), który pozwala przydzielać
 duże ciągłe fizycznie bufory, bez konieczności rezerwowania na
 wyłączność dużych obszarów przy starcie systemu.
 

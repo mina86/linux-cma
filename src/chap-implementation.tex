@@ -1,34 +1,34 @@
-\section{Implementacja i~sposób działania mechanizmu CMA}
+\section{Implementacja i~sposób działania mechanizmu \acc{CMA}}
 
-Podstawowym założeniem alokatora CMA jest umożliwienie alokowania
+Podstawowym założeniem alokatora \acc{CMA} jest umożliwienie alokowania
 dużych obszarów ciągłych fizycznie bez konieczności rezerwacji na
-wyłączność dużej ilości pamięci.  Aby to umożliwić, interfejs CMA
+wyłączność dużej ilości pamięci.  Aby to umożliwić, interfejs \acc{CMA}
 korzysta z~mechanizmu migracji stron opisanego pokrótce w~podrozdziale
-\ref{sec:migratetype}.  Ogólny zarys alokacji z~regionów CMA
+\ref{sec:migratetype}.  Ogólny zarys alokacji z~regionów \acc{CMA}
 przedstawiony jest na rysunku \ref{fig:cma-alloc-algo} a~niniejszy
 rozdział opisze ją w~większych szczegółach.
 
 \begin{figure}[tbp]
   \includegraphics[width=\textwidth]{build/cma-alloc-algo.eps}
-  \caption{Schemat działania alokatora CMA.}
+  \caption{Schemat działania alokatora \acc{CMA}.}
   \label{fig:cma-alloc-algo}
 \end{figure}
 
 
-\subsection{Typ migracji CMA}\label{sec:migrate-cma}
+\subsection{Typ migracji \acc{CMA}}\label{sec:migrate-cma}
 
 Migracja jest możliwa tylko dla stron ruchomych.  Niestety, przed
-zaimplementowaniem alokatora CMA, Linux nie posiadał mechanizmu, który
-pozwalałby zagwarantować istnienie dużego obszaru, w~którym strony są
-albo wolne, albo ruchome.  Ponieważ (jak opisałem w~podrozdziale
-\ref{sec:type-change}) jądro dopuszcza alokacje nieruchomych stron
-z~bloków ruchomych, a~także posiada mechanizm na skutek którego bloki
-zmieniają swój typ, aby mechanizm CMA mógł działać poprawnie, należało
-stworzyć nowy typ migracji\,---\,nazwanym po prostu typem migracji
-cma\,---\,który posiada dwie bardzo istotne cechy: (i) z~bloków
-oznaczonych typem cma mogą być alokowane tylko strony ruchome, oraz
-(ii) blok oznaczony typem cma nie zmienia swojego typu (na skutek
-działania alokatora stron).
+zaimplementowaniem alokatora \acc{CMA}, Linux nie posiadał mechanizmu,
+który pozwalałby zagwarantować istnienie dużego obszaru, w~którym
+strony są albo wolne, albo ruchome.  Ponieważ (jak opisałem
+w~podrozdziale \ref{sec:type-change}) jądro dopuszcza alokacje
+nieruchomych stron z~bloków ruchomych, a~także posiada mechanizm na
+skutek którego bloki zmieniają swój typ, aby mechanizm \acc{CMA} mógł
+działać poprawnie, należało stworzyć nowy typ migracji\,---\,nazwanym
+po prostu typem migracji cma\,---\,który posiada dwie bardzo istotne
+cechy: (i) z~bloków oznaczonych typem cma mogą być alokowane tylko
+strony ruchome, oraz (ii) blok oznaczony typem cma nie zmienia swojego
+typu (na skutek działania alokatora stron).
 
 O~ile pierwsza właściwość jest stosunkowo prosta do osiągnięcia,
 zagwarantowanie niezmienności typu bloku stron wymagało
@@ -40,7 +40,7 @@ zmiana nie nastąpi.
 
 Posiadając gwarancję, że dany zakres składa się jedynie z wolnych
 i~ruchomych stron, można przystąpić do jego alokacji.  Drugim krokiem
-implementowania alokatora CMA było zatem stworzenie funkcji, która
+implementowania alokatora \acc{CMA} było zatem stworzenie funkcji, która
 dostaje jako argument zakres stron, a~następnie migruje wszystkie
 zajęte strony, a~wolne usuwa z~listy wolnych stron.  Właśnie to czyni
 funkcja \code|alloc_contig_range|.
@@ -71,9 +71,9 @@ wskaźnik na pierwszą zaalokowaną stronę.
 
 \subsection{Wybór zakresu stron}\label{sec:alloc-from-contig}
 
-Alokacje CMA odbywają się z~regionów, które są rezerwowane przy
+Alokacje \acc{CMA} odbywają się z~regionów, które są rezerwowane przy
 starcie systemu.  Dla każdego zarezerwowanego obszaru tworzona jest
-struktura \code|cma| reprezentujące pojedynczy kontekst CMA.  Posiada
+struktura \code|cma| reprezentujące pojedynczy kontekst \acc{CMA}.  Posiada
 ona następujące pola:
 
 \begin{tabular}{lll}
@@ -83,11 +83,11 @@ ona następujące pola:
 \end{tabular}
 
 Pierwsze dwa identyfikują obszar w~pamięci fizycznej, gdzie znajduje
-się kontekst CMA, a~ostatnia jest mapą określającą, które ze stron
-zostały zaalokowane przez CMA.  Bitmapa jest wykorzystywana przez
+się kontekst \acc{CMA}, a~ostatnia jest mapą określającą, które ze stron
+zostały zaalokowane przez \acc{CMA}.  Bitmapa jest wykorzystywana przez
 funkcję \code|dma_alloc_from_contiguous|, która używa metody „pierwszy
 pasujący” do wyszukania dostatecznie dużego obszaru niezaalokowanych
-przez CMA stron.  Po wybraniu obszaru, wołana jest funkcja
+przez \acc{CMA} stron.  Po wybraniu obszaru, wołana jest funkcja
 \code|alloc_contig_range|, aby dany obszar zaalokować i~jeżeli się to
 powiedzie, oznacza obszar w~bitmapie jako zajęty i~zwraca wynik.
 

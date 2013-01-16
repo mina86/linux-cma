@@ -1,12 +1,12 @@
 \section{Zapoznanie z~alokatorem stron}
 
-Ponieważ mechanizm CMA w~dużym stopniu integruje się z~podsystemem
+Ponieważ mechanizm \acc{CMA} w~dużym stopniu integruje się z~podsystemem
 zarządzania pamięcią, do jego zrozumienia potrzeba ogólnej wiedzy na
 temat tego w~jaki sposób jądro śledzi i~przydziela pamięć procesom
 i~sterownikom.  Linux posiada wiele mechanizmów alokacji pamięci
 począwszy od najprostszych w~użyciu funkcji \code|kmalloc|
 i \code|vmalloc|, poprzez mechanizmy pul pamięci, aż do alokatora
-czasu startu systemu (memblock) i~alokatorów pamięci DMA (DMA API)
+czasu startu systemu (memblock) i~alokatorów pamięci \acc{DMA} (\acc{DMA} \acc{API})
 \autocite[rozdział 8]{bib:ldd3}.  Pomimo tak dużej liczby interfejsów,
 wiele z~nich sprowadza się do wywołania alokatora stron, który jest
 sercem podsystemu.
@@ -40,7 +40,7 @@ stąd, iż alokator stron nie pozwala alokować obszarów: (i) mniejszych
 niż jedna strona (4096 bajty), (ii) których rozmiar nie jest potęgą
 dwójki, oraz (iii) większych niż \unit[4]{MiB} (przez co nie nadaje
 się do alokowania buforu dla pięciomegapikselowej kamery, czy nawet
-pojedynczej ramki \textit{full HD}).
+pojedynczej ramki \textit{full \acc{HD}}).
 
 Alokator stron posiada 11 list dwukierunkowych, które przechowują
 wolne strony danego rzędu.  Gdy sterownik chce zaalokować stronę rzędu
@@ -145,10 +145,10 @@ sześć: \textit{unmovable}, \textit{reclaimable}, \textit{movable},
 
 Dla potrzeb tej pracy typy \textit{unmovable}, \textit{reclaimable}
 i~{\it reserve} są traktowane jak jeden typ\,---\,typ nieruchomy.  To
-uproszczenie wynika z~faktu, iż dla mechanizmu CMA istotne jest tylko
+uproszczenie wynika z~faktu, iż dla mechanizmu \acc{CMA} istotne jest tylko
 rozróżnienie pomiędzy stronami ruchomymi i~nieruchomymi.
 
-Typ \textit{cma} jest nowym typem dodanym dla potrzeb interfejsu CMA
+Typ \textit{cma} jest nowym typem dodanym dla potrzeb interfejsu \acc{CMA}
 i~jest opisany dokładniej w~podrozdziale \ref{sec:migrate-cma}.  Typ
 \textit{isolate} jest niejako pseudo-typem, gdyż jeżeli wolna strona
 ma taki typ, nie może ona zostać zaalokowana.  Więcej na temat sposobu

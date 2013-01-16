@@ -1,10 +1,10 @@
 \section{Podsumowanie}
 
-Dołączenie CMA w~czerwcu 2012 r.\ do Linuksa w~żadnym stopniu nie
+Dołączenie \acc{CMA} w~czerwcu 2012 r.\ do Linuksa w~żadnym stopniu nie
 oznacza zakończenia nad nim prac.  Nadal jest wiele właściwości, które
 można usprawnić i~nowych funkcji, które można dodać.
 
-Najistotniejszym aspektem CMA jest czas potrzebny na zrealizowanie
+Najistotniejszym aspektem \acc{CMA} jest czas potrzebny na zrealizowanie
 alokacji.  Migracja tysięcy stron może być czasochłonna, gdyż nawet
 w~systemach z~szybką magistralą, kopiowanie kilkudziesięciu megabajtów
 danych może trochę potrwać.
@@ -17,7 +17,7 @@ odrzucaniu stron które można w~prosty sposób odzyskać.  Najprostszym
 przykładem są tutaj bufory dyskowe\,---\,ich zawartość można
 przywrócić ponownie odczytując dane z~nośnika.
 
-Innym możliwym usprawnieniem CMA jest ulepszenie algorytmu doboru
+Innym możliwym usprawnieniem \acc{CMA} jest ulepszenie algorytmu doboru
 zakresu stron.  Obecnie stosowana metoda „pierwszy pasujący” nie
 uwzględnienia, które strony wymagają migracji.  Może to powodować, iż
 alokator będzie dokonywał migracji, którym można było zapobiec.  Na
@@ -25,7 +25,7 @@ chwilę obecną nie wiadomo jednak, czy zysk z~nowego algorytmu nie
 zostałby przysłonięty kosztami wynikającymi z~jego złożoności jak
 i~możliwą większą fragmentacją.
 
-Innym dość uciążliwym problemem, z~którym CMA musi sobie radzić jest
+Innym dość uciążliwym problemem, z~którym \acc{CMA} musi sobie radzić jest
 fakt, że strony ruchome nie zawsze można migrować, co może być
 spowodowane brakiem funkcji migrującej lub chwilowym wykorzystaniem
 strony w~kontekście wymagającym stałego adresu fizycznego.
@@ -36,14 +36,15 @@ systemie plików ext4, strony dziennika nie posiadają zaimplementowanej
 funkcji migracji.
 
 Druga kategoria to sytuacje, gdy strona została unieruchomiona na
-czas, gdy wykonywany jest na niej transfer DMA.  Przykładowo, jeżeli
-dane są kopiowane pomiędzy taką stroną, a~dyskiem twardym.  Jednym
-z~rozważanych przeze mnie rozwiązań było migrowanie strony poza region
-CMA zanim zostanie ona unieruchomiona, ale niestety sytuacja taka jest
-na tyle powszechna, że degradacja wydajności byłaby zbyt duża.
+czas, gdy wykonywany jest na niej transfer \acc{DMA}.  Przykładowo,
+jeżeli dane są kopiowane pomiędzy taką stroną, a~dyskiem twardym.
+Jednym z~rozważanych przeze mnie rozwiązań było migrowanie strony poza
+region \acc{CMA} zanim zostanie ona unieruchomiona, ale niestety
+sytuacja taka jest na tyle powszechna, że degradacja wydajności byłaby
+zbyt duża.
 
 Innymi możliwymi rozwiązaniami jest ograniczenie wykorzystywania
-regionów CMA tylko do funkcji takich jak:
+regionów \acc{CMA} tylko do funkcji takich jak:
 
 \begin{itemize}
 \item mechanizm zRam \autocite{patch:zram}, który umożliwia tworzenie
@@ -54,13 +55,13 @@ regionów CMA tylko do funkcji takich jak:
 \end{itemize}
 
 Z~drugiej strony w~znacznym stopniu zmniejszyłoby to użyteczność stron
-z~regionu CMA, potencjalnie do tego stopnia, iż przez większość czasu
+z~regionu \acc{CMA}, potencjalnie do tego stopnia, iż przez większość czasu
 nie byłyby one zupełnie wykorzystywane.
 
-Widać, że droga przed alokatorem CMA jest otwarta i~istnieje wiele
+Widać, że droga przed alokatorem \acc{CMA} jest otwarta i~istnieje wiele
 aspektów, które można ulepszać, a~dzięki coraz większemu gronu osób
 zainteresowanych tym kodem, można pokusić się o~predykcję, iż
-mechanizm CMA będzie się rozwijał.  Równocześnie kolejne osoby
+mechanizm \acc{CMA} będzie się rozwijał.  Równocześnie kolejne osoby
 wykazują zainteresowanie korzystania z~niego w~systemach znacznie
 różniących się od platform, dla których był projektowany
 (tj.\ telefonów komórkowych), takich jak zarządcy maszyn wirtualnych
