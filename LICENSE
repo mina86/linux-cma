@@ -1,0 +1,22 @@
+
+Unless stated otherwise:
+
+* All content is copyright (c) 2012 by Michał Nazarewicz.
+
+* All TeX source files and images are distributed under the terms of
+  the Creative Commons Attribution-ShareAlike 3.0 Unported (CC
+  BY-SA 3.0) license which can be found at
+  <http://creativecommons.org/licenses/by-sa/3.0/>.
+
+* All shell scripts and programs are distributed under the terms of
+  the Apache License Version 2.0 which can be found at
+  <http://www.apache.org/licenses/LICENSE-2.0.html>.
+
+* The Makefile file is released as Public Domain.
+
+Exceptions from the above terms:
+
+* The contents of llncs directory belong to the LaTeX2e package for
+  Lecture Notes in Computer Science (LNCS) of Springer-Verlag and are
+  freely available at
+  <ftp://ftp.springer.de/pub/tex/latex/llncs/word/splnproc1110.zip>.
