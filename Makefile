@@ -41,6 +41,10 @@ build/%.eps: img/%.jpg
 	@exec mkdir -p build
 	exec convert $^ $@
 
+build/%.eps: img/%.png
+	@exec mkdir -p build
+	exec convert $^ $@
+
 
 clean:
 	exec rm -fr -- build
