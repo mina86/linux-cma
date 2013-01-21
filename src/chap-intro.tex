@@ -3,10 +3,10 @@
 Tematem niniejszej pracy inżynierskiej jest sterownik dla jądra Linux,
 który pozwala w~efektywny sposób alokować duże obszary ciągłej
 fizycznie pamięci.  Opisanym mechanizmem jest stworzony przeze mnie
-alokator ciągłej pamięci, (\ang{Contiguous Memory Allocator}, CMA).
+alokator ciągłej pamięci, (\ang{Contiguous Memory Allocator}, \acc{CMA}).
 
 Podstawowym zastosowaniem dużych buforów, który w~głównej mierze
-brałem podczas pisania alokatora CMA, jest wykorzystanie ich
+brałem podczas pisania alokatora \acc{CMA}, jest wykorzystanie ich
 w~podzespołach dostępnych w~nowoczesnych telefonach komórkowych.
 Niemniej odkąd stworzony przeze mnie kod został dołączony do Linuksa,
 różne osoby wykazały zainteresowanie, aby wykorzystywać go również
@@ -20,22 +20,22 @@ funkcji, komputery a w~szczególności telefony komórkowe posiadają
 wiele wyspecjalizowanych podzespołów.  W~wielu przypadkach, procesor
 komunikuje się z~nimi poprzez bufory w pamięci operacyjnej,
 przekazując do urządzenia jedynie adresy gdzie dane się znajdują.
-Dostęp do RAM-u poprzez takie podzespoły może się jednak wiązać
+Dostęp do \acc{RAM}-u poprzez takie podzespoły może się jednak wiązać
 z~wieloma ograniczeniami.
 
 \begin{figure}[tbp]
   \centering
-  \subfloat[System z~układem MMU pomiędzy procesorem a~pamięcią oraz
+  \subfloat[System z~układem \acc{MMU} pomiędzy procesorem a~pamięcią oraz
     urządzeniami podłączonymi bezpośrednie do szyny pamięci.]{
     \label{fig:sys-with-mmu}
     \includegraphics[width=.25\textwidth]{build/mmu-iommu-images--img-nommu.eps}
   } \qquad
-  \subfloat[Systemu z~kontrolerem DMA, który pośredniczy w~transferach
+  \subfloat[Systemu z~kontrolerem \acc{DMA}, który pośredniczy w~transferach
     danych pomiędzy pamięcią i~urządzeniami.]{
     \label{fig:sys-with-dma}
     \includegraphics[width=.25\textwidth]{build/mmu-iommu-images--img-dma.eps}
   }\qquad
-  \subfloat[Systemu z~zarówno układem MMU jak i~IOMMU, które tłumaczą
+  \subfloat[Systemu z~zarówno układem \acc{MMU} jak i~\acc{IOMMU}, które tłumaczą
     adresy widziane przez odpowiednio procesor oraz urządzenia.]{
     \label{fig:sys-with-iommu}
     \includegraphics[width=.25\textwidth]{build/mmu-iommu-images--img-iommu.eps}
@@ -51,7 +51,7 @@ z~wieloma ograniczeniami.
 
 Nowoczesne architektury przeznaczone do serwerów i~komputerów
 osobistych posiadają jednostkę zarządzania pamięcią (\ang{memory
-  management unit}, MMU), która tłumaczy adresy logiczne na
+  management unit}, \acc{MMU}), która tłumaczy adresy logiczne na
 fizyczne.  Dzięki temu, bufory, które z~punktu widzenia procesora są
 ciągłe, mogą w~rzeczywistości być podzielone na wiele stron
 rozrzuconych po pamięci fizycznej.  W~ten sposób, nawet jeżeli program
@@ -60,26 +60,26 @@ alokując wiele czterokibibajtowych\footnote{Aby uniknąć
   wieloznaczności, stosuję przedrostki „kilo-” i~„mega-” w~znaczeniu
   odpowiednio tysiąc i~milion (zgodnie z~układem SI), a~„kibi-”
   i~„mebi-” w~znaczeniu odpowiednie $2^{10} = 1024$ i~$2^{20}$
-  (zgodnie z~tzw.\ przedrostkami ICE).} stron i~nie przejmować się
+  (zgodnie z~tzw.\ przedrostkami \acc{ICE}).} stron i~nie przejmować się
 fragmentacją pamięci.
 
 \subsection{Bezpośredni dostęp do pamięci}
 
 Niemniej, tak jak to przedstawia rysunek \subref*{fig:sys-with-mmu},
-jednostka MMU przeważnie nie jest dostępna dla pozostałych układów
+jednostka \acc{MMU} przeważnie nie jest dostępna dla pozostałych układów
 znajdujących się w~urządzeniu, takich jak np.\ karta dźwiękowa, czy
 kontroler sieciowy.  Na szczęście także i~dla tych przypadków istnieje
 rozwiązanie w~postaci mechanizmu bezpośredniego dostępu do pamięci
-(\ang{Direct Memory Access}, DMA), którego celem jest odciążenie
+(\ang{Direct Memory Access}, \acc{DMA}), którego celem jest odciążenie
 procesora od przesyłania danych.  Co prawda urządzenie nadal znajduje
 się w~przestrzeni adresów fizycznych, co ilustruje rysunek
-\subref*{fig:sys-with-dma}, ale dzięki układowi DMA nieciągłość
+\subref*{fig:sys-with-dma}, ale dzięki układowi \acc{DMA} nieciągłość
 buforów może zostać przed nim ukryta.
 
-Układ DMA może obsługiwać technikę wektorowego wejścia/wyjścia
+Układ \acc{DMA} może obsługiwać technikę wektorowego wejścia/wyjścia
 (\ang{vectored I/O}), która pozwala zbierać wiele rozrzuconych
 fragmentów danych w~jeden bufor (stąd też inna nazwa:
-rozrzucanie/zbieranie, \ang{scatter/gather}).  Nawet jeżeli DMA nie
+rozrzucanie/zbieranie, \ang{scatter/gather}).  Nawet jeżeli \acc{DMA} nie
 umożliwia wykorzystania tej techniki, procesor może ją symulować
 poprzez sekwencyjne wywoływanie wielu mniejszych transferów, choć jest
 to niestety mniej efektywne rozwiązanie.
@@ -95,17 +95,17 @@ jednocześnie.\footnote{Jednym z~rodzajów ramek stosowanych do
   nowszego standardu H.264, może zależeć od więcej niż dwóch innych
   ramek.}
 
-\subsection{IOMMU}
+\subsection{\acc{IOMMU}}
 
 Oczywiście nie ma żadnych technologicznych przeszkód do zastosowania
 jednostki translacji adresów również dla podzespołów innych niż
-procesor.  Istotnie istnieją platformy sprzętowe z~tzw.\ MMU
-wejścia/wyjścia (IOMMU), który pozwala na budowanie dużych ciągłych
+procesor.  Istotnie istnieją platformy sprzętowe z~tzw.\ \acc{MMU}
+wejścia/wyjścia (\acc{IOMMU}), który pozwala na budowanie dużych ciągłych
 buforów złożonych ze stosunkowo małych stron.  W~takich systemach
 w~zasadzie nie ma (lub nie powinno być) konieczności alokowania
 wielomegabajtowych buforów.
 
-Niestety, nawet jeżeli układ IOMMU jest dostępny, jego obecność może
+Niestety, nawet jeżeli układ \acc{IOMMU} jest dostępny, jego obecność może
 się wiązać z~dodatkowym kosztem wynikającym z~nieoptymalnego kodu
 (\textcite{bib:price-of-safety} pokazuje zwiększenie zużycia procesora
 wynikające z~nieoptymalnego mapowania o~15--30\%) lub konieczności
@@ -113,17 +113,17 @@ odczytywania mapowań z~pamięci
 (\textcite{bib:mitigate-iotlb-bottleneck} pokazuje, że przy
 nieoptymalnych odczytach, czas dostępu do pamięci w~buforach rzędu
 \unit[1]{MiB} może wynieść nawet 45\%).  Z~tego względu architekt
-platformy może zdecydować się wyłączyć IOMMU i~rozwiązać problem
+platformy może zdecydować się wyłączyć \acc{IOMMU} i~rozwiązać problem
 „w~oprogramowaniu”.
 
 \subsection{Podsumowanie}
 
-Z~uwagi na koszty i~ograniczenia zarówno kontrolerów DMA jak i~układów
-MMU, w~wielu systemach wbudowanych, takich jak np.\ telefony
+Z~uwagi na koszty i~ograniczenia zarówno kontrolerów \acc{DMA} jak i~układów
+\acc{MMU}, w~wielu systemach wbudowanych, takich jak np.\ telefony
 komórkowe, takie mechanizmy są często niedostępne.  Jednocześnie,
 właśnie takie urządzenia posiadają dużo wyspecjalizowanych
 podzespołów, jak chociażby aparat fotograficzny, czy układ do
-szybkiego dekodowania obrazów JPEG.
+szybkiego dekodowania obrazów \acc{JPEG}.
 
 Powoduje to, że tego typu układy muszą operować bezpośrednio na
 adresach fizycznych i~w~konsekwencji, wszelkie stosowane przez nie
@@ -153,7 +153,7 @@ konkretnych sterowników.
 Najłatwiejszym, acz niezbyt eleganckim sposobem jest wykorzystanie
 argumentu \code|mem| jądra.  Przekazany przez program rozruchowy
 powoduje, że Linux nie stara się automatycznie wykryć dostępnej
-w~systemie pamięci RAM i~zamiast tego interpretuje przekazane
+w~systemie pamięci \acc{RAM} i~zamiast tego interpretuje przekazane
 informacje.  W~ten sposób, możliwe jest ograniczenie widzianej przez
 system pamięci, tak że ukryte regiony mogą być wykorzystywane przez
 konkretne sterowniki.
@@ -179,60 +179,61 @@ pewną przestrzeń pamięci, ale zamiast na stałe przypisywać obszary do
 urządzeń, pozwala sterownikom alokować bufory, wtedy, gdy są one
 potrzebne.
 
-W~trakcie moich prac stworzyłem \ang*{Physical Memory Manager} (PMM)
+W~trakcie moich prac stworzyłem \ang*{Physical Memory Manager} (\acc{PMM})
 \autocite{patch:pmm}, który implementuje dokładnie te założenia. W~tym
-podstawowym zastosowaniu, PMM nie przedstawia sobą nic nowego.  Już
+podstawowym zastosowaniu, \acc{PMM} nie przedstawia sobą nic nowego.  Już
 bowiem w~1996 roku Matt Welsh napisał pierwszą wersję dodatku
 \ang*{bigphysarea} dla jądra 1.3.71, który był z~różnym zaangażowaniem
 utrzymywany i~przystosowywany aż do wersji 3.2 Linuksa
 \autocite{patch:bigphys}.
 
-PMM posiadał jednak wiele dodatkowych funkcji opisanych w~podrozdziale
-\ref{sec:evo-pmm}, których próżno szukać w~\ang*{bigphysarea}, czy
-w~innych dostępnych poprawkach do jądra.  Niemniej, pomimo swoich
-dodatkowych funkcji, nie rozwiązywał do końca problemu nieefektywnego
-wykorzystania pamięci, przez co nie został przyjęty przez społeczność
-programistów Linuksa i~musiałem rozwijać inne rozwiązanie.
+Menadżer \acc{PMM} posiadał jednak wiele dodatkowych funkcji opisanych
+w~podrozdziale \ref{sec:evo-pmm}, których próżno szukać
+w~\ang*{bigphysarea}, czy w~innych dostępnych poprawkach do jądra.
+Niemniej, pomimo swoich dodatkowych funkcji, nie rozwiązywał do końca
+problemu nieefektywnego wykorzystania pamięci, przez co nie został
+przyjęty przez społeczność programistów Linuksa i~musiałem rozwijać
+inne rozwiązanie.
 
 \subsection{Zarys Contiguous Memory Allocatora}
 
-Ostatecznym rozwiązaniem stał się alokator ciągłej pamięci (CMA),
+Ostatecznym rozwiązaniem stał się alokator ciągłej pamięci (\acc{CMA}),
 który umożliwia systemowi używanie zarezerwowanej pamięci, o~ile żadne
 urządzenie jej w~danym momencie nie potrzebuje.
 
-W~swoich początkowych wersjach, również mechanizm CMA działał na
-założeniach podobnych do PMM\,---\,rezerwował przy starcie systemu
+W~swoich początkowych wersjach, również mechanizm \acc{CMA} działał na
+założeniach podobnych do \acc{PMM}\,---\,rezerwował przy starcie systemu
 pamięć, którą potem zarządzał pozwalając sterownikom i~programom na
 alokowanie obszarów ciągłych fizycznie \autocite{patch:cma-1}.
 
-Wynika to z~faktu, iż pierwsze wersje alokatora CMA skupiały się
+Wynika to z~faktu, iż pierwsze wersje alokatora \acc{CMA} skupiały się
 w~dużej mierze na rozwiązywaniu problemu przypisywania różnych
 zarezerwowanych obszarów do różnych urządzeń, a~także umożliwianiu
 sterownikom alokowanie różnych buforów w~różnych obszarach pamięci, co
 opisałem w~podrozdziale \ref{sec:evo-cma}.
 
-Z~czasem, coraz bardziej integrowałem mechanizm CMA z~kodem
+Z~czasem, coraz bardziej integrowałem mechanizm \acc{CMA} z~kodem
 zarządzania pamięci w~Linuksie w~wyniku czego, pamięć rezerwowana przy
 starcie systemu, stała się dostępna dla reszty systemu, o~ile żaden
 sterownik jej nie używał \autocite{patch:cma-24}.  Takie rozwiązanie
 zostało ostatecznie zaakceptowane przez społeczność deweloperów
 Linuksa i~jest dostępne w~źródłach Linuksa począwszy od wersji 3.5.
-W~tej pracy opisuję alokator CMA w~formie w~jakiej znalazł się on
+W~tej pracy opisuję alokator \acc{CMA} w~formie w~jakiej znalazł się on
 w~Linuksie 3.5\footnote{Należy zauważyć, że Linux jest szybko
   rozwijającym się projektem wolnego oprogramowania i~ponieważ
-  mechanizm CMA używana jest przez coraz więcej osób, jest ona ciągle
+  mechanizm \acc{CMA} używana jest przez coraz więcej osób, jest ona ciągle
   rozwijana i~im dalej w~przyszłość, tym bardziej opis w~niniejszej
   pracy będzie się różnił od stanu faktycznego.}.
 
 \section{Wielkie strony}
 
-Zagadnieniem związanym w~pewnym stopniu z~mechanizmem CMA są wielkie
+Zagadnieniem związanym w~pewnym stopniu z~mechanizmem \acc{CMA} są wielkie
 strony (\ang{huge pages}).  O~ile zwyczajne strony pamięci mają
 przeważnie cztery kibibajty, o~tyle wielkie strony mają rozmiary rzędu
 dwóch lub czterech mebibajtów\footnote{Konkretne rozmiary zależą od
   architektury procesora i~co więcej wiele rozmiarów może być
   dostępnych jednocześnie.}.  Stosowane są w~celu zmniejszenia liczby
-wpisów w~tablicy translacji adresów, a~co za tym idzie również TLB
+wpisów w~tablicy translacji adresów, a~co za tym idzie również \acc{TLB}
 procesora.
 
 Począwszy od wersji 2.6.38, Linux posiada mechanizm automatycznego
@@ -241,9 +242,9 @@ wykorzystywania wielkich stron dla działających programów,
 o~ile to możliwe, wiele czterokibibajtowych stron mapowanych jest za
 pomocą pojedynczego wpisu w~tablicy translacji adresów.
 
-Podobnie jak w~przypadku alokatora CMA, wymaga to alokowania dużych
+Podobnie jak w~przypadku alokatora \acc{CMA}, wymaga to alokowania dużych
 obszarów ciągłych fizycznie.  Tym co różni oba mechanizmy jest wymóg
-aby alokacja CMA zakończyła się sukcesem i~do tego w~jak najkrótszym
+aby alokacja \acc{CMA} zakończyła się sukcesem i~do tego w~jak najkrótszym
 czasie, gdy tymczasem automatyczne wykorzystywanie wielkich stron jest
 procesem oportunistyczny i~jeżeli w~danej chwili w~systemie nie ma
 dostatecznie dużego wolnego obszaru, mechanizm ten nie zostanie

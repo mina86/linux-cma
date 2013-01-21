@@ -1,47 +1,47 @@
-\chapter{Sposób użycia interfesju CMA}\label{sec:cma-usage}
+\chapter{Sposób użycia interfesju \acc{CMA}}\label{sec:cma-usage}
 
-Idea mechanizmu CMA jest stosunkowo prosta, jednak urósł on do raczej
+Idea mechanizmu \acc{CMA} jest stosunkowo prosta, jednak urósł on do raczej
 skomplikowanego kawałka kodu, który integruje się dość głęboko
 z~systemem zarządzania pamięci jądra Linuksa.  Pomimo tego, jego
 użycie nie jest szczególnie trudne, a~w~wielu przypadkach autor
-sterownika, który chciałby korzystać z~alokatora CMA nie musi niczego
+sterownika, który chciałby korzystać z~alokatora \acc{CMA} nie musi niczego
 zmieniać w~swoim kodzie.
 
 \section{Wykorzystanie w~sterownikach}\label{sec:usage-drivers}
 
-Alokator CMA integruje się z~interfejsem programowania DMA (DMA API),
-co oznacza, że jeżeli mechanizm CMA jest włączony i~zintegrowany
+Alokator \acc{CMA} integruje się z~interfejsem programowania \acc{DMA} (\acc{DMA} \acc{API}),
+co oznacza, że jeżeli mechanizm \acc{CMA} jest włączony i~zintegrowany
 z~daną architekturą, poprawnie napisany sterownik (tzn.\ taki, który
-korzysta z~DMA API) będzie korzystał z~alokatora CMA bez konieczności
+korzysta z~\acc{DMA} \acc{API}) będzie korzystał z~alokatora \acc{CMA} bez konieczności
 dokonywania jakichkolwiek zmian.
 
 Tak naprawdę, sterowniki nie powinny odwoływać się bezpośrednio do
-funkcji CMA, gdyż są one zbyt nisko poziomowe i~operują na stronach,
+funkcji \acc{CMA}, gdyż są one zbyt nisko poziomowe i~operują na stronach,
 gdy tymczasem sterowniki urządzeń są raczej zainteresowane adresami
 szyny.\footnote{W~ogólności, adres szyny strony może być inny niż jej
-  adres fizyczny i~DMA API zostało zaprojektowane tak, aby brać to pod
-  uwagę.}  Co więcej, mechanizm CMA nie posiada żadnych interfejsów
+  adres fizyczny i~\acc{DMA} \acc{API} zostało zaprojektowane tak, aby brać to pod
+  uwagę.}  Co więcej, mechanizm \acc{CMA} nie posiada żadnych interfejsów
 gwarantujących spójność pamięci podręcznej -- zadanie to leży
-w~kwestii DMA API.
+w~kwestii \acc{DMA} \acc{API}.
 
 Najprostszym mechanizmem z~tego interfejsu są funkcje
 \code|dma_alloc_coherent| i~\code|dma_free_coherent|.  Służą one
-odpowiednio do alokacji i~zwalniania buforów DMA, których zawartość
+odpowiednio do alokacji i~zwalniania buforów \acc{DMA}, których zawartość
 jest zawsze spójna z~tym co widzi procesor\footnote{W~różnych
   architekturach efekt ten jest uzyskiwany w~różny sposób.
   W~architekturze Intel istnieje gwarancja spójność zawartości kości
-  RAM oraz pamięci podręcznej procesora, gdy tymczasem architektura
-  ARM nie daje takich gwarancji.  Z~tego powodu, w~systemach opartych
-  o~Linuksa działających na platformie ARM, bufory alokowane przy
+  \acc{RAM} oraz pamięci podręcznej procesora, gdy tymczasem architektura
+  \acc{ARM} nie daje takich gwarancji.  Z~tego powodu, w~systemach opartych
+  o~Linuksa działających na platformie \acc{ARM}, bufory alokowane przy
   pomocy \code|dma_alloc_coherent| nie podlegają buforowaniu w~pamięci
   podręcznej procesora.}.  Wydruk \ref{lst:dma-alloc-example} pokazuje
 sposób wykorzystania tych dwóch funkcji.  \textcite{patch:cma-test}
 stworzył prosty sterownik, który można wykorzystać do testowania
-mechanizmu CMA.  Dokładniejszy opis DMA API można znaleźć w~rozdziale
+mechanizmu \acc{CMA}.  Dokładniejszy opis \acc{DMA} \acc{API} można znaleźć w~rozdziale
 15 \autocite{bib:ldd3}.
 
-\begin{lstlisting}[float=tbhp,caption={Alokacja bufora DMA z~użyciem
-      DMA API.},label=lst:dma-alloc-example]
+\begin{lstlisting}[float=tbhp,caption={Alokacja bufora \acc{DMA} z~użyciem
+      \acc{DMA} \acc{API}.},label=lst:dma-alloc-example]
 static struct device *my_dev;
 
 void *my_dev_alloc_buffer(unsigned long size_in_bytes, dma_addr_t *dma_addrp)
@@ -66,9 +66,9 @@ void *my_dev_free_buffer(unsigned long size_in_bytes,
 
 \section{Integracja z~architekturą procesora}\label{sec:integrate-with-arch}
 
-Alokator CMA działa dzięki rezerwowaniu w~trakcie startu systemu
-pewnego regionu pamięci (zwanego regionem lub kontekstem CMA), który
-po zainicjowaniu całego mechanizmu CMA jest zwracany do systemu (tak
+Alokator \acc{CMA} działa dzięki rezerwowaniu w~trakcie startu systemu
+pewnego regionu pamięci (zwanego regionem lub kontekstem \acc{CMA}), który
+po zainicjowaniu całego mechanizmu \acc{CMA} jest zwracany do systemu (tak
 że może być wykorzystywany do pewnego rodzaju alokacji).  Aby taki
 obszar został zarezerwowany, w~trakcie startu systemu musi zostać
 wywołana funkcja:
@@ -79,18 +79,18 @@ void dma_contiguous_reserve(phys_addr_t limit);
 
 Wywołanie to musi nastąpić gdy podsystem alokacji pamięci czasu startu
 systemu (tj.\ \ang*{memblock}) zostanie zainicjowany, ale przed
-aktywowaniem alokatora stron.  Dla przykładu w~architekturze ARM
+aktywowaniem alokatora stron.  Dla przykładu w~architekturze \acc{ARM}
 dogodnym miejscem jest funkcja \code|arm_memblock_init|, a~x86 --
 \code|setup_arch| zaraz po aktywowaniu memblock.
 
 Argument \code|limit| określa górny adres pamięci fizycznej, którego
-zarezerwowany obszar CMA nie przekroczy.  Dzięki niemu regiony CMA
+zarezerwowany obszar \acc{CMA} nie przekroczy.  Dzięki niemu regiony \acc{CMA}
 mogą zostać ograniczone do adresów dostępnych dla urządzeń w~systemie.
-Przykładowo w~architekturze ARM argument ten przyjmuje wartość
+Przykładowo w~architekturze \acc{ARM} argument ten przyjmuje wartość
 zmiennych \code|arm_dma_limit| lub \code|arm_lowmem_limit|,
 którakolwiek jest mniejsza.  W~procesorach 64-bitowych może zaistnieć
 potrzeba ograniczenia do 32-bitowych adresów.  Jeżeli wartością tego
-argumentu jest zero, na kontekst CMA nie jest narzucany żaden limit.
+argumentu jest zero, na kontekst \acc{CMA} nie jest narzucany żaden limit.
 
 Ilość zarezerwowanej pamięci zależy od argumentu \code|cma| (który
 określa rozmiar regionu w~bajtach) przekazywanego do jądra w~trakcie
@@ -108,7 +108,7 @@ określania rozmiaru:
 
 Domyślną wartością konfiguracji jest alokacja \unit[16]{MiB}.
 
-Funkcja \code|dma_contiguous_reserve| tworzy domyślny region CMA
+Funkcja \code|dma_contiguous_reserve| tworzy domyślny region \acc{CMA}
 wykorzystywany przez wszystkie urządzenia, które nie mają przypisanych
 prywatnych kontekstów.  Prywatne regiony opisane są w~podrozdziale
 \ref{sec:priv-regions}.
@@ -118,15 +118,15 @@ prywatnych kontekstów.  Prywatne regiony opisane są w~podrozdziale
 
 Na niektórych architekturach może zaistnieć przeprowadzenia dodatkowej
 obróbki zarezerwowanych regionów pamięci.  Przykładowo, z~uwagi na
-brak gwarancji spójności pamięci RAM i~pamięci podręcznej procesora na
-architekturze ARM \autocite[podrozdział B5.5]{bib:arm-arch-reference},
+brak gwarancji spójności pamięci \acc{RAM} i~pamięci podręcznej procesora na
+architekturze \acc{ARM} \autocite[podrozdział B5.5]{bib:arm-arch-reference},
 wymagane jest aby strony, z~których korzystają urządzenia, były
 mapowane jako niepodlegające buforowaniu (\ang{noncacheable}).  Co
 więcej, specyfikacja architektury mówi, że jeżeli dana strona jest
 mapowana z~różnymi parametrami buforowania (\ang{cacheability}), efekt
 działania systemu nie jest zdefiniowany.
 
-Dlatego w~architekturze ARM, kod integrujący CMA z~DMA API zmienia
+Dlatego w~architekturze \acc{ARM}, kod integrujący \acc{CMA} z~\acc{DMA} \acc{API} zmienia
 mapowanie strony na niechachewalne na czas, gdy jest ona używana przez
 urządzenie.  Z~drugiej strony, aby przyśpieszyć translację adresów,
 jądro stara się stosować tak zwane wielkie strony.  Pozwala to
@@ -134,19 +134,19 @@ zmapować \unit[2]{MiB} pamięci (512 normalnych stron o~rozmiarze
 \unit[4]{KiB}) poprzez jeden wpis w~tablicy mapowania.
 
 Niestety, takie mapowanie uniemożliwia zmianę parametrów mapowania
-pojedynczej strony.  Z~uwagi na to, regiony CMA są przygotowane w~ten
+pojedynczej strony.  Z~uwagi na to, regiony \acc{CMA} są przygotowane w~ten
 sposób, że mapowanie wielkich stron jest rozbijane na wiele mapowań
 pojedynczych stron co pozwala na (w~miarę) proste modyfikowanie
 ustawień cachowania danej strony.  Więcej na ten temat napisał
 \textcite{bib:cma-and-arm}.
 
-Aby to umożliwić, dla każdego kontekstu CMA, zawołana zostanie funkcja:
+Aby to umożliwić, dla każdego kontekstu \acc{CMA}, zawołana zostanie funkcja:
 
 \begin{lstlisting}
 void dma_contiguous_early_fixup(phys_addr_t base, unsigned long size);
 \end{lstlisting}
 
-Nie jest ona zaimplementowana przez alokator CMA i~musi zostać
+Nie jest ona zaimplementowana przez alokator \acc{CMA} i~musi zostać
 dostarczona wraz z~kodem danej architektury.  Jej deklaracja powinna
 znaleźć się w~pliku nagłówkowym \code|asm/dma-contiguous.h|.  Jeżeli
 funkcjonalność ta nie jest konieczna, wystarczy dostarczyć pustą
@@ -156,14 +156,14 @@ Należy pamiętać, że funkcja ta jest wołana dość wcześnie w~trakcie
 startu systemu, zatem wiele podsystemów może jeszcze nie być
 dostępnych, a~w~szczególności funkcja \code|kmalloc| nie będzie
 działać.  Co więcej, może ona zostać wywołana kilkakrotnie, dla
-różnych regionów CMA, ale nie więcej niż \code|MAX_CMA_AREAS| razy
+różnych regionów \acc{CMA}, ale nie więcej niż \code|MAX_CMA_AREAS| razy
 (domyślnie osiem).
 
-\subsection{Integracja z~podsystemem DMA}\label{sec:usage-integrate}
+\subsection{Integracja z~podsystemem \acc{DMA}}\label{sec:usage-integrate}
 
-Aby sterowniki mogły korzystać z~alokatora CMA poprzez DMA API, CMA
-musi zostać dodane do podsystemu DMA danej architektury.  Alokacja
-buforu CMA odbywa się poprzez wywołanie funkcji:
+Aby sterowniki mogły korzystać z~alokatora \acc{CMA} poprzez \acc{DMA} \acc{API}, \acc{CMA}
+musi zostać dodane do podsystemu \acc{DMA} danej architektury.  Alokacja
+buforu \acc{CMA} odbywa się poprzez wywołanie funkcji:
 
 \begin{lstlisting}
 struct page *dma_alloc_from_contiguous(
@@ -202,20 +202,20 @@ Argumenty \code|dev| i \code|count| mają takie samo
 znaczenie jak w~funkcji \code|dma_alloc_from_contiguous|,
 a~argument \code|pages| jest wartością zwróconą przez tę funkcję.
 
-Jeżeli dany bufor nie był zaalokowany poprzez interfejs CMA, funkcja
+Jeżeli dany bufor nie był zaalokowany poprzez interfejs \acc{CMA}, funkcja
 zwróci \code|false|, w~przeciwnym wypadku, bufor zostanie zwolniony
 i~funkcja zwróci \code|true|.  Zwracana wartość może zostać
-wykorzystana, aby rozróżnić, czy dany bufor był buforem CMA, czy też
+wykorzystana, aby rozróżnić, czy dany bufor był buforem \acc{CMA}, czy też
 nie.
 
 Wydruk \ref{lst:dma-integration} pokazuje fragment kodu, który
-integruje mechanizm CMA z~podsystemem DMA architektury x86.  Warto
+integruje mechanizm \acc{CMA} z~podsystemem \acc{DMA} architektury x86.  Warto
 zwrócić uwagę, jak w~funkcji \code|dma_generic_free_coherent| wartość
 zwracana przez \code|dma_release_from_contiguous| jest wykorzystana,
 aby podjąć decyzję, czy należy zwolnić bufor korzystając z~funkcji
 \code|free_pages|.
 
-\begin{lstlisting}[float=bht,caption={Integracja alokatora CMA z~podsystemem DMA
+\begin{lstlisting}[float=bht,caption={Integracja alokatora \acc{CMA} z~podsystemem \acc{DMA}
       architektury x86.},label=lst:dma-integration]
 diff --git a/arch/x86/kernel/pci-dma.c b/arch/x86/kernel/pci-dma.c
 @@ -99,14 +99,18 @@ void *dma_generic_alloc_coherent(
@@ -249,18 +249,18 @@ diff --git a/arch/x86/kernel/pci-dma.c b/arch/x86/kernel/pci-dma.c
 Funkcja \code|dma_alloc_from_contiguous| nie może zostać wywołana
 w~kontekście atomowym (np.\ z~procedury obsługi przerwania),
 a~jednocześnie dopuszczalne jest wywołanie \code|dma_alloc_coherent|
-z~takiego kontekstu.  Z~tego powodu, podsystem DMA musi posiadać inny
+z~takiego kontekstu.  Z~tego powodu, podsystem \acc{DMA} musi posiadać inny
 mechanizm przeznaczony dla takich alokacji.  Najprostszym rozwiązaniem
 jest zarezerwowanie pewnego, stosunkowo niewielkiego, obszaru pamięci,
 przeznaczonego do alokacji w~kontekście atomowym.  Istniejące
 architektury muszą posiadać tego typu mechanizmy.
 
 
-\section{Regiony CMA dla poszczególnych urządzeń}\label{sec:priv-regions}
+\section{Regiony \acc{CMA} dla poszczególnych urządzeń}\label{sec:priv-regions}
 
 Po dokonaniu zmian opisanych w~powyższym podrozdziale, sterowniki
-urządzeń powinny już działać.  Korzystając z~interfesju DMA odwołują
-się bowiem do alokatora CMA.
+urządzeń powinny już działać.  Korzystając z~interfesju \acc{DMA} odwołują
+się bowiem do alokatora \acc{CMA}.
 
 Jednak niektóre urządzenia mogą mieć specyficzne wymagania.
 Wspomniany już w~podrozdziale \ref{sec:evo-cma} koder multimedialny
@@ -271,15 +271,15 @@ mieszanie alokacji dla stosunkowo małych tekstur dla koprocesora
 graficznego z~alokacjami dużych buforów przeznaczonych dla kamery,
 może przyczynić się do zwiększenia fragmentacji.
 
-Funkcja \code|dma_declare_contiguous| tworzy domyślny kontekst CMA,
+Funkcja \code|dma_declare_contiguous| tworzy domyślny kontekst \acc{CMA},
 ale istnieje możliwość przypisania różnych regionów do różnych
 urządzeń.  Istnieje mapowanie wiele-do-jednego pomiędzy strukturą
-\code|device|, a~kontekstem CMA.  Oznacza to, że pojedynczy region CMA
+\code|device|, a~kontekstem \acc{CMA}.  Oznacza to, że pojedynczy region \acc{CMA}
 może zostać przypisany do danego urządzenia, ale jeżeli urządzenie ma
-korzystać z~wielu kontekstów CMA konieczne jest stworzenie kilku
+korzystać z~wielu kontekstów \acc{CMA} konieczne jest stworzenie kilku
 struktur \code|device|.
 
-Aby przypisać region CMA do urządzenia wystarczy wywołać funkcję:
+Aby przypisać region \acc{CMA} do urządzenia wystarczy wywołać funkcję:
 
 \begin{lstlisting}
 int dma_declare_contiguous(
@@ -297,7 +297,7 @@ się zaczynać lub zero, jeżeli nie ma to znaczenia.  Ostatni argument,
 \ref{lst:s5p-priv-region} pokazuje fragment kodu dodającego prywatne
 konteksty do dwóch urządzeń.
 
-Istnieje limit liczby „prywatnych” regionów CMA.  Konkretnie może być
+Istnieje limit liczby „prywatnych” regionów \acc{CMA}.  Konkretnie może być
 ich co najwyżej \code|CONFIG_CMA_AREAS| (domyślnie siedem).  Jeżeli
 limit ten zostanie przekroczony, funkcja \code|dma_declare_contiguous|
 zacznie zwracać \code|-ENOSPC|.  Jeżeli istnieje taka potrzeba, nic
@@ -307,7 +307,7 @@ jądra.
 % For some reason, breaklines=true does not work, so I'm breaking the
 % line manually...
 \begin{lstlisting}[float=tbhp,caption={Przypisanie prywatnych regionów
-      CMA do dwóch urządzeń.},label=lst:s5p-priv-region]
+      \acc{CMA} do dwóch urządzeń.},label=lst:s5p-priv-region]
 diff --git a/arch/arm/plat-s5p/dev-mfc.c b/arch/arm/plat-s5p/dev-mfc.c
 
  void __init s5p_mfc_reserve_mem(phys_addr_t rbase, unsigned int rsize,
@@ -329,7 +329,7 @@ diff --git a/arch/arm/plat-s5p/dev-mfc.c b/arch/arm/plat-s5p/dev-mfc.c
 \end{lstlisting}
 
 Odrobinę bardziej skomplikowane jest przypisanie tego samego kontekstu
-do kilku urządzeń.  Obecny interfejs CMA nie udostępnia funkcji, która
+do kilku urządzeń.  Obecny interfejs \acc{CMA} nie udostępnia funkcji, która
 by na to pozwalała, ale i~tak nie jest to szczególnie trudne do
 osiągnięcia.  Wystarczy zastosować metodę opisaną powyżej, aby
 przypisać region do jednego urządzenia, a~następnie skopiować ten
@@ -347,6 +347,6 @@ postcore_initcall(foo_set_up_cma_areas);
 \end{lstlisting}
 
 Warto zauważyć, że nic nie stoi na przeszkodzie, aby nie tworzyć
-domyślnego kontekstu CMA.  Oczywiście, jeżeli nie zostanie on
+domyślnego kontekstu \acc{CMA}.  Oczywiście, jeżeli nie zostanie on
 stworzony, urządzenia, którym nie zostaną przypisane prywatne regiony
-nie będą mogły korzystać z~buforów CMA.
+nie będą mogły korzystać z~buforów \acc{CMA}.

@@ -1,18 +1,19 @@
 \chapter{Testowanie Contiguous Memory Allocatora}
 
-Aby sprawdzić działanie alokatora CMA, w~tym rozdziale opiszę jak go
-przetestować na przykładzie laptopa MSI U100 z~jednym GiB pamięci RAM
-z~zainstalowanym systemem Slackware 14.0.  Do testów wybrałem tę
-dystrybucję GNU/Linuksa, gdyż jest ona stosunkowo prosta w~użyciu,
-a~jednocześnie pozostaje wierny filozofii Uniksa, dzięki czemu łatwo
-jest wymieniać komponenty systemu takie jak jądro.
+Aby sprawdzić działanie alokatora \acc{CMA}, w~tym rozdziale opiszę
+jak go przetestować na przykładzie laptopa \acc{MSI} U100 z~jednym
+\unit{GiB} pamięci \acc{RAM} z~zainstalowanym systemem Slackware 14.0.
+Do testów wybrałem tę dystrybucję \acc{GNU}/Linuksa, gdyż jest ona
+stosunkowo prosta w~użyciu, a~jednocześnie pozostaje wierny filozofii
+Uniksa, dzięki czemu łatwo jest wymieniać komponenty systemu takie jak
+jądro.
 
 
-\section{Instalacja jądra z~obsługą CMA}
+\section{Instalacja jądra z~obsługą \acc{CMA}}
 
-Standardowo Linux nie posiada obsługi alokatora CMA, dlatego pierwszym
+Standardowo Linux nie posiada obsługi alokatora \acc{CMA}, dlatego pierwszym
 krokiem będzie zmiana jądra systemu na Linux 3.5 z~włączonym
-mechanizmem CMA.  Źródła można pobrać ze strony
+mechanizmem \acc{CMA}.  Źródła można pobrać ze strony
 \url{http://kernel.org/}, która jest głównym miejscem dystrybucji
 Linuksa.
 
@@ -36,7 +37,7 @@ Uruchomi to graficzny interfejs użytkownika\footnote{W~przypadku
     xconfig} należy wykonać komendę \code{make menuconfig}, które
   uruchomi interfejs tekstowy oparty o~bibliotekę ncurses.}, który
 pozwala wybrać opcje z~jakimi jądro ma zostać zbudowane.  Aby móc
-testować CMA należy w~nim zaznaczyć opcje \ang*{Prompt for development
+testować \acc{CMA} należy w~nim zaznaczyć opcje \ang*{Prompt for development
   and/or incomplete code/drivers} w~sekcji \ang*{General setup}
 (zob.\ rysunek \subref*{fig:xconfig-exp}) oraz \ang*{Contiguous Memory
   Allocator} w~sekcji \ang*{Device Drivers $\rightarrow$ Generic
@@ -50,7 +51,7 @@ aby umożliwić dalsze testy należy również upewnić się, że opcja
     \label{fig:xconfig-exp}
     \includegraphics[width=.9\textwidth]{build/xconfig-exp.eps}
   } \\
-  \subfloat[Opcja włączająca CMA.]{
+  \subfloat[Opcja włączająca \acc{CMA}.]{
     \label{fig:xconfig-cma}
     \includegraphics[width=.9\textwidth]{build/xconfig-cma.eps}
   }
@@ -60,23 +61,23 @@ aby umożliwić dalsze testy należy również upewnić się, że opcja
 
 Gdy konfiguracja zostanie zakończenie należy zbudować i~zainstalować
 nowe jądro zgodnie z~opisem w~\autocite{bib:building-linux}.  Aby móc
-testować alokator CMA, należy stworzyć dodatkowe wpisy
+testować alokator \acc{CMA}, należy stworzyć dodatkowe wpisy
 w~\code{/etc/lilo.conf} różniące się opcją \code{append} (która
 powoduje, że program startujący przekazuje dodatkowe opcje do jądra):
 
 \begin{itemize}
-\item \code{append = "cma=0"} wyłączy CMA tak, że jądro będzie
-  zachowywać się jakby obsługa CMA nie była dostępna w~jądrze.
+\item \code{append = "cma=0"} wyłączy \acc{CMA} tak, że jądro będzie
+  zachowywać się jakby obsługa \acc{CMA} nie była dostępna w~jądrze.
 \item \code{append = "cma=0 mem=512m"} spowoduje, że Linux będzie
-  korzystał tylko z~pierwszych \unit[512]{MiB} pamięci RAM.  Ustawienie
+  korzystał tylko z~pierwszych \unit[512]{MiB} pamięci \acc{RAM}.  Ustawienie
   to pozwala symulować sytuację, w~której część pamięci jest na stałe
   zarezerwowane dla sterowników.
-\item \code{append = "cma=512m"} skonfiguruje alokator CMA, tak aby
+\item \code{append = "cma=512m"} skonfiguruje alokator \acc{CMA}, tak aby
   zarezerwował pojedynczy region rozmiaru \unit[512]{MiB} do
   wykorzystania dla sterowników.
 \end{itemize}
 
-Po uruchomieniu nowego jądra, obecność mechanizmu CMA można sprawdzić
+Po uruchomieniu nowego jądra, obecność mechanizmu \acc{CMA} można sprawdzić
 analizując plik \code{/proc/pagetypeinfo}.  Zawiera on statystyki
 alokatora stron w~postaci liczby ramek różnych typów w~poszczególnych
 strefach.  Ponadto plik \code{/proc/cmdline} zawiera pełną listę
@@ -113,12 +114,12 @@ programu, \ang*{out-of-memory killer} wymusi jego zakończenie.  Jest
 to mechanizm jądra, którego celem jest zagwarantowanie, iż system
 zawsze będzie miał pewne rezerwy wolnej pamięci.
 
-Uruchomiony na testowym systemie z~jednym GiB zakończył się przy
-próbie alokacji \unit[988\,284]{KiB}, gdy CMA był wyłączony, oraz
-\unit[987\,628]{KiB}, gdy CMA był skonfigurowany, aby zarezerwować
-region o~rozmiarze \unit[512]{MiB}.  Różnica jednego megabajta jest
-pomijalna i~wskazuje, iż istotnie pamięć rezerwowana przez CMA jest
-dostępna dla systemu.
+Uruchomiony na testowym systemie z~jednym \unit{GiB} zakończył się
+przy próbie alokacji \unit[988\,284]{KiB}, gdy \acc{CMA} był
+wyłączony, oraz \unit[987\,628]{KiB}, gdy \acc{CMA} był
+skonfigurowany, aby zarezerwować region o~rozmiarze \unit[512]{MiB}.
+Różnica jednego megabajta jest pomijalna i~wskazuje, iż istotnie
+pamięć rezerwowana przez \acc{CMA} jest dostępna dla systemu.
 
 Jednocześnie gdy jądro zostanie uruchomione z~opcją \code{mem=512m},
 program został zatrzymany przy próbie alokacji \unit[488\,900]{KiB}.
@@ -127,10 +128,10 @@ Pokazuje to w~praktyce działanie argumentu \code{mem} jądra.
 
 \section{Modułu testowy cma\_test}
 
-Do testów CMA wykorzystam moduł Barry'ego Songa
+Do testów \acc{CMA} wykorzystam moduł Barry'ego Songa
 \autocite{patch:cma-test}.  Po nałożeniu do źródeł jądra 3.5 stworzy
 on nowy katalog \code{tools/cma} z~testowym sterownikiem.  Był on
-testowany na architekturze ARM i~aby zadziałał na systemie x86 należy
+testowany na architekturze \acc{ARM} i~aby zadziałał na systemie x86 należy
 zmodyfikować plik \code{cma_test.c} wprowadzając dwie zmiany.  Po
 pierwsze, zaraz po ostatniej dyrektywie \code{#include} należy dodać
 następujące linie:
@@ -157,8 +158,8 @@ utworzenie pliku \code{cma_test.ko}.
 
 Po wczytaniu tego modułu poleceniem \code{insmod cma_test.ko}
 w~systemie pojawi się urządzenie \code{/dev/cma_test}, które służy do
-wykonywania testowych alokacji z~wykorzystaniem interfejsu DMA API
-(a~zatem pośrednio z~użyciem alokatora CMA).  Zapis do tego pliku
+wykonywania testowych alokacji z~wykorzystaniem interfejsu \acc{DMA} \acc{API}
+(a~zatem pośrednio z~użyciem alokatora \acc{CMA}).  Zapis do tego pliku
 liczby naturalnej spowoduje wykonanie alokacji podanej liczby
 kibibajtów, a~odczyt zwolnienie najwcześniej zaalokowanego obszaru.
 

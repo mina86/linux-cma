@@ -1,23 +1,23 @@
-\chapter{Implementacja i~sposób działania mechanizmu CMA}\label{sec:implementation}
+\chapter{Implementacja i~sposób działania mechanizmu \acc{CMA}}\label{sec:implementation}
 
-Podstawowym założeniem alokatora CMA jest umożliwienie alokowania
+Podstawowym założeniem alokatora \acc{CMA} jest umożliwienie alokowania
 dużych obszarów ciągłych fizycznie bez konieczneści rezerwacji na
-wyłączność dużej ilości pamięci.  Aby to umożliwić, interfejs CMA
+wyłączność dużej ilości pamięci.  Aby to umożliwić, interfejs \acc{CMA}
 korzysta z~mechanizmu migracji stron opisanego pokrótce w~podrozdziale
-\ref{sec:migratetype}.  Ogólny zarys alokacji z~regionów CMA
+\ref{sec:migratetype}.  Ogólny zarys alokacji z~regionów \acc{CMA}
 przedstawiony jest na rysunku \ref{fig:cma-alloc-algo} a~niniejszy
 rozdział opisze ją w~większych szczegółach.
 
 \begin{figure}[tbp]
   \includegraphics[width=\textwidth]{build/cma-alloc-algo.eps}
-  \caption{Schemat działania alokatora CMA.}
+  \caption{Schemat działania alokatora \acc{CMA}.}
   \label{fig:cma-alloc-algo}
 \end{figure}
 
-\section{Typ migracji CMA}\label{sec:migrate-cma}
+\section{Typ migracji \acc{CMA}}\label{sec:migrate-cma}
 
 Migracja jest możliwa tylko dla stron ruchomych.  Niestety, przed
-zaimplementowaniem alokatora CMA, Linux nie posiadał mechanizmu,
+zaimplementowaniem alokatora \acc{CMA}, Linux nie posiadał mechanizmu,
 który pozwalałby zagwarantować, aby w~systemie istniał duży obszar,
 w~którym strony są albo wolne, albo ruchome.  Ponieważ (jak opisałem
 w~podrozdziale \ref{sec:type-change}) jądro dopuszcza alokacje
@@ -26,16 +26,16 @@ strony ruchome, a~także posiada mechanizm na skutek którego bloki
 stron zmieniają swój typ, oznaczenie bloku stron jako ruchome nie
 gwarantuje, że tylko strony ruchome będą alokowane z~tego bloku stron.
 
-Z~tego powodu, aby mechanizm CMA działał dobrze, pierwszym krokiem
+Z~tego powodu, aby mechanizm \acc{CMA} działał dobrze, pierwszym krokiem
 było stworzenie nowego typu migracji, nazwanym po prostu typem
-migracji CMA (\code|MIGRATE_CMA|), który posiada dwie bardzo istotne
+migracji \acc{CMA} (\code|MIGRATE_CMA|), który posiada dwie bardzo istotne
 cechy:
 
 \begin{itemize}
-\item Z~bloków stron oznaczonych typem CMA mogą być alokowane tylko
-  strony ruchome.  Innymi słowy, typ migracji CMA istnieje w~liście
+\item Z~bloków stron oznaczonych typem \acc{CMA} mogą być alokowane tylko
+  strony ruchome.  Innymi słowy, typ migracji \acc{CMA} istnieje w~liście
   zapasowych typów migracji jedynie dla typu ruchomego.
-\item Blok oznaczony typem CMA nie zmienia swojego typu (na skutek
+\item Blok oznaczony typem \acc{CMA} nie zmienia swojego typu (na skutek
   działania alokatora stron).
 \end{itemize}
 
@@ -49,7 +49,7 @@ zmiana nie nastąpi.
 
 W~sytuacji, gdy istnieje gwarancja, że dany zakres stron posiada
 jedynie strony wolne i~ruchome, można przystąpić do jej alokacji.
-Drugim krokiem implementowania alokatora CMA było stworzenie funkcji,
+Drugim krokiem implementowania alokatora \acc{CMA} było stworzenie funkcji,
 która dostaje jako argument zakres stron, a~następnie migruje
 wszystkie zajęte strony, a~wolne usuwa z~listy wolnych stron.
 
@@ -107,14 +107,14 @@ W~dalszej części wołana jest funkcja
 \code|__alloc_contig_migrate_range|, której zadaniem jest
 zidentyfikowanie i~zmigrowanie wszystkich zajętych stron z~zakresu
 $\left<\mathrm{start}, \mathrm{end}\right)$.  Również i~tę funkcję
-musiałem zaimplementować specjalnie na potrzeby mechanizmu CMA i~jest
+musiałem zaimplementować specjalnie na potrzeby mechanizmu \acc{CMA} i~jest
 ona opisana w~następnym podrozdziale.
 
 Po tych dwóch krokach w~zasadzie wszystkie strony z~interesującego nas
 zakresu powinny być wolne.  Jednak, jak opisano w~podrozdziale
 \ref{sec:pcp-lists}, strona może być wolna, ale nie znajdować się na
 liście wolnych stron.  Dlatego, w~dalszej części, w~liniach 13--14
-wszystkie strony przenoszone są z~list PCP i~wstawiane z~powrotem na
+wszystkie strony przenoszone są z~list \acc{PCP} i~wstawiane z~powrotem na
 listy wolnych stron.
 
 Po tych operacjach wszystkie strony w~zakresie $\left<\mathrm{start},
@@ -213,7 +213,7 @@ innego obszaru.
 
 Funkcja \code|alloc_contig_range| potrafi zaalokawać zakres ramek
 (wykonując przy tym migrację zajętych stron), ale w~jaki sposób
-mechanizm CMA wybiera zakres do wykonania alokacji?  Odpowiedzi na to
+mechanizm \acc{CMA} wybiera zakres do wykonania alokacji?  Odpowiedzi na to
 pytanie należy szukać w~funkcji \code|dma_alloc_from_contiguous|,
 której skróconą wersję przedstawia wydruk
 \ref{lst:dma-alloc-from-contiguous}.
@@ -261,7 +261,7 @@ powodu, funkcja \code|dma_alloc_from_contiguous| działa w~pętli
 w~ten sposób, że jeżeli alokacja jednego obszaru się nie powiedzie,
 w~następnej iteracji funkcja próbuje zaalokować kolejny.
 
-\section{Regiony CMA}
+\section{Regiony \acc{CMA}}
 
 Regiony rezerwowane są przy starcie systemu wewnątrz funkcji
 \code|dma_declare_contiguous| zanim jeszcze alokator stron zostanie
@@ -314,7 +314,7 @@ dopiero w~późniejszej fazie startu systemu przez funkcję
 \code|cma_init_reserved_areas|.  Dla każdego zarezerwowanego regionu
 wywołuje funkcję \code|cma_create_area|, która tworzy struktury
 \code|cma| reprezentujące pojedynczy region pamięci, kontrolowany
-przez alokator CMA.  Struktura \code|cma| posiada następujące pola:
+przez alokator \acc{CMA}.  Struktura \code|cma| posiada następujące pola:
 
 \begin{tabular}{lll}
 \code|unsigned long|   & \textbf{\code|base_pfn|} & Identyfikator początkowej strony w~regionie. \\
@@ -323,18 +323,18 @@ przez alokator CMA.  Struktura \code|cma| posiada następujące pola:
 \end{tabular}
 
 Pierwsze dwa identyfikują obszar w~pamięci fizycznej, gdzie znajduje
-się kontekst CMA, a~ostatnia jest bitmapą wykorzystywaną przez funkcję
+się kontekst \acc{CMA}, a~ostatnia jest bitmapą wykorzystywaną przez funkcję
 \code|dma_alloc_from_contiguous| zgodnie z~opisem w~poprzednim
 podrozdziale.
 
 
 \section{Podsumowanie}
 
-Z~uwagi na złożoność mechanizmu CMA, niniejszy rozdział skupiał się
+Z~uwagi na złożoność mechanizmu \acc{CMA}, niniejszy rozdział skupiał się
 jedynie na jego najistotniejszych aspektach.  Aby prześledzić
-implementację alokatora CMA w~większych szczegółach, czytelnik będzie
+implementację alokatora \acc{CMA} w~większych szczegółach, czytelnik będzie
 musiał zwrócić się do \autocite{patch:cma-24} lub przyjrzeć się plikom
 \code|drivers/base/dma-contiguous.c|, \code|mm/page_alloc.c|,
 \code|mm/compaction.c| oraz \code|mm/page_isolation.c| w~jądrze Linux.
 Niemniej wiedza zawarta w~tym rozdziale powinna wystarczyć, aby móc
-z~łatwością prześledzić kod stojący za mechanizmem CMA.
+z~łatwością prześledzić kod stojący za mechanizmem \acc{CMA}.

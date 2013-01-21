@@ -117,7 +117,7 @@
       tzw.\ systemów wbudowanych, jest zazwyczaj podłączonych
       bezpośrednio do magistrali systemowej, przez co muszą operować
       adresami fizycznymi.  Równocześnie mechanizmy bezpośredniego
-      dostępu do pamięci (\ang{Direct Memory Access}, DMA) są
+      dostępu do pamięci (\ang{Direct Memory Access}, \acc{DMA}) są
       ograniczone do transferów sekwencyjnych.  Stwarza to potrzebę,
       alokowania dużych ciągłych fizycznie obszarów pamięci do
       wykorzystania w~takich układach.
@@ -128,7 +128,7 @@
       jądra i~w~rezultacie wykorzystywany nieefektywnie.
 
       Praca opisuje stworzony przeze mnie alokator pamięci ciągłej,
-      \ang{Contiguous Memory Allocator} (CMA), który rozwiązuje ten
+      \ang{Contiguous Memory Allocator} (\acc{CMA}), który rozwiązuje ten
       problem poprzez zastosowanie mechanizmu migracji, który pozwala
       przenosić zajęte strony i~w~ten sposób tworzyć długie sekwencje
       wolnych stron.}
@@ -148,7 +148,7 @@
     {\itshape Many computer components, especially in a~so called
       embedde system, are attached directly to the system bus and thus
       need to operate on physical addresses.  At the same time, Direct
-      Memory Access (DMA) is limited to sequential transfers only.
+      Memory Access (\acc{DMA}) is limited to sequential transfers only.
       This creates a need to allocate big physically contiguous memory
       buffers to be used with such components.
 
@@ -156,7 +156,7 @@
       reserving big memory area which removed from Linux control
       cannot be used by the kernel and is used inefficiently.
 
-      This work describes Contiguous Memory Allocator (CMA) -- an
+      This work describes Contiguous Memory Allocator (\acc{CMA}) -- an
       allocator written by me which solves the problem by using
       migration, which makes it possible to move allocated pages and
       thus create a~long sequence of free pages.}

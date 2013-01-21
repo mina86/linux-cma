@@ -2,7 +2,7 @@
 
 W~skomplikowanych systemach, nawet jeżeli jakiś istniejący problem
 zostanie rozwiązany, przeważnie jest znaleźć wiele aspektów, które
-można ulepszyć.  Nie inaczej jest z~alokatorem CMA, którego dodanie
+można ulepszyć.  Nie inaczej jest z~alokatorem \acc{CMA}, którego dodanie
 w~czerwcu 2012 r.\ do Linuksa 3.5, w~żadnym stopniu nie oznacza
 zakończenia nad nim prac.
 
@@ -13,7 +13,7 @@ oprogramowania z~dość stabilnym harmonogramem wydawania nowych
 wersji\,---\,średnio 2--3 miesiące\footnote{Konkretnie, z~pośród 35
   wydań Linuksa od 2.6.13 aż do 3.7, jedynie trzy potrzebowały więcej
   niż 92 dni, konkretnie wersja 2.6.18 (94 dni), 2.6.24 (107 dni)
-  i~3.1 (94 dni).}.  W~połączeniu z~faktem, że alokator CMA budzi
+  i~3.1 (94 dni).}.  W~połączeniu z~faktem, że alokator \acc{CMA} budzi
 coraz większe zainteresowanie, powoduje to, iż gdy już znalazł się
 w~oficjalnym wydaniu, więcej osób zaczęło publikować poprawki.
 
@@ -48,7 +48,7 @@ i~możliwą większą fragmentacją.
 n
 \subsection{Strony, których nie można przenieść}
 
-Innym dość uciążliwym problemem, z~którym CMA musi sobie radzić, jest,
+Innym dość uciążliwym problemem, z~którym \acc{CMA} musi sobie radzić, jest,
 fakt iż nie zawsze istnieje możliwość migracji pewnych stron
 ruchomych.  Może to być spowodowane brakiem funkcji migrującej lub
 chwilowym wykorzystaniem strony w~kontekście wymagającym stałego
@@ -64,23 +64,23 @@ brakujące funkcje migrujące należy choć w~podstawowym stopniu zapoznać
 się z~kodem.
 
 Druga kategoria to sytuacje, gdy strona została unieruchomiona na
-czas, gdy wykonywany jest na niej transfer DMA (lub inna operacja
+czas, gdy wykonywany jest na niej transfer \acc{DMA} (lub inna operacja
 wymagająca stałego adresu fizycznego).  Przykładowo, w~sytuacji gdy
 dane są kopiowane pomiędzy pamięcią a~dyskiem twardym.  Jednym
 z~rozważanych przeze mnie rozwiązań było migrowanie strony poza region
-CMA zanim zostanie ona unieruchomiona.  Niestety unieruchamianie stron
+\acc{CMA} zanim zostanie ona unieruchomiona.  Niestety unieruchamianie stron
 jest dość częstym zjawiskiem i~kopiowanie danych za każdym razem
 prowadziłoby do znacznej degradacji wydajności systemu.
 
 
 \subsection{Ograniczenie dozwolonych rodzajów stron}
 
-Możliwą zmianą, która w~największym stopniu wpływa na mechanizm CMA
-jest ograniczenie wykorzystywania regionów CMA tylko do stron
+Możliwą zmianą, która w~największym stopniu wpływa na mechanizm \acc{CMA}
+jest ograniczenie wykorzystywania regionów \acc{CMA} tylko do stron
 przeznaczonych dla funkcji, które zawsze można migrować.
 
 Ciekawym przykładem jest tutaj zRam \autocite{patch:zram}, który jest
-mechanizmem, pozwalającym na tworzenie partycji wymiany w~pamięci RAM.
+mechanizmem, pozwalającym na tworzenie partycji wymiany w~pamięci \acc{RAM}.
 Z~pozoru może się to wydawać dziwnym rozwiązaniem, ale istotnym
 elementem jest kompresja danych.  Dzięki niej, po przeniesieniu stron
 do takiej „partycji wymiany” zajmują one mniej miejsca w~pamięci.
@@ -102,21 +102,21 @@ w~znacznym stopniu poprawić doświadczenie użytkownika, ale z~drugiej
 strony większe zużycie pamięci może spowolnić resztę środowiska.
 Dzięki zastosowaniu \code|POSIX_FADV_VOLATILE| jądro może zdecydować,
 aby usunąć dane z~pamięci podręcznej przeglądarki.  Oczywiście z~puntu
-widzenia CMA, możliwość usunięcia danych z~pamięci jest bardzo
+widzenia \acc{CMA}, możliwość usunięcia danych z~pamięci jest bardzo
 kusząca.
 
 W~przypadku takich rozwiązań problemem może być zbytnie ograniczenie
-zastosowania stron z~regionów CMA.  Jeżeli niewiele rodzajów danych
+zastosowania stron z~regionów \acc{CMA}.  Jeżeli niewiele rodzajów danych
 może korzystać z~zarezerwowanej pamięci to może to prowadzić do
-nieefektywnego jej wykorzystania, co sprowadza CMA z~powrotem do
+nieefektywnego jej wykorzystania, co sprowadza \acc{CMA} z~powrotem do
 punktu wyjścia.
 
 \subsection{Podsumowanie}
 
-Droga przed alokatorem CMA jest otwarta i~istnieje wiele aspektów nad
+Droga przed alokatorem \acc{CMA} jest otwarta i~istnieje wiele aspektów nad
 które można ulepszać, a~dzięki coraz większemu gronu osób
 zainteresowanych tym kodem, można pokusić się o~predykcję, iż
-mechanizm CMA będzie się rozwijał.  Równocześnie kolejne osoby
+mechanizm \acc{CMA} będzie się rozwijał.  Równocześnie kolejne osoby
 wykazuje zainteresowanie korzystania z~niego w~systemach znacznie
 różniących się od platform, dla których był projektowany
 (tj.\ telefonów komórkowych), takich jak zarządcy maszyn wirtualnych

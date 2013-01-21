@@ -1,6 +1,6 @@
 \chapter{Zapoznanie z~alokatorem stron}
 
-Ponieważ mechanizm CMA w~dużym stopniu integruje się z~podsystemem
+Ponieważ mechanizm \acc{CMA} w~dużym stopniu integruje się z~podsystemem
 zarządzania pamięci (\ang{memory management} lub w~skrócie mm), do
 jego zrozumienia potrzeba ogólnej wiedzy na temat tego, w~jaki sposób
 jądro śledzi i~przydziela pamięć procesom i~sterownikom.
@@ -162,10 +162,10 @@ Kolejnym istotnym elementem alokatora stron są typy migracji
 
 Dla potrzeb tej pracy traktuję typy \ang*{unmovable},
 \ang*{reclaimable} i~\ang*{reserve} jak jeden typ -- typ nieruchomy.
-To uproszczenie wynika z~faktu, iż dla mechanizmu CMA istotne jest
+To uproszczenie wynika z~faktu, iż dla mechanizmu \acc{CMA} istotne jest
 tylko rozróżnienie pomiędzy stronami ruchomymi i~nieruchomymi.
 
-Typ \ang*{cma} jest nowym typem dodanym dla potrzeb interfejsu CMA
+Typ \ang*{cma} jest nowym typem dodanym dla potrzeb interfejsu \acc{CMA}
 i~jest opisany dokładniej w~podrozdziale \ref{sec:migrate-cma}.  Typ
 \ang*{isolate} jest niejako pseudo-typem, gdyż jeżeli wolna strona ma
 taki typ, nie może ona zostać zaalokowana.  Więcej na temat sposobu
@@ -174,7 +174,7 @@ w~jaki ten typ może być wykorzystywany opisuję w~podrozdziale
 
 Strony ruchome charakteryzują się tym, że ich adres fizyczny nie jest
 istotny, w~związku z~czym mogą być przeniesione w~inne miejsce pamięci
-RAM.  Jednym z~przykładów są strony anonimowe działających procesów.
+\acc{RAM}.  Jednym z~przykładów są strony anonimowe działających procesów.
 Ponieważ program odwołują się do nich poprzez mapowania wirtualne,
 o~ile tablice translacji zostaną uaktualnione, zawartość strony może
 być przeniesiona w~dowolne inne miejsce.  Podobnie wygląda sprawa
@@ -196,7 +196,7 @@ przez przypisaną stronie funkcję migrującą (\code|migratepage|).
 
 Przykładowo dla stron anonimowych wiąże się to z~uaktualnieniem
 tablicy translacji adresów tak, aby wskazywały w~nowe miejsce, a~także
-wyczyszczeniem pamięci TLB (\ang{Translate Lookaside Buffer}), aby nie
+wyczyszczeniem pamięci \acc{TLB} (\ang{Translate Lookaside Buffer}), aby nie
 posiadała, żadnych nieaktualnych wpisów.
 
 Wołając funkcję \code|alloc_pages|, typ migracji strony jest
@@ -275,15 +275,15 @@ w~danym bloku zostaje zmieniano na ten zgodny z~wywołaniem funkcji
 \end{algorithm}
 
 \begin{algorithm}[p]
-\caption[Alokacja z~uwzględnieniem list PCP.]{Alokacja strony rzędu
-  $k$ z~typem migracji $m$ z~uwzględnieniem list PCP.}
+\caption[Alokacja z~uwzględnieniem list \acc{PCP}.]{Alokacja strony rzędu
+  $k$ z~typem migracji $m$ z~uwzględnieniem list \acc{PCP}.}
 \label{alg:buddy-pcp}
 \begin{algorithmic}[1]
 \Function{AllocPageUsePCP}{$k$, $m$}
     \If {$k \neq 0$}
         \State $p \gets$ \Call{AllocPageMigrateType}{$k$, $m$}
     \Else
-        \State $l \gets$ lista PCP dla typu migracji $m$
+        \State $l \gets$ lista \acc{PCP} dla typu migracji $m$
         \If {$l = \emptyset$}
             \State $i \gets 0$
             \Repeat
@@ -300,7 +300,7 @@ w~danym bloku zostaje zmieniano na ten zgodny z~wywołaniem funkcji
         \Else
             \State $p \gets$ pierwsza strona z $l$
             \State usuń pierwszą stronę z $l$
-            \State lista PCP dla typu migracji $m$ $\gets l$
+            \State lista \acc{PCP} dla typu migracji $m$ $\gets l$
         \EndIf
     \EndIf
     \State \Return $p$
@@ -319,22 +319,22 @@ typ migracji, a~także, że nawet jeżeli blok ma dany typ migracji,
 strony o~innym typie migracji mogą być z~niego przydzielone.
 
 
-\section{Listy PCP}\label{sec:pcp-lists}
+\section{Listy \acc{PCP}}\label{sec:pcp-lists}
 
-Ostatnim istotnym, z~punktu widzenia mechanizmu CMA, aspektem
-alokatora stron są listy PCP (\ang{per CPU pages})
+Ostatnim istotnym, z~punktu widzenia mechanizmu \acc{CMA}, aspektem
+alokatora stron są listy \acc{PCP} (\ang{per \acc{CPU} pages})
 \autocite[podrozdział 8.1.8]{bib:utlk}.  Ponieważ listy wolnych stron
 są współdzielone w~obrębie całego systemu dostęp do nich musi być
 synchronizowany pomiędzy wszystkimi procesorami.  Aby uniknąć kosztów
 związanych z~synchronizacją, każdy procesor posiada swoje prywatne
-listy PCP, na których znajdują się wolne strony rzędu 0.  Biorąc
+listy \acc{PCP}, na których znajdują się wolne strony rzędu 0.  Biorąc
 również i~ten aspekt pod uwagę, alokacja przyjmuje postać
 przedstawianą w~algorytmie \ref{alg:buddy-pcp}.
 
 \section{Inne aspekty alokatora stron}
 
 Powyższy opis pomija wiele szczegółów alokatora stron, które nie są
-istotne z~punktu widzenia mechanizmu CMA.  Niemniej dla porządku
+istotne z~punktu widzenia mechanizmu \acc{CMA}.  Niemniej dla porządku
 wymienię kilka istotniejszych detali, które wpływają w~dużej mierze na
 sposób w~jaki Linux zarządza pamięcią.
 
@@ -344,9 +344,9 @@ architektury oraz opcji kompilacji, może być pięć:
 
 \begin{description}
 \item[ZONE\_DMA] Strefa przeznaczona dla urządzeń, które nie są
-  w~stanie wykonywać transferów DMA w~całej przestrzeni adresowej.  Na
+  w~stanie wykonywać transferów \acc{DMA} w~całej przestrzeni adresowej.  Na
   przykład w~architekturze x86 strefa ta jest przeznaczona dla
-  urządzeń ISA, które operują na 24-bitowy adresach.
+  urządzeń \acc{ISA}, które operują na 24-bitowy adresach.
 \item[ZONE\_DMA32] Strefa przeznaczona dla urządzeń operujących
   na 32-bitowych adresach pracujących w~architekturze x86\_64.
 \item[ZONE\_NORMAL] Strefa z~„normalnymi” stronami, które są na
@@ -373,12 +373,12 @@ aktywowana jest tzw.\ wolna ścieżka (\ang{slow path}), która
 wykorzystuje różne mechanizmy odzyskiwania pamięci (np.\ poprzez
 zwalnianie buforów dyskowych, czy w~najgorszym przypadku zabiciu
 jednego z~działających procesów, czego dokonuje \ang*{out-of-memory
-  killer} lub OOM \ang*{killer}) \autocite[rozdział 17]{bib:utlk}.
+  killer} lub \acc{OOM} \ang*{killer}) \autocite[rozdział 17]{bib:utlk}.
 
 Istnieje jeszcze wiele innych aspektów -- takich jak chociażby
 alokacja w~kontekście atomowym (np.\ w~trakcie obsługi przerwania),
 tzw.\ wskaźniki poziamu wody (\ang{watermarks}), które kontrolują jak
 duży wolnej pamięci jest w~systemie -- które wprowadzają dodatkową
 komplikację do podsystemu zarządzania pamięcią, jednak ponieważ nie
-mają one wpływu na mechanizm CMA, wychodzą poza zakres niniejszej
+mają one wpływu na mechanizm \acc{CMA}, wychodzą poza zakres niniejszej
 pracy.
