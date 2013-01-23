@@ -125,7 +125,7 @@
       Dotychczas stosowane w~systemach bazujących na jądrze Linux
       rozwiązania wiążą się z~rezerwowaniem dużego obszaru pamięci,
       który wyjęty spod kontroli Linuksa przestaje być użyteczny dla
-      jądra i~w~rezultacie wykorzystywany nieefektywnie.
+      jądra i~w~rezultacie jest wykorzystywany nieefektywnie.
 
       Praca opisuje stworzony przeze mnie alokator pamięci ciągłej,
       \ang{Contiguous Memory Allocator} (\acc{CMA}), który rozwiązuje ten
@@ -146,20 +146,20 @@
     \vspace*{1\baselineskip}
 
     {\itshape Many computer components, especially in a~so called
-      embedde system, are attached directly to the system bus and thus
+      embedded system, are attached directly to the system bus and thus
       need to operate on physical addresses.  At the same time, Direct
       Memory Access (\acc{DMA}) is limited to sequential transfers only.
       This creates a need to allocate big physically contiguous memory
       buffers to be used with such components.
 
       Solutions previously used in Linux-based systems boil down to
-      reserving big memory area which removed from Linux control
-      cannot be used by the kernel and is used inefficiently.
+      reserving a~big memory area which exempted from Linux control
+      cannot be used efficiently by the kernel.
 
-      This work describes Contiguous Memory Allocator (\acc{CMA}) -- an
-      allocator written by me which solves the problem by using
-      migration, which makes it possible to move allocated pages and
-      thus create a~long sequence of free pages.}
+      This work describes Contiguous Memory Allocator
+      (\acc{CMA})\,---\,an allocator written by me which solves the
+      problem by using migration, which makes it possible to move
+      allocated pages and thus create a~long sequence of free pages.}
     \vspace*{1\baselineskip}
 
     \noindent{\bf Key words}: {\itshape memory allocation, Linux,

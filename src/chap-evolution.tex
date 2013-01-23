@@ -48,18 +48,20 @@ przysłania danych przez gniazdo sieciowe.  Dzięki temu aplikacja mogła
 przekazać obrazek przetworzony w~sprzętowym potoku bezpośrednio do
 serwera X11 bez konieczności kopiowania danych między buforami.
 
-Wszystkie operacje \acc{PMM} działały w~czasie \BigO{\log n} co powodowało,
-że \acc{PMM} skalował się nawet do tysięcy buforów i~wystarczał dla potrzeb
-takich aplikacji jak odtwarzacz wideo, czy program do nagrywania
-obrazu z~kamery.  Pierwotna wersja korzystała z~algorytmu „najlepszy
-pasujący”, ale był on wyodrębniony od reszty kodu, tak iż był łatwy do
-podmienienia, jeżeli zaistniałaby taka potrzeba.
+Wszystkie operacje \acc{PMM} działały w~czasie \BigO{\log n} co
+powodowało, że \acc{PMM} skalował się nawet do tysięcy buforów
+i~wystarczał dla potrzeb takich aplikacji jak odtwarzacz wideo, czy
+program do nagrywania obrazu z~kamery.  Pierwotna wersja korzystała
+z~algorytmu „najlepszy pasujący”, ale był on wyodrębniony od reszty
+kodu, tak iż był łatwy do zastąpienia innym, jeżeli zaistniałaby taka
+potrzeba.
 
-Głównymi zastrzeżeniami odnośnie \acc{PMM} było rezerwowanie na wyłączność
-pamięci, a~także brak mechanizmów, które byłyby w~stanie zapobiec
-problemom z~fragmentacją dostępnej puli.  Niemniej, pomimo, że kod nie
-trafił do oficjalnego wydania Linuksa, był on z~powodzeniem stosowany
-w~drzewie utrzymywanym przez firmę Samsung Electronics.
+Głównymi zastrzeżeniami odnośnie \acc{PMM} było rezerwowanie na
+wyłączność pamięci, a~także brak mechanizmów, które byłyby w~stanie
+zapobiec problemom z~fragmentacją dostępnej puli.  Niemniej, pomimo,
+że kod nie trafił do oficjalnego wydania Linuksa, był on z~powodzeniem
+stosowany w~wersji źródeł jądra utrzymywanym przez firmę Samsung
+Electronics.
 
 
 \section{Contiguous Memory Allocator}
@@ -135,18 +137,18 @@ wyłączność obszaru pamięci, który nie jest zupełnie używany, jeżeli
 prace nad implementacją mechanizmu migracji, który pozwalał na
 współdzielenie pamięci \acc{CMA} z~systemem.
 
-Początkowo implementacja bazował na kodzie Kamezawa'y
-Hiroyuki\,---\,który bazował na infrastrukturze umożliwiającym
-usuwanie (dodawanie) kości \acc{RAM} z~(do) komputera baz konieczności jego
-wyłączania (\ang{memory hot-plugging})\,---\,i~nie należał do bardzo
-stabilnych.  Kolejne wersje \acc{CMA} przynosiły iteracyjne poprawki
-zwiększające stabilność i~niezawodność alokacji.
+Początkowo implementacja bazowała na kodzie Kamezawa'y
+Hiroyuki\,---\,który był oparty na infrastrukturze umożliwiającym
+usuwanie (dodawanie) kości \acc{RAM} z~(do) komputera bez konieczności
+jego wyłączania (\ang{memory hot-plugging})\,---\,i~nie należał do
+bardzo stabilnych.  Kolejne wersje \acc{CMA} przynosiły iteracyjne
+poprawki zwiększające stabilność i~niezawodność alokacji.
 
-Szósta wersja  dodała również operacja przypinania zaalokowanych
+Szósta wersja dodała również operację przypinania zaalokowanych
 buforów (\ang{pinning}), którą zasugerował Johan Mossberg.  Interfejs
-ten miał umożliwiać przenoszenie buforów \acc{CMA} jeżeli żadne urządzenie
-z~nich w~danej chwili nie korzysta, co zmniejszyłoby fragmentację
-regionów \acc{CMA}.
+ten miał umożliwiać przenoszenie buforów \acc{CMA} jeżeli żadne
+urządzenie z~nich w~danej chwili nie korzysta, co zmniejszyłoby
+fragmentację regionów \acc{CMA}.
 
 Z~czasem stawało się oczywiste, iż pisząc \acc{CMA} powinienem się skupić na
 najistotniejszym aspekcie alokatora, gdyż nie uda się od razu
@@ -159,12 +161,13 @@ utrzymywanie i~rozwój.
 \subsection{Wersje 10--16: Integracja z~\acc{DMA} \acc{API}}
 
 W~trakcie współpracy ze społecznością programistów Linuksa nad
-poprzednimi wersjami \acc{CMA} okazało się oczywiste, że alokator musi si
-bardziej integrować z~\acc{DMA} \acc{API} jądra, które jest standardowym
-interfejsem, który sterowniki mogą wykorzystywać, by alokować bufory
-\acc{DMA}.  Dlatego w~wersji dziesiątej \acc{CMA}, Marek Szyprowski, opiekun \acc{DMA}
-\acc{API} dla architektury \acc{ARM}, dodał poprawki modyfikujące interfejs \acc{DMA}
-\acc{ARM}-a tak, aby korzystał z~\acc{CMA}.  Osobiście byłem w~mniejszym stopniu
+poprzednimi wersjami \acc{CMA} okazało się oczywiste, że alokator musi
+być lepiej zintegrowany z~\acc{DMA} \acc{API} jądra, będącym
+standardowym interfejsem, który sterowniki mogą wykorzystywać, by
+alokować bufory \acc{DMA}.  Dlatego w~wersji dziesiątej \acc{CMA},
+Marek Szyprowski, opiekun \acc{DMA} \acc{API} dla architektury
+\acc{ARM}, dodał poprawki modyfikujące interfejs \acc{DMA} \acc{ARM}-a
+tak, aby korzystał z~\acc{CMA}.  Osobiście byłem w~mniejszym stopniu
 zaangażowany w~te zmiany pracując raczej głębiej w~podsystemie
 zarządzania pamięcią.
 
@@ -195,12 +198,13 @@ Z~czasem mechanizm \acc{CMA} budził coraz większe zainteresowanie i~coraz
 więcej osób przeglądało jego kod, co tylko pomogło w~naprawianiu
 wszelkich problemów.
 
-W~kwietniu 2012 roku 24 wersja alokatora \acc{CMA} została wydana, która
-uzyskała pozytywne opinie od Arnda Bergmanna, Mela Gormana i Kamezawa
-Hiroyuki i~była przetestowana przez kilka innych osób.  W~tym momencie
-mechanizm \acc{CMA} był dostatecznie stabilne i~niezawodne, aby Andrew
-Morton dołączył go do swojego drzewa \code|-mm|, które następnie
-zostało połączone z~drzewem Linusa Torvaldsa.
+W~kwietniu 2012 roku 24 wersja alokatora \acc{CMA} została wydana,
+która uzyskała pozytywne opinie od Arnda Bergmanna, Mela Gormana
+i Kamezawa Hiroyuki i~była przetestowana przez kilka innych osób.
+W~tym momencie mechanizm \acc{CMA} był dostatecznie stabilny
+i~niezawodny, aby Andrew Morton dołączył go do swojego drzewa
+\code{-mm}, które następnie zostało połączone z~drzewem Linusa
+Torvaldsa. \TODO{Zrobić coś z~„drzewem”?}
 
 \section{Współpraca ze społecznością Linuksa}
 
@@ -212,18 +216,19 @@ i~znacznie mniej inwazyjne.
 Było to cenne doświadczenie, które nauczyło mnie, iż często istotne
 jest tworzenie kodu, który skutecznie rozwiązuje najistotniejszy
 problem zamiast częściowo poruszać wiele różnych zagadnień.  Śledząc
-drogę jaką przeszedł mechanizm \acc{CMA} łatwo zauważyć, jak jego zakres się
-zmniejszał w~zamian zwiększając jakość rozwiązania.
+drogę jaką przeszedł mechanizm \acc{CMA} łatwo zauważyć, jak jego
+zakres się zmniejszał, oferując w~zamian rozwiązanie coraz wyższej
+jakości.
 
-Co więcej, prace nad mechanizmami \acc{PMM} i~\acc{CMA} pokazują, że współpraca
-z~programistami Linuksa może być ciężka\,---\,czasami wręcz wątpiłem,
-czy mój kod kiedykolwiek trafi do jądra\,---\,ale przeważnie powoduje,
-że akceptowany staje się tylko kod najwyższej jakości.  Pomimo
-niezaprzeczalnych trudności, w~szczególności na początku tworzenia
-\acc{CMA}, muszę przyznać, iż praca nad dużym projektem wolnego
-oprogramowania i~ostateczna akceptacja poprawki w~jądrze, były warte
-wielu wieczorów przesiedzianych szukając szczególnie nieuchwytnych
-blędów w~kodzie.
+Co więcej, prace nad mechanizmami \acc{PMM} i~\acc{CMA} pokazują, że
+współpraca z~programistami Linuksa może być trudna\,---\,czasami wręcz
+wątpiłem, czy mój kod kiedykolwiek trafi do jądra\,---\,ale przeważnie
+powoduje, że akceptowany staje się tylko kod najwyższej jakości.
+Pomimo niezaprzeczalnych trudności, w~szczególności na początku
+tworzenia \acc{CMA}, muszę przyznać, iż praca nad dużym projektem
+wolnego oprogramowania i~ostateczna akceptacja poprawki w~jądrze, były
+warte wielu wieczorów przesiedzianych przy poszukiwaniu szczególnie
+nieuchwytnych blędów w~kodzie.
 
 \begin{table}[htbp]
 \begin{center}

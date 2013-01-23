@@ -9,11 +9,12 @@ zmieniać w~swoim kodzie.
 
 \section{Wykorzystanie w~sterownikach}\label{sec:usage-drivers}
 
-Alokator \acc{CMA} integruje się z~interfejsem programowania \acc{DMA} (\acc{DMA} \acc{API}),
-co oznacza, że jeżeli mechanizm \acc{CMA} jest włączony i~zintegrowany
-z~daną architekturą, poprawnie napisany sterownik (tzn.\ taki, który
-korzysta z~\acc{DMA} \acc{API}) będzie korzystał z~alokatora \acc{CMA} bez konieczności
-dokonywania jakichkolwiek zmian.
+Alokator \acc{CMA} jest zintegrowany z~interfejsem programowania
+\acc{DMA} (\acc{DMA} \acc{API}), co oznacza, że jeżeli mechanizm
+\acc{CMA} jest włączony i~zintegrowany z~daną architekturą, poprawnie
+napisany sterownik (tzn.\ taki, który korzysta z~\acc{DMA} \acc{API})
+będzie korzystał z~alokatora \acc{CMA} bez konieczności dokonywania
+jakichkolwiek zmian.
 
 Tak naprawdę, sterowniki nie powinny odwoływać się bezpośrednio do
 funkcji \acc{CMA}, gdyż są one zbyt nisko poziomowe i~operują na stronach,
@@ -77,8 +78,8 @@ wywołana funkcja:
 void dma_contiguous_reserve(phys_addr_t limit);
 \end{lstlisting}
 
-Wywołanie to musi nastąpić gdy podsystem alokacji pamięci czasu startu
-systemu (tj.\ \ang*{memblock}) zostanie zainicjowany, ale przed
+Wywołanie to musi nastąpić, gdy podsystem alokacji pamięci czasu
+startu systemu (tj.\ \ang*{memblock}) zostanie zainicjowany, ale przed
 aktywowaniem alokatora stron.  Dla przykładu w~architekturze \acc{ARM}
 dogodnym miejscem jest funkcja \code|arm_memblock_init|, a~x86 --
 \code|setup_arch| zaraz po aktywowaniu memblock.
@@ -126,12 +127,13 @@ więcej, specyfikacja architektury mówi, że jeżeli dana strona jest
 mapowana z~różnymi parametrami buforowania (\ang{cacheability}), efekt
 działania systemu nie jest zdefiniowany.
 
-Dlatego w~architekturze \acc{ARM}, kod integrujący \acc{CMA} z~\acc{DMA} \acc{API} zmienia
-mapowanie strony na niechachewalne na czas, gdy jest ona używana przez
-urządzenie.  Z~drugiej strony, aby przyśpieszyć translację adresów,
-jądro stara się stosować tak zwane wielkie strony.  Pozwala to
-zmapować \unit[2]{MiB} pamięci (512 normalnych stron o~rozmiarze
-\unit[4]{KiB}) poprzez jeden wpis w~tablicy mapowania.
+Dlatego w~architekturze \acc{ARM}, kod integrujący \acc{CMA}
+z~\acc{DMA} \acc{API} zmienia mapowanie stron na niebuforowane na
+czas, gdy są one używana przez urządzenie.  Z~drugiej strony, aby
+przyśpieszyć translację adresów, jądro stara się stosować tak zwane
+wielkie strony.  Pozwala to zmapować \unit[2]{MiB} pamięci (512
+normalnych stron o~rozmiarze \unit[4]{KiB}) poprzez jeden wpis
+w~tablicy mapowania.
 
 Niestety, takie mapowanie uniemożliwia zmianę parametrów mapowania
 pojedynczej strony.  Z~uwagi na to, regiony \acc{CMA} są przygotowane w~ten
@@ -172,8 +174,9 @@ struct page *dma_alloc_from_contiguous(
 	unsigned int align);
 \end{lstlisting}
 
-Pierwszym argumentem jest urządzenie na rzecz którego odbywa się
-alokacja.  Drugim jest \emph{liczba stron} do zaalokowania.
+Pierwszym argumentem jest struktura opisująca urządzenie, na rzecz
+którego odbywa się alokacja.  Drugim jest \emph{liczba stron} do
+zaalokowania.
 
 Trzeci argument to wyrównanie alokacji wyrażone jako~rzęd strony.
 Innymi słowy jeżeli bufor ma być wyrównany do $a$ bajtów, parametr

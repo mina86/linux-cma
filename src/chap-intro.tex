@@ -1,16 +1,16 @@
 \chapter{Wstęp}
 
 Tematem niniejszej pracy inżynierskiej jest sterownik dla jądra Linux,
-który pozwala w~efektywny sposób alokować duże obszary ciągłej
+które pozwala w~efektywny sposób alokować duże obszary ciągłej
 fizycznie pamięci.  Opisanym mechanizmem jest stworzony przeze mnie
 alokator ciągłej pamięci, (\ang{Contiguous Memory Allocator}, \acc{CMA}).
 
 Podstawowym zastosowaniem dużych buforów, który w~głównej mierze
-brałem podczas pisania alokatora \acc{CMA}, jest wykorzystanie ich
-w~podzespołach dostępnych w~nowoczesnych telefonach komórkowych.
-Niemniej odkąd stworzony przeze mnie kod został dołączony do Linuksa,
-różne osoby wykazały zainteresowanie, aby wykorzystywać go również
-w~innych celach.
+brałem pod uwagę podczas pisania alokatora \acc{CMA}, jest
+wykorzystanie ich przez podzespoły dostępne w~nowoczesnych telefonach
+komórkowych.  Niemniej odkąd stworzony przeze mnie kod został
+dołączony do Linuksa, różne osoby wykazały zainteresowanie, aby
+wykorzystywać go również w~innych celach.
 
 
 \section{Opis problemu}
@@ -142,9 +142,9 @@ obszarów.\footnote{W~szczególności, Linux nie jest nawet w~stanie (bez
 Ponieważ opisany powyżej problem jest znany od dawna, na przestrzeni
 lat powstało wiele rozwiązań programowych umożliwiających obejście
 trudność w~alokacji dużych obszarów.  W~tym podrozdziale opiszę je
-pokrótce oraz przedstawie ich ograniczenia.
+pokrótce oraz przedstawię ich ograniczenia.
 
-\subsection{Przypisywanie pamięci na stałe}
+\subsection{Przypisywanie pamięci na stałe}\label{sec:rezerwe-mem}
 
 Najprostszym, i~stosunkowo często stosowanym, rozwiązaniem jest
 rezerwacja przy starcie systemu pewnego regionu pamięci na potrzeby
@@ -153,17 +153,19 @@ konkretnych sterowników.
 Najłatwiejszym, acz niezbyt eleganckim sposobem jest wykorzystanie
 argumentu \code|mem| jądra.  Przekazany przez program rozruchowy
 powoduje, że Linux nie stara się automatycznie wykryć dostępnej
-w~systemie pamięci \acc{RAM} i~zamiast tego interpretuje przekazane
-informacje.  W~ten sposób, możliwe jest ograniczenie widzianej przez
-system pamięci, tak że ukryte regiony mogą być wykorzystywane przez
-konkretne sterowniki.
+w~systemie pamięci \acc{RAM} i~zamiast tego akceptuje przekazaną
+informację o~jej wielkości.  W~ten sposób, możliwe jest ograniczenie
+widzianej przez system pamięci, tak że ukryte regiony mogą być
+wykorzystywane przez konkretne sterowniki.
 
 Bardziej eleganckim rozwiązaniem jest skorzystanie z~alokatora
-memblock, który jest aktywny zanim jądro zainicjuje wszystkie swoje
-podsystemy.  Jego zadaniem jest śledzenie wolnej pamięci zanim jeszcze
-bardziej zaawansowany alokator stron będzie dostępny w~systemie.
-Wołany dostatecznie wcześnie, jest w~stanie zaalokować duże obszary
-pamięci, które potem można wykorzystać w~dowolny sposób.
+memblock, \TODO{Tu przydałby się jakiś odnośnik do rozwiązania
+  opartego na tym alokatorze.} który jest aktywny zanim jądro
+zainicjuje wszystkie swoje podsystemy.  Jego zadaniem jest śledzenie
+wolnej pamięci zanim jeszcze bardziej zaawansowany alokator stron
+będzie dostępny w~systemie.  Wołany dostatecznie wcześnie, jest
+w~stanie zaalokować duże obszary pamięci, które potem można
+wykorzystać w~dowolny sposób.
 
 Niestety, o~ile tego typu rozwiązania mogą być wystarczające, jeżeli
 podzespoły wymagają stosunkowo małych buforów lub jeżeli pamięć jest
@@ -242,13 +244,13 @@ wykorzystywania wielkich stron dla działających programów,
 o~ile to możliwe, wiele czterokibibajtowych stron mapowanych jest za
 pomocą pojedynczego wpisu w~tablicy translacji adresów.
 
-Podobnie jak w~przypadku alokatora \acc{CMA}, wymaga to alokowania dużych
-obszarów ciągłych fizycznie.  Tym co różni oba mechanizmy jest wymóg
-aby alokacja \acc{CMA} zakończyła się sukcesem i~do tego w~jak najkrótszym
-czasie, gdy tymczasem automatyczne wykorzystywanie wielkich stron jest
-procesem oportunistyczny i~jeżeli w~danej chwili w~systemie nie ma
-dostatecznie dużego wolnego obszaru, mechanizm ten nie zostanie
-wykorzystywany.
+Podobnie jak w~przypadku alokatora \acc{CMA}, wymaga to alokowania
+dużych obszarów ciągłych fizycznie.  Tym co różni oba mechanizmy jest
+wymóg aby alokacja \acc{CMA} zakończyła się sukcesem i~do tego w~jak
+najkrótszym czasie, gdy tymczasem automatyczne wykorzystywanie
+wielkich stron jest procesem oportunistycznym i~jeżeli w~danej chwili
+w~systemie nie ma dostatecznie dużego wolnego obszaru, mechanizm ten
+nie zostanie wykorzystywany.
 
 Z~uwagi na te odmienne wymagania, obie implementacje, pomimo, że
 pozornie mające podobne założenia, są w~dużym stopniu rozłączne.
