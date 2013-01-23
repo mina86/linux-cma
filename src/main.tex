@@ -106,6 +106,14 @@
     \@starttoc{loa}}%
     \if@restonecol\twocolumn\fi
 }
+\renewcommand*\listoftables{%
+    \section*{\listtablename}
+    {\secondarysize
+     \renewcommand*\addvspace[1]{}
+    \gdef\previous@toc@level{-1000}%
+    \@starttoc{lot}}%
+    \if@restonecol\twocolumn\fi
+}
 \newcommand*\l@algorithm{\mw@tocline{1}{0pt}{2.5em}}
 
 \makeatother
