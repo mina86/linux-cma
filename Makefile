@@ -12,6 +12,7 @@ build/deps: find-deps.sh $(wildcard src/*.tex)
 
 build/mnazarew_bsc.dvi: src/main.tex
 build/mnazarew_bsc.dvi: $(wildcard src/*.*)
+build/mnazarew_bsc.dvi: $(wildcard code/*.*)
 
 -include build/deps
 
