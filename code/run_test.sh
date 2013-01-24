@@ -11,9 +11,9 @@ fi
 size=$(( ${2:-900} * 1024 * 1024 ))
 
 echo "First read of ${2:-900} MiB"
-time ./seq-read rand-1g 1 $size
+time ./seq-read rand 1 $size
 
 echo "Subsequent ${1:-100} reads of ${2:-900} MiB"
-time ./seq-read rand-1g ${1:-100} $size
+time ./seq-read rand ${1:-100} $size
 
 read && /sbin/reboot
