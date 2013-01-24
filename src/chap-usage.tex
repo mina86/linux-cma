@@ -41,7 +41,7 @@ stworzył prosty sterownik, który można wykorzystać do testowania
 mechanizmu \acc{CMA}.  Dokładniejszy opis \acc{DMA} \acc{API} można znaleźć w~rozdziale
 15 \autocite{bib:ldd3}.
 
-\begin{lstlisting}[float=tbhp,caption={Alokacja bufora \acc{DMA} z~użyciem
+\begin{lstlisting}[float=tbhp,caption={Alokacja bufora pamięci z~użyciem
       \acc{DMA} \acc{API}.},label=lst:dma-alloc-example]
 static struct device *my_dev;
 
@@ -50,15 +50,15 @@ void *my_dev_alloc_buffer(unsigned long size_in_bytes, dma_addr_t *dma_addrp)
 	void *virt_addr;
 
 	virt_addr = dma_alloc_coherent(my_dev, size_in_bytes,
-				       dma_addrp, GFP_KERNEL);
+	                               dma_addrp, GFP_KERNEL);
 	if (!virt_addr)
 		dev_err(my_dev, "Unable to allocate %lu-byte DMA %buffer",
-			size_in_bytes);
+		        size_in_bytes);
 	return virt_addr;
 }
 
 void *my_dev_free_buffer(unsigned long size_in_bytes,
-			 void *virt_addr, dma_addr_t dma_addr)
+                         void *virt_addr, dma_addr_t dma_addr)
 {
 	dma_free_coherent(my_dev, size_in_bytes, virt_addr, dma_addr);
 }
@@ -74,7 +74,7 @@ po zainicjowaniu całego mechanizmu \acc{CMA} jest zwracany do systemu (tak
 obszar został zarezerwowany, w~trakcie startu systemu musi zostać
 wywołana funkcja:
 
-\begin{lstlisting}
+\begin{lstlisting}[numbers=none,columns=fullflexible]
 void dma_contiguous_reserve(phys_addr_t limit);
 \end{lstlisting}
 
@@ -143,7 +143,7 @@ ustawień cachowania danej strony.  Więcej na ten temat napisał
 
 Aby to umożliwić, dla każdego kontekstu \acc{CMA}, zawołana zostanie funkcja:
 
-\begin{lstlisting}
+\begin{lstlisting}[numbers=none,columns=fullflexible]
 void dma_contiguous_early_fixup(phys_addr_t base, unsigned long size);
 \end{lstlisting}
 

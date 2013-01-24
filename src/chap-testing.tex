@@ -28,7 +28,7 @@ obecnie uruchomionego jądra jest dostępna w~pliku
   \code{config} w~katalogu \code{/boot}.}.  Aby uruchomić program
 konfiguracji jądra, należy wykonać następującą sekwencję poleceń:
 
-\begin{lstlisting}[language=sh,numbers=none]
+\begin{lstlisting}[language=sh,numbers=none,columns=fullflexible]
 wget http://www.kernel.org/pub/linux/kernel/v3.0/linux-3.5.tar.xz
 xz -d <linux-3.5.tar.xz | tar xf
 cd linux-3.5
@@ -137,8 +137,8 @@ wykonania sekwencji poleceń z~wydruku \ref{lst:compile-cma-test}
 w~katalogu ze źródłami Linuksa.
 
 \begin{lstlisting}[float=tb,caption=Sekwencja komend dodająca
-    i~budująca moduł \code{cma_test}.,
-    label=lst:compile-cma-test,language=sh,numbers=none]
+    i~budująca moduł \code{cma_test}.,label=lst:compile-cma-test,
+    language=sh,numbers=none,columns=fullflexible]
 wget -O cma_test.patch https://patchwork.kernel.org/patch/1158071/raw/
 patch -p1 <cma_test.patch
 cd tools/cma
@@ -271,7 +271,7 @@ posłużyłem się skryptep \code|run_test.sh| przedstawiony na wydruku
 \code|rand-1g| o~rozmiarze przynajmniej jednego \unit[GiB], który
 można stworzyć za pomocą następującej sekwencji poleceń:
 
-\begin{lstlisting}[language=sh,numbers=none]
+\begin{lstlisting}[language=sh,numbers=none,columns=fullflexible]
 head -c 4096 /dev/urandom >rand
 for i in $(seq 18); do cat rand rand >tmp && mv tmp rand; done
 mv -- rand rand-1g
