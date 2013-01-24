@@ -1,6 +1,7 @@
 \chapter{Zapoznanie z~alokatorem stron}
 
-Ponieważ mechanizm \acc{CMA} w~dużym stopniu integruje się z~podsystemem
+Ponieważ mechanizm \acc{CMA} w~dużym stopniu integruje się \TODO{Co
+  z~tym integrować?} z~podsystemem
 zarządzania pamięci (\ang{memory management} lub w~skrócie mm), do
 jego zrozumienia potrzeba ogólnej wiedzy na temat tego, w~jaki sposób
 jądro śledzi i~przydziela pamięć procesom i~sterownikom.
@@ -182,10 +183,11 @@ z~buforami dyskowymi i~wieloma innymi strukturami, którymi zarządza
 jądro.
 
 Proces przenoszenia ruchomej strony nazywa się migracją
-i wykorzystywany jest między innymi przy obsłudze hot-swapu pamięci,
-a~także w~trackie procesu zagęszczania \autocite{bib:compaction,
-  bib:supporting-large-contig-regions}, którego celem jest zwiększenie
-liczby dostępnych stron o~wysokich rzędach.
+i wykorzystywany jest między innymi przy obsłudze wymiany pamięci „na
+gorąca”, a~także w~trakcie procesu zagęszczania
+\autocite{bib:compaction, bib:supporting-large-contig-regions},
+którego celem jest zwiększenie liczby dostępnych stron o~wysokich
+rzędach.
 
 Najbardziej skomplikowanym krokiem migracji\,---\,zilustrowanej
 poprzez algorytm \ref{alg:migrate}\,---\,jest uaktualnienie odwołań do
@@ -219,7 +221,7 @@ i~wykorzystane w~graficznej reprezentacji na rysunku \ref{fig:pages}.
 
 \begin{figure}[tbp]
 \begin{center}
-\includegraphics[width=0.8\textwidth]{build/pages.eps}
+\includegraphics[width=\textwidth]{build/pages.eps}
 \end{center}
 \caption[Organizacja pamięci w~Linuksie.]{Graficzna reprezentacja
   organizacji stron pamięci stosowanej w~podsystemie zarządzania
@@ -309,7 +311,7 @@ w~danym bloku zostaje zmieniano na ten zgodny z~wywołaniem funkcji
 \end{algorithm}
 
 Podczas zwalniania, gdy strona jest dodawana do listy wolnych stron
-(wideczne w~linii \ref{alg:buddy-free:add} algorytmu
+(jest to widoczne w~linii \ref{alg:buddy-free:add} algorytmu
 \ref{alg:buddy-free}) typ migracji listy, na którą strona trafia
 determinowany jest poprzez typ migracji przypisany blokowi stron do
 którego dana strona należy.
@@ -344,9 +346,10 @@ architektury oraz opcji kompilacji, może być pięć:
 
 \begin{description}
 \item[ZONE\_DMA] Strefa przeznaczona dla urządzeń, które nie są
-  w~stanie wykonywać transferów \acc{DMA} w~całej przestrzeni adresowej.  Na
-  przykład w~architekturze x86 strefa ta jest przeznaczona dla
-  urządzeń \acc{ISA}, które operują na 24-bitowy adresach.
+  w~stanie wykonywać transferów \acc{DMA} w~całej przestrzeni
+  adresowej.  Na przykład w~architekturze x86 strefa ta jest
+  przeznaczona dla urządzeń \acc{ISA}, które operują na 24-bitowych
+  adresach.
 \item[ZONE\_DMA32] Strefa przeznaczona dla urządzeń operujących
   na 32-bitowych adresach pracujących w~architekturze x86\_64.
 \item[ZONE\_NORMAL] Strefa z~„normalnymi” stronami, które są na
@@ -377,8 +380,8 @@ jednego z~działających procesów, czego dokonuje \ang*{out-of-memory
 
 Istnieje jeszcze wiele innych aspektów -- takich jak chociażby
 alokacja w~kontekście atomowym (np.\ w~trakcie obsługi przerwania),
-tzw.\ wskaźniki poziamu wody (\ang{watermarks}), które kontrolują jak
-duży wolnej pamięci jest w~systemie -- które wprowadzają dodatkową
-komplikację do podsystemu zarządzania pamięcią, jednak ponieważ nie
-mają one wpływu na mechanizm \acc{CMA}, wychodzą poza zakres niniejszej
-pracy.
+tzw.\ wskaźniki wykorzystania pamięci (\ang{watermarks}), które
+kontrolują jak duży wolnej pamięci jest w~systemie -- które
+wprowadzają dodatkową komplikację do podsystemu zarządzania pamięcią,
+jednak ponieważ nie mają one wpływu na mechanizm \acc{CMA}, wychodzą
+poza zakres niniejszej pracy.

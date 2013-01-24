@@ -6,7 +6,7 @@ wyłączność dużej ilości pamięci.  Aby to umożliwić, interfejs \acc{CMA}
 korzysta z~mechanizmu migracji stron opisanego pokrótce w~podrozdziale
 \ref{sec:migratetype}.  Ogólny zarys alokacji z~regionów \acc{CMA}
 przedstawiony jest na rysunku \ref{fig:cma-alloc-algo} a~niniejszy
-rozdział opisze ją w~większych szczegółach.
+rozdział opisze ją bardziej szczegółowo.
 
 \begin{figure}[tbp]
   \includegraphics[width=\textwidth]{build/cma-alloc-algo.eps}
@@ -26,10 +26,10 @@ strony ruchome, a~także posiada mechanizm na skutek którego bloki
 stron zmieniają swój typ, oznaczenie bloku stron jako ruchome nie
 gwarantuje, że tylko strony ruchome będą alokowane z~tego bloku stron.
 
-Z~tego powodu, aby mechanizm \acc{CMA} działał dobrze, pierwszym krokiem
-było stworzenie nowego typu migracji, nazwanym po prostu typem
-migracji \acc{CMA} (\code|MIGRATE_CMA|), który posiada dwie bardzo istotne
-cechy:
+Z~tego powodu, aby mechanizm \acc{CMA} działał dobrze, pierwszym
+krokiem było stworzenie nowego typu migracji, nazwanego po prostu
+typem migracji \acc{CMA} (\code|MIGRATE_CMA|), który posiada dwie
+bardzo istotne cechy:
 
 \begin{itemize}
 \item Z~bloków stron oznaczonych typem \acc{CMA} mogą być alokowane tylko
@@ -40,9 +40,9 @@ cechy:
 \end{itemize}
 
 O~ile pierwsza właściwość jest stosunkowo prosta do osiągnięcia,
-zagwarantowania niezmienności typu bloku stron wymagało
+zagwarantowanie niezmienności typu bloku stron wymagało
 zidentyfikowania wszystkich sytuacji, w~których blok może zmienić swój
-typ i~dodanie odpowiednich warunków zapewniających, że niepożądana
+typ i~dodania odpowiednich warunków zapewniających, że niepożądana
 zmiana nie nastąpi.
 
 \section{Alokowanie wybranego obszaru pamięci}\label{sec:alloc-contig-range}
@@ -61,14 +61,14 @@ bardziej skomplikowana, niżby to wynikało z~powyższego opisu.
 \begin{lstlisting}[float=tb,caption=Skrócony wydruk funkcji
     \code|alloc_conting_range| z Linuksa 3.5.,label=lst:alloc-contig-range]
 int alloc_contig_range(unsigned long start, unsigned long end,
-		       unsigned migratetype)
+                       unsigned migratetype)
 {
 	struct zone *zone = page_zone(pfn_to_page(start));
 	unsigned long outer_start, outer_end;
 	int ret = 0, order;
 
 	start_isolate_page_range(pfn_max_align_down(start),
-				 pfn_max_align_up(end), migratetype);
+	                         pfn_max_align_up(end), migratetype);
 
 	__alloc_contig_migrate_range(start, end);
 
@@ -78,7 +78,7 @@ int alloc_contig_range(unsigned long start, unsigned long end,
 	order = 0;
 	outer_start = start;
 	while (!PageBuddy(pfn_to_page(outer_start)))
-		outer_start &= ~0UL << ++order;
+	        outer_start &= ~0UL << ++order;
 
 	outer_end = isolate_freepages_range(outer_start, end);
 
@@ -88,7 +88,7 @@ int alloc_contig_range(unsigned long start, unsigned long end,
 		free_contig_range(end, outer_end - end);
 
 	undo_isolate_page_range(pfn_max_align_down(start),
-				pfn_max_align_up(end), migratetype);
+	                        pfn_max_align_up(end), migratetype);
 	return ret;
 }
 \end{lstlisting}
@@ -98,7 +98,7 @@ Pierwszym krokiem jest wywołanie funkcji
 stron na izolowany typ migracji i~przeniesienie wszystkich wolnych
 stron należących do tych bloków na listy tego typu.  Pomimo, że
 izolowane strony są przechowywane na liście wolnych stron, i~formalnie
-są pod kontrolą alokatora stron, nie są nigdy używano do zaspokajania
+są pod kontrolą alokatora stron, nie są nigdy używane do zaspokajania
 żądań alokacji.  W~ten sposób, funkcja \code|alloc_contig_range|
 uzyskuje pewność, że w~trakcie jej działania strony, na których
 operuje nie zostaną zaalokowane dla innych wątków jądra.
@@ -133,10 +133,10 @@ zdaje sobie sprawy z~ich istnienia.  W~procesie tym, wszystkie strony
 których rząd jest niezerowy są dzielone na strony rzędu zerowego.
 
 Należy zauważyć, że tak samo jak na początku zakresu, tak samo i~na
-końcu możemy trafić na stronę, które przekracza interesujący nas
-zakres.  Dlatego też funkcja \code|isolate_freepages_range|,
-która dokonuje alokacji, zwraca „zewnętrzny koniec” zakresu, który
-może wypadać poza żądanym końcem zakresu.
+końcu możemy trafić na stronę, która przekracza interesujący nas
+zakres.  Dlatego też funkcja \code|isolate_freepages_range|, która
+dokonuje alokacji, zwraca „zewnętrzny koniec” zakresu, który może
+wypadać poza żądanym końcem zakresu.
 
 Po tych wszystkich operacjach, funkcja zaalokowała strony z~zakresu
 $\left<\mathrm{outer\_start}, \mathrm{outer\_end}\right)$, który może
@@ -179,7 +179,7 @@ static int __alloc_contig_migrate_range(unsigned long start, unsigned long end)
 		if (list_empty(&cc.migratepages)) {
 			cc.nr_migratepages = 0;
 			pfn = isolate_migratepages_range(cc.zone, &cc,
-							 pfn, end);
+			                                 pfn, end);
 			tries = 0;
 		} else if (++tries == 5) {
 			ret = ret < 0 ? ret : -EBUSY;
@@ -187,8 +187,8 @@ static int __alloc_contig_migrate_range(unsigned long start, unsigned long end)
 		}
 
 		ret = migrate_pages(&cc.migratepages,
-				    __alloc_contig_migrate_alloc,
-				    0, false, MIGRATE_SYNC);
+		                    __alloc_contig_migrate_alloc,
+		                    0, false, MIGRATE_SYNC);
 	}
 
 	putback_lru_pages(&cc.migratepages);
@@ -211,12 +211,12 @@ innego obszaru.
 
 \section{Wybór zakresu stron}\label{sec:alloc-from-contig}
 
-Funkcja \code|alloc_contig_range| potrafi zaalokawać zakres ramek
+Funkcja \code|alloc_contig_range| potrafi zaalokować zakres stron
 (wykonując przy tym migrację zajętych stron), ale w~jaki sposób
-mechanizm \acc{CMA} wybiera zakres do wykonania alokacji?  Odpowiedzi na to
-pytanie należy szukać w~funkcji \code|dma_alloc_from_contiguous|,
-której skróconą wersję przedstawia wydruk
-\ref{lst:dma-alloc-from-contiguous}.
+mechanizm \acc{CMA} wybiera zakres do wykonania alokacji?  Odpowiedzi
+na to pytanie należy szukać w~funkcji
+\code|dma_alloc_from_contiguous|, której skróconą wersję przedstawia
+wydruk \ref{lst:dma-alloc-from-contiguous}.
 
 \begin{lstlisting}[float=tb,caption={Skrócony wydruk funkcji
     \code|dma_alloc_from_contiguous| z Linuksa
@@ -253,19 +253,19 @@ Aby nie załączać zbyt wielu szczegółów, podrozdział
 \ref{sec:alloc-contig-range} nie opisuje sytuacji, w~których alokacja
 może się nie powieść, ale takie istnieją\footnote{W~istocie, jest ich
   dość sporo i~obecnie wraz z~innymi deweloperami Linuksa staram się
-  wyszukać i~wyeliminowaniem takie sytuacji.  Linux, a~szczególnie
+  wyszukać i~wyeliminować takie sytuacje.  Linux, a~szczególnie
   zarządzanie pamięcią w~Linuksie, jest jednak skomplikowany i~czasem
   trudno prześledzić wszystkie zależności i~interakcje pomiędzy
   komponentami, które mogą prowadzić do błędu alokacji.} i~z~tego
-powodu, funkcja \code|dma_alloc_from_contiguous| działa w~pętli
-w~ten sposób, że jeżeli alokacja jednego obszaru się nie powiedzie,
+powodu, funkcja \code|dma_alloc_from_contiguous| działa w~pętli w~ten
+sposób, że jeżeli alokacja jednego obszaru się nie powiedzie,
 w~następnej iteracji funkcja próbuje zaalokować kolejny.
 
 \section{Regiony \acc{CMA}}
 
 Regiony rezerwowane są przy starcie systemu wewnątrz funkcji
 \code|dma_declare_contiguous| zanim jeszcze alokator stron zostanie
-zainicjowany, jak to opisanuje podrozdział
+zainicjowany, jak to opisuje podrozdział
 \ref{sec:integrate-with-arch}.  Zadaniem funkcji
 \code|dma_declare_contiguous| przedstawionej w~wydruku
 \ref{lst:dma-declare-contiguous} jest żądanie pamięci z~alokatora
@@ -313,7 +313,7 @@ jest zapisywana w~tablicy \code|cma_reserved|.  Jest ona odczytywana
 dopiero w~późniejszej fazie startu systemu przez funkcję
 \code|cma_init_reserved_areas|.  Dla każdego zarezerwowanego regionu
 wywołuje funkcję \code|cma_create_area|, która tworzy struktury
-\code|cma| reprezentujące pojedynczy region pamięci, kontrolowany
+\code|cma| reprezentujące pojedynczy region pamięci, kontrolowane
 przez alokator \acc{CMA}.  Struktura \code|cma| posiada następujące pola:
 
 \begin{tabular}{lll}
@@ -330,11 +330,16 @@ podrozdziale.
 
 \section{Podsumowanie}
 
-Z~uwagi na złożoność mechanizmu \acc{CMA}, niniejszy rozdział skupiał się
-jedynie na jego najistotniejszych aspektach.  Aby prześledzić
-implementację alokatora \acc{CMA} w~większych szczegółach, czytelnik będzie
-musiał zwrócić się do \autocite{patch:cma-24} lub przyjrzeć się plikom
-\code|drivers/base/dma-contiguous.c|, \code|mm/page_alloc.c|,
-\code|mm/compaction.c| oraz \code|mm/page_isolation.c| w~jądrze Linux.
-Niemniej wiedza zawarta w~tym rozdziale powinna wystarczyć, aby móc
-z~łatwością prześledzić kod stojący za mechanizmem \acc{CMA}.
+Z~uwagi na złożoność mechanizmu \acc{CMA}, niniejszy rozdział skupiał
+się jedynie na jego najistotniejszych aspektach.  Aby prześledzić
+implementację alokatora \acc{CMA} w~większych szczegółach, czytelnik
+będzie musiał zwrócić się do \autocite{patch:cma-24} lub przyjrzeć się
+plikom
+\code|drivers/base/dma-contiguous.c|\footnote{\url{http://lxr.linux.no/linux/drivers/base/dma-contiguous.c}},
+\code|mm/page_alloc.c|\footnote{\url{http://lxr.linux.no/linux/mm/page\_alloc.c}},
+\code|mm/compaction.c|\footnote{\url{http://lxr.linux.no/linux/mm/compaction.c}}
+oraz
+\code|mm/page_isolation.c|\footnote{\url{http://lxr.linux.no/linux/mm/page\_isolation.c}}
+w~jądrze Linux.  Niemniej wiedza zawarta w~tym rozdziale powinna
+wystarczyć, aby móc z~łatwością prześledzić kod stojący za mechanizmem
+\acc{CMA}.

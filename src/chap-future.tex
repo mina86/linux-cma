@@ -40,12 +40,12 @@ stron (omówionego w~podrozdziale \ref{sec:alloc-from-contig}).  Metoda
 algorytm „najlepszy pasujący” mógłby zmniejszyć fragmentacje pamięci.
 
 Co istotniejsze, funkcja \code|dma_alloc_from_contiguous| nie
-uwzględnienia, które strony wymagają migracji.  Może to powodować, iż
+uwzględnia, które strony wymagają migracji.  Może to powodować, iż
 alokator będzie dokonywał migracji, którym można było zapobiec.  Na
 chwilę obecną nie wiadomo jednak, czy zysk z~nowego algorytmu nie
 zostałby przysłonięty kosztami wynikającymi z~jego złożoności jak
 i~możliwą większą fragmentacją.
-n
+
 \subsection{Strony, których nie można przenieść}
 
 Innym dość uciążliwym problemem, z~którym \acc{CMA} musi sobie radzić, jest,
@@ -98,12 +98,12 @@ porzucić.
 
 Jednym z~flagowych zastosowań jest pamięć podręczna przeglądarek
 internetowych.  Przechowywanie danych w~pamięci przeglądarki może
-w~znacznym stopniu poprawić doświadczenie użytkownika, ale z~drugiej
-strony większe zużycie pamięci może spowolnić resztę środowiska.
-Dzięki zastosowaniu \code|POSIX_FADV_VOLATILE| jądro może zdecydować,
-aby usunąć dane z~pamięci podręcznej przeglądarki.  Oczywiście z~puntu
-widzenia \acc{CMA}, możliwość usunięcia danych z~pamięci jest bardzo
-kusząca.
+w~znacznym stopniu poprawić doświadczenie użytkownika\TODO{kalka
+  z~ang.}, ale z~drugiej strony większe zużycie pamięci może spowolnić
+resztę środowiska.  Dzięki zastosowaniu \code|POSIX_FADV_VOLATILE|
+jądro może zdecydować, aby usunąć dane z~pamięci podręcznej
+przeglądarki.  Oczywiście z~puntu widzenia \acc{CMA}, możliwość
+usunięcia danych z~pamięci jest bardzo kusząca.
 
 W~przypadku takich rozwiązań problemem może być zbytnie ograniczenie
 zastosowania stron z~regionów \acc{CMA}.  Jeżeli niewiele rodzajów danych
@@ -111,13 +111,13 @@ może korzystać z~zarezerwowanej pamięci to może to prowadzić do
 nieefektywnego jej wykorzystania, co sprowadza \acc{CMA} z~powrotem do
 punktu wyjścia.
 
-\subsection{Podsumowanie}
+\section{Podsumowanie}
 
-Droga przed alokatorem \acc{CMA} jest otwarta i~istnieje wiele aspektów nad
-które można ulepszać, a~dzięki coraz większemu gronu osób
-zainteresowanych tym kodem, można pokusić się o~predykcję, iż
+Droga przed alokatorem \acc{CMA} jest otwarta i~istnieje wiele
+aspektów, które można ulepszać, a~dzięki coraz większemu gronu osób
+zainteresowanych jego kodem, można pokusić się o~predykcję, iż
 mechanizm \acc{CMA} będzie się rozwijał.  Równocześnie kolejne osoby
-wykazuje zainteresowanie korzystania z~niego w~systemach znacznie
+wykazują zainteresowanie korzystaniem z~niego w~systemach znacznie
 różniących się od platform, dla których był projektowany
 (tj.\ telefonów komórkowych), takich jak zarządcy maszyn wirtualnych
 jaki i~oprogramowanie samolotów.
