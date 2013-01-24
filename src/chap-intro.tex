@@ -219,13 +219,17 @@ zarządzania pamięci w~Linuksie w~wyniku czego, pamięć rezerwowana przy
 starcie systemu, stała się dostępna dla reszty systemu, o~ile żaden
 sterownik jej nie używał \autocite{patch:cma-24}.  Takie rozwiązanie
 zostało ostatecznie zaakceptowane przez społeczność deweloperów
-Linuksa i~jest dostępne w~źródłach Linuksa począwszy od wersji 3.5.
-W~tej pracy opisuję alokator \acc{CMA} w~formie w~jakiej znalazł się on
-w~Linuksie 3.5\footnote{Należy zauważyć, że Linux jest szybko
-  rozwijającym się projektem wolnego oprogramowania i~ponieważ
-  mechanizm \acc{CMA} używana jest przez coraz więcej osób, jest ona ciągle
-  rozwijana i~im dalej w~przyszłość, tym bardziej opis w~niniejszej
-  pracy będzie się różnił od stanu faktycznego.}.
+Linuksa i~jest dostępne w~źródłach Linuksa począwszy od wersji
+3.5\footnote{W~styczniu 2013 Linux Foundation wydał wersję \acc{LTSI}
+  (Long Term Support Initiative) jądra bazującą na Linuksie 3.4
+  \autocite{bib:ltsi-34} zatem i~dla tej serii jądra mechanizm
+  \acc{CMA} jest dostępny.}  W~tej pracy opisuję alokator \acc{CMA}
+w~formie w~jakiej znalazł się on w~Linuksie 3.5\footnote{Należy
+  zauważyć, że Linux jest szybko rozwijającym się projektem wolnego
+  oprogramowania i~ponieważ mechanizm \acc{CMA} używana jest przez
+  coraz więcej osób, jest ona ciągle rozwijana i~im dalej
+  w~przyszłość, tym bardziej opis w~niniejszej pracy będzie się różnił
+  od stanu faktycznego.}.
 
 \section{Wielkie strony}
 
