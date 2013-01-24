@@ -5,12 +5,21 @@ Unless stated otherwise:
 
 * All TeX source files and images are distributed under the terms of
   the Creative Commons Attribution-ShareAlike 3.0 Unported (CC
-  BY-SA 3.0) license which can be found at
+  BY-SA 3.0) license.  Copy of this license is available in the
+  LICENSE.CC3 file and can also be found at
   <http://creativecommons.org/licenses/by-sa/3.0/>.
 
-* All shell scripts and programs are distributed under the terms of
-  the Apache License Version 2.0 which can be found at
-  <http://www.apache.org/licenses/LICENSE-2.0.html>.
+* All shell scripts and programs are licensed under the Apache
+  License, Version 2.0; you may not use those files except in
+  compliance with this license.  The copy of this license is available
+  in the LICENSE.AL2 file and can also be found at
+  <http://www.apache.org/licenses/LICENSE-2.0>.
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+  implied.  See the License for the specific language governing
+  permissions and limitations under the License.
 
 * The Makefile file is released as Public Domain.
 
