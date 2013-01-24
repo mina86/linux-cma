@@ -162,22 +162,23 @@ utrzymywanie i~rozwój.
 
 W~trakcie współpracy ze społecznością programistów Linuksa nad
 poprzednimi wersjami \acc{CMA} okazało się oczywiste, że alokator musi
-być lepiej zintegrowany z~\acc{DMA} \acc{API} jądra, będącym
-standardowym interfejsem, który sterowniki mogą wykorzystywać, by
-alokować bufory \acc{DMA}.  Dlatego w~wersji dziesiątej \acc{CMA},
+być w~większym stopniu zintegrowany z~\acc{DMA} \acc{API} jądra,
+będącym standardowym interfejsem, który sterowniki mogą wykorzystywać,
+by alokować bufory \acc{DMA}.  Dlatego w~wersji dziesiątej \acc{CMA},
 Marek Szyprowski, opiekun \acc{DMA} \acc{API} dla architektury
 \acc{ARM}, dodał poprawki modyfikujące interfejs \acc{DMA} \acc{ARM}-a
 tak, aby korzystał z~\acc{CMA}.  Osobiście byłem w~mniejszym stopniu
 zaangażowany w~te zmiany pracując raczej głębiej w~podsystemie
 zarządzania pamięcią.
 
-Na skutek tej integracji funkcje \acc{CMA} przeznaczone dla sterowników
-stały się niepotrzebne i~w~związku z~tym usunięte.  Począwszy od
-wersji dziesiątej, sterowniki powinny korzystać z~\acc{DMA} \acc{API} i~nie
-powinny być nawet świadome obecności \acc{CMA} w~systemie.  Pociągnęło to za
-sobą również usunięcie mechanizmu przypinania buforów, jednak nie był
-on do niczego używany i~stanowił raczej teoretyczny pomysł, więc jego
-usunięcie nie miało żadnych negatywnych skutków.
+Na skutek tych modyfikacji funkcje \acc{CMA} przeznaczone dla
+sterowników stały się niepotrzebne i~w~związku z~tym usunięte.
+Począwszy od wersji dziesiątej, sterowniki powinny korzystać
+z~\acc{DMA} \acc{API} i~nie powinny być nawet świadome obecności
+\acc{CMA} w~systemie.  Pociągnęło to za sobą również usunięcie
+mechanizmu przypinania buforów, jednak nie był on do niczego używany
+i~stanowił raczej teoretyczny pomysł, więc jego usunięcie nie miało
+żadnych negatywnych skutków.
 
 Kolejne wydania \acc{CMA} aż do wersji 16 skupiały się w~głównej mierze na
 stabilizacji interfejsu pomiędzy \acc{CMA} a~\acc{DMA} \acc{API}, a~także małych
@@ -198,13 +199,13 @@ Z~czasem mechanizm \acc{CMA} budził coraz większe zainteresowanie i~coraz
 więcej osób przeglądało jego kod, co tylko pomogło w~naprawianiu
 wszelkich problemów.
 
-W~kwietniu 2012 roku 24 wersja alokatora \acc{CMA} została wydana,
-która uzyskała pozytywne opinie od Arnda Bergmanna, Mela Gormana
-i Kamezawa Hiroyuki i~była przetestowana przez kilka innych osób.
-W~tym momencie mechanizm \acc{CMA} był dostatecznie stabilny
-i~niezawodny, aby Andrew Morton dołączył go do swojego drzewa
-\code{-mm}, które następnie zostało połączone z~drzewem Linusa
-Torvaldsa. \TODO{Zrobić coś z~„drzewem”?}
+W~kwietniu 2012 roku 24 wersja alokatora \acc{CMA} została wydana.
+Uzyskała pozytywne opinie od Arnda Bergmanna, Mela Gormana i Kamezawa
+Hiroyuki i~była przetestowana przez kilka innych osób.  W~tym momencie
+mechanizm \acc{CMA} był dostatecznie stabilny i~niezawodny, aby Andrew
+Morton dołączył go do swojego drzewa \code{-mm}, które następnie
+zostało połączone z~oficjalnymi źródłami będącymi pod opieką Linusa
+Torvaldsa.
 
 \section{Współpraca ze społecznością Linuksa}
 

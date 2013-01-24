@@ -1,20 +1,20 @@
 \chapter{Sposób użycia interfesju \acc{CMA}}\label{sec:cma-usage}
 
-Idea mechanizmu \acc{CMA} jest stosunkowo prosta, jednak urósł on do raczej
-skomplikowanego kawałka kodu, który integruje się dość głęboko
+Idea mechanizmu \acc{CMA} jest stosunkowo prosta, jednak urósł on do
+raczej skomplikowanego kawałka kodu, który integruje się dość głęboko
 z~systemem zarządzania pamięci jądra Linuksa.  Pomimo tego, jego
 użycie nie jest szczególnie trudne, a~w~wielu przypadkach autor
-sterownika, który chciałby korzystać z~alokatora \acc{CMA} nie musi niczego
-zmieniać w~swoim kodzie.
+sterownika, który chciałby korzystać z~alokatora \acc{CMA} nie musi
+niczego zmieniać w~swoim kodzie.
 
 \section{Wykorzystanie w~sterownikach}\label{sec:usage-drivers}
 
-Alokator \acc{CMA} jest zintegrowany z~interfejsem programowania
-\acc{DMA} (\acc{DMA} \acc{API}), co oznacza, że jeżeli mechanizm
-\acc{CMA} jest włączony i~zintegrowany z~daną architekturą, poprawnie
-napisany sterownik (tzn.\ taki, który korzysta z~\acc{DMA} \acc{API})
-będzie korzystał z~alokatora \acc{CMA} bez konieczności dokonywania
-jakichkolwiek zmian.
+Alokator \acc{CMA} jest zgodny z~interfejsem programowania \acc{DMA}
+(\acc{DMA} \acc{API}), dzięki czemu jeśli mechanizm \acc{CMA} jest
+włączony na danej architekturze, poprawnie napisany sterownik
+(tzn.\ taki, który korzysta z~\acc{DMA} \acc{API}) będzie korzystał
+z~alokatora \acc{CMA} bez konieczności dokonywania jakichkolwiek
+zmian.
 
 Tak naprawdę, sterowniki nie powinny odwoływać się bezpośrednio do
 funkcji \acc{CMA}, gdyż są one zbyt nisko poziomowe i~operują na stronach,
@@ -127,13 +127,12 @@ więcej, specyfikacja architektury mówi, że jeżeli dana strona jest
 mapowana z~różnymi parametrami buforowania (\ang{cacheability}), efekt
 działania systemu nie jest zdefiniowany.
 
-Dlatego w~architekturze \acc{ARM}, kod integrujący \acc{CMA}
-z~\acc{DMA} \acc{API} zmienia mapowanie stron na niebuforowane na
-czas, gdy są one używana przez urządzenie.  Z~drugiej strony, aby
-przyśpieszyć translację adresów, jądro stara się stosować tak zwane
-wielkie strony.  Pozwala to zmapować \unit[2]{MiB} pamięci (512
-normalnych stron o~rozmiarze \unit[4]{KiB}) poprzez jeden wpis
-w~tablicy mapowania.
+Dlatego w~architekturze \acc{ARM}, kod łączący \acc{CMA} z~\acc{DMA}
+\acc{API} zmienia mapowanie stron na niebuforowane na czas, gdy są one
+używana przez urządzenie.  Z~drugiej strony, aby przyśpieszyć
+translację adresów, jądro stara się stosować tak zwane wielkie strony.
+Pozwala to zmapować \unit[2]{MiB} pamięci (512 normalnych stron
+o~rozmiarze \unit[4]{KiB}) poprzez jeden wpis w~tablicy mapowania.
 
 Niestety, takie mapowanie uniemożliwia zmianę parametrów mapowania
 pojedynczej strony.  Z~uwagi na to, regiony \acc{CMA} są przygotowane w~ten
@@ -212,10 +211,11 @@ wykorzystana, aby rozróżnić, czy dany bufor był buforem \acc{CMA}, czy też
 nie.
 
 Wydruk \ref{lst:dma-integration} pokazuje fragment kodu, który
-integruje mechanizm \acc{CMA} z~podsystemem \acc{DMA} architektury x86.  Warto
-zwrócić uwagę, jak w~funkcji \code|dma_generic_free_coherent| wartość
-zwracana przez \code|dma_release_from_contiguous| jest wykorzystana,
-aby podjąć decyzję, czy należy zwolnić bufor korzystając z~funkcji
+integruje mechanizm \acc{CMA} z~podsystemem \acc{DMA} architektury
+x86.  Warto zwrócić uwagę, jak w~funkcji
+\code|dma_generic_free_coherent| wartość zwracana przez
+\code|dma_release_from_contiguous| jest wykorzystana, aby podjąć
+decyzję, czy należy zwolnić bufor korzystając z~funkcji
 \code|free_pages|.
 
 \begin{lstlisting}[float=bht,caption={Integracja alokatora \acc{CMA} z~podsystemem \acc{DMA}

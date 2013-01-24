@@ -98,12 +98,12 @@ porzucić.
 
 Jednym z~flagowych zastosowań jest pamięć podręczna przeglądarek
 internetowych.  Przechowywanie danych w~pamięci przeglądarki może
-w~znacznym stopniu poprawić doświadczenie użytkownika\TODO{kalka
-  z~ang.}, ale z~drugiej strony większe zużycie pamięci może spowolnić
-resztę środowiska.  Dzięki zastosowaniu \code|POSIX_FADV_VOLATILE|
-jądro może zdecydować, aby usunąć dane z~pamięci podręcznej
-przeglądarki.  Oczywiście z~puntu widzenia \acc{CMA}, możliwość
-usunięcia danych z~pamięci jest bardzo kusząca.
+w~znacznym stopniu poprawić doznania użytkownika, ale z~drugiej strony
+większe zużycie pamięci może spowolnić resztę środowiska.  Dzięki
+zastosowaniu \code|POSIX_FADV_VOLATILE| jądro może zdecydować, aby
+usunąć dane z~pamięci podręcznej przeglądarki.  Oczywiście z~puntu
+widzenia \acc{CMA}, możliwość usunięcia danych z~pamięci jest bardzo
+kusząca.
 
 W~przypadku takich rozwiązań problemem może być zbytnie ograniczenie
 zastosowania stron z~regionów \acc{CMA}.  Jeżeli niewiele rodzajów danych

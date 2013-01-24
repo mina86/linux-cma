@@ -159,13 +159,13 @@ widzianej przez system pamięci, tak że ukryte regiony mogą być
 wykorzystywane przez konkretne sterowniki.
 
 Bardziej eleganckim rozwiązaniem jest skorzystanie z~alokatora
-memblock, \TODO{Tu przydałby się jakiś odnośnik do rozwiązania
-  opartego na tym alokatorze.} który jest aktywny zanim jądro
-zainicjuje wszystkie swoje podsystemy.  Jego zadaniem jest śledzenie
-wolnej pamięci zanim jeszcze bardziej zaawansowany alokator stron
-będzie dostępny w~systemie.  Wołany dostatecznie wcześnie, jest
-w~stanie zaalokować duże obszary pamięci, które potem można
-wykorzystać w~dowolny sposób.
+memblock, który jest aktywny zanim jądro zainicjuje wszystkie swoje
+podsystemy.  Jego zadaniem jest śledzenie wolnej pamięci zanim jeszcze
+bardziej zaawansowany alokator stron będzie dostępny w~systemie.
+Wołany dostatecznie wcześnie, jest w~stanie zaalokować duże obszary
+pamięci, które potem można wykorzystać w~dowolny sposób.  W~głównej
+mierze jest wykorzystywany przez samo jądro, które przy jego pomocy
+alokuje bufory potrzebne do działania innym podsystemom.
 
 Niestety, o~ile tego typu rozwiązania mogą być wystarczające, jeżeli
 podzespoły wymagają stosunkowo małych buforów lub jeżeli pamięć jest
@@ -214,7 +214,7 @@ zarezerwowanych obszarów do różnych urządzeń, a~także umożliwianiu
 sterownikom alokowanie różnych buforów w~różnych obszarach pamięci, co
 opisałem w~podrozdziale \ref{sec:evo-cma}.
 
-Z~czasem, coraz bardziej integrowałem mechanizm \acc{CMA} z~kodem
+Z~czasem, coraz bardziej łączyłem mechanizm \acc{CMA} z~kodem
 zarządzania pamięci w~Linuksie w~wyniku czego, pamięć rezerwowana przy
 starcie systemu, stała się dostępna dla reszty systemu, o~ile żaden
 sterownik jej nie używał \autocite{patch:cma-24}.  Takie rozwiązanie
