@@ -382,3 +382,21 @@ zaalokuje \unit[384]{MiB}.  Jak wynika z~wiersza (5) tablicy
 w~stosunku do sytuacji, gdy \unit[512]{MiB} jest zarezerwowanych przez
 \acc{CMA}, niemniej „brakujące” \unit[12]{MiB} znacznie spowalnia
 program \code|seq_read| z~tych samych powodów co opisane powyżej.
+
+
+\section{Podsumowanie}
+
+Testy szybkości odczytu pliku pokazują także w~jak dużym stopniu brak
+wolnej pamięci może spowolnić pracę systemu.  Co prawda odczyt w~kółko
+pojedynczego pliku nie jest realnym scenariuszem działania prawdziwej
+aplikacji, niemniej aplikacje bazodanowe, czy programy do obróbki
+multimediów często charakteryzują się losowym dostępem do dysku, który
+przy małej ilości wolnej pamięci będzie odnosi na system podobny
+efekt jak aplikacja \code|seq_read|.
+
+Pokazuje to jak istotne jest, że alokator \acc{CMA} spełnia swoje
+założenia i~pozwala sterownikom alokawać dużo obszory ciągłej
+fizicznie pamięci, a~jednocześnie udostępnia zarezerwowaną pamięć
+jądru podczas, gdy nie jest ona wykorzystywana przez żadne urządzenie.
+To właśnie ta cecha mechanizmu \acc{CMA} odróżnia go od innych
+rozwiązań problemu alokacji ciągłych fizycznie obszarów pamięci.
