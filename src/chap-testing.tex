@@ -23,7 +23,7 @@ które funkcje i~sterowniki mają być dostępne.  Aby ułatwić ten proces,
 zamiast ustawiać wszystkie opcje od początku, warto skorzystać z~już
 istniejącego pliku konfiguracyjnego.  Zazwyczaj jest on dostępny
 w~skompresowanej formie jako plik
-\code{/proc/config.gz}\footnote{W~dystsrybucjach innych niż Slackware
+\code{/proc/config.gz}\footnote{W~dystrybucjach innych niż Slackware
   plik ten może byc nieobecny.  W~takim przypadku należy sprawdzić
   obecność pliku \code{/proc/config}.  Jeżeli również i~ten plik nie
   jest dostępny, warto poszukać plików których nazwa rozpoczyna się od
@@ -239,7 +239,7 @@ programowi \code{malloc} zanim system wymusił jego zakończenie.
 \end{table}
 
 
-\section{Testowanie szybkość działania systemu}
+\section{Testowanie szybkości działania systemu}
 
 Aby zmierzyć jak zmniejszona ilość dostępnej pamięci może wpływać na
 szybkość systemu posłużę się programem \code{seq_read} zaprezentowanym
@@ -306,7 +306,7 @@ zapobiec, wystarczy zamiast Enter wcisnąć Ctrl+D).
   label=lst:run-test,language=sh]{code/run_test.sh}
 
 Tablica \subref*{tab:seq-read-times-first} przedstawia czas jaki był
-potrzebny do jednorazowego odczytanie zadanej liczby mebibajtów pliku.
+potrzebny do jednorazowego odczytania zadanej liczby mebibajtów pliku.
 Zgodnie z~przewidywaniami, ponieważ zaraz po uruchomieniu komputera
 system nie miał szansy buforować pliku, liczba dostępnej pamięci nie
 wpływa na czas działania programu\,---\,za każdym razem jądro musi
@@ -393,13 +393,13 @@ Testy szybkości odczytu pliku pokazują w~jak dużym stopniu brak wolnej
 pamięci może spowolnić pracę systemu.  Co prawda odczyt w~kółko
 pojedynczego pliku nie jest realnym scenariuszem działania prawdziwego
 programu, niemniej aplikacje bazodanowe, czy oprogramowanie do obróbki
-multimediów często charakteryzują się losowym dostępem do dysku, który
-przy małej ilości wolnej pamięci będzie odnosił na system podobny
-efekt jak aplikacja \code|seq_read|.
+multimediów często charakteryzują się losowym dostępem do dysku.  Przy
+niewielkiej ilości wolnej pamięci, tego typu programy będą cierpiały
+na te same problemy co aplikacja \code|seq_read|.
 
 Pokazuje to jak istotne jest, że alokator \acc{CMA} spełnia swoje
-założenia i~pozwala sterownikom alokawać duże obszory ciągłej
-fizicznie pamięci, a~jednocześnie udostępnia zarezerwowaną pamięć
+założenia i~pozwala sterownikom alokować duże obszary ciągłej
+fizycznie pamięci, a~jednocześnie udostępnia zarezerwowaną pamięć
 jądru podczas, gdy nie jest ona wykorzystywana przez żadne urządzenie.
 To właśnie ta cecha mechanizmu \acc{CMA} odróżnia go od innych
 rozwiązań problemu alokacji ciągłych fizycznie obszarów pamięci.
