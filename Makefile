@@ -43,7 +43,8 @@ build/%.eps: img/%.dia
 
 RELEASE_TYPE	:= referat
 RELEASE_BASE	:= Nazarewicz_Michal-CMA-$(RELEASE_TYPE)
-release: $(RELEASE_BASE).pdf $(RELEASE_BASE).zip $(RELEASE_BASE).tar.bz2 $(RELEASE_BASE).tar.gz
+release: $(RELEASE_BASE).pdf $(RELEASE_BASE).zip $(RELEASE_BASE).tar.bz2
+release: $(RELEASE_BASE).tar.gz $(RELEASE_BASE).tar.xz
 
 $(RELEASE_BASE).pdf: cma-sdi-paper.pdf
 	cp -- $^ $@
@@ -60,6 +61,9 @@ $(RELEASE_BASE).tar.gz: $(RELEASE_BASE).tar
 
 $(RELEASE_BASE).tar.bz2: $(RELEASE_BASE).tar
 	bzip2 -9 <$^ >$@
+
+$(RELEASE_BASE).tar.xz: $(RELEASE_BASE).tar
+	xz -9 <$^ >$@
 
 .PHONY: $(RELEASE_BASE).zip $(RELEASE_BASE).tar
 
