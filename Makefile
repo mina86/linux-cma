@@ -47,6 +47,29 @@ build/%.eps: img/%.png
 	exec convert $^ $@
 
 
+RELEASE_TYPE	:= praca
+RELEASE_BASE	:= Nazarewicz_Michal-CMA-$(RELEASE_TYPE)
+release: $(RELEASE_BASE).pdf $(RELEASE_BASE).zip $(RELEASE_BASE).tar.bz2 $(RELEASE_BASE).tar.gz
+
+$(RELEASE_BASE).pdf: cma-bsc.pdf
+	cp -- $^ $@
+
+$(RELEASE_BASE).zip:
+	git archive --format=zip --prefix=$(basename $@)/ -o $@ HEAD
+
+.INTERMEDIATE: $(RELEASE_BASE).tar
+$(RELEASE_BASE).tar:
+	git archive --format=zip --prefix=$(basename $@)/ -o $@ HEAD
+
+$(RELEASE_BASE).tar.gz: $(RELEASE_BASE).tar
+	gzip -9 <$^ >$@
+
+$(RELEASE_BASE).tar.bz2: $(RELEASE_BASE).tar
+	bzip2 -9 <$^ >$@
+
+.PHONY: $(RELEASE_BASE).zip $(RELEASE_BASE).tar
+
+
 clean:
 	exec rm -fr -- build
 
@@ -54,7 +77,7 @@ clean-tex:
 	exec rm -r -- build/main.*
 
 distclean: clean
-	exec rm -f -- cma-bsc.pdf
+	exec rm -f -- cma-bsc.pdf Nazarewicz_Michal-CMA-$(RELEASE_TYPE)*
 
 
 .PHONY: clean clean-tex distclean
