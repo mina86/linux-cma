@@ -3,16 +3,16 @@ LATEX := latex -halt-on-error -file-line-error -output-directory=build
 TEXINPUTS := .:$(HOME)/bsc/:
 export TEXINPUTS
 
-all: mnazarew_bsc.pdf
+all: cma-bsc.pdf
 
 
 build/deps: find-deps.sh $(wildcard src/*.tex)
 	@exec mkdir -p build
-	@DEPS_TARGET=build/mnazarew_bsc.dvi exec sh $^ >$@
+	@DEPS_TARGET=build/cma-bsc.dvi exec sh $^ >$@
 
-build/mnazarew_bsc.dvi: src/main.tex
-build/mnazarew_bsc.dvi: $(wildcard src/*.*)
-build/mnazarew_bsc.dvi: $(wildcard code/*.*)
+build/cma-bsc.dvi: src/main.tex
+build/cma-bsc.dvi: $(wildcard src/*.*)
+build/cma-bsc.dvi: $(wildcard code/*.*)
 
 -include build/deps
 
@@ -21,7 +21,7 @@ build/mnazarew_bsc.dvi: $(wildcard code/*.*)
 	exec dvipdf $< $@
 
 
-build/mnazarew_bsc.dvi:
+build/cma-bsc.dvi:
 	@exec mkdir -p build
 	exec $(LATEX) $<
 	( cd build; exec bibtex main )
@@ -54,7 +54,7 @@ clean-tex:
 	exec rm -r -- build/main.*
 
 distclean: clean
-	exec rm -f -- mnazarew_bsc.pdf
+	exec rm -f -- cma-bsc.pdf
 
 
 .PHONY: clean clean-tex distclean
