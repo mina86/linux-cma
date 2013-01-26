@@ -53,7 +53,7 @@ $(RELEASE_BASE).zip:
 
 .INTERMEDIATE: $(RELEASE_BASE).tar
 $(RELEASE_BASE).tar:
-	git archive --format=zip --prefix=$(basename $@)/ -o $@ HEAD
+	git archive --format=tar --prefix=$(basename $@)/ -o $@ HEAD
 
 $(RELEASE_BASE).tar.gz: $(RELEASE_BASE).tar
 	gzip -9 <$^ >$@
