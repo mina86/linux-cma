@@ -1,0 +1,40 @@
+From d76ccc4264688312a86876f70eaf8f5a1c5fd36c Mon Sep 17 00:00:00 2001
+Message-Id: <d76ccc4264688312a86876f70eaf8f5a1c5fd36c.1359066558.git.mina86@mina86.com>
+From: Michal Nazarewicz <mina86@mina86.com>
+Date: Thu, 24 Jan 2013 23:29:03 +0100
+Subject: [PATCH] mm: cma: fix cma_test module to work on x86
+
+
+Signed-off-by: Michal Nazarewicz <mina86@mina86.com>
+---
+ tools/cma/cma_test.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/tools/cma/cma_test.c b/tools/cma/cma_test.c
+index 7eb96db..ad8ef11 100644
+--- a/tools/cma/cma_test.c
++++ b/tools/cma/cma_test.c
+@@ -14,6 +14,12 @@
+ #include <linux/slab.h>
+ #include <linux/spinlock.h>
+ 
++#ifndef SZ_1K
++#  define SZ_1K 1024
++#endif
++
++static u64 cma_test_dma_mask = ~(u64)0;
++
+ struct cma_allocation {
+ 	struct list_head list;
+ 	size_t size;
+@@ -121,6 +127,7 @@ static int __init cma_test_init(void)
+ 		return ret;
+ 	}
+ 	cma_dev = cma_test_misc.this_device;
++	cma_dev->dma_mask = &cma_test_dma_mask;
+ 	cma_dev->coherent_dma_mask = ~0;
+ 	_dev_info(cma_dev, "registered.\n");
+ 
+-- 
+1.8.1
+

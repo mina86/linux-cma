@@ -74,6 +74,53 @@ $(RELEASE_BASE).tar.xz: $(RELEASE_BASE).tar
 .PHONY: $(RELEASE_BASE).zip $(RELEASE_BASE).tar
 
 
+.DELETE_ON_ERROR:
+
+iso-full: iso-source img/seq-read-times.ods code/seq_read.c code/Makefile code/run_test.sh code/malloc.c
+	mkdir -p $@
+	cp -Rl -- $</* $@/
+	mv -- $@/README.full.txt $@/README.txt
+	rm -- $@/README.text.txt
+	ln -f -- img/seq-read-times.ods code/seq_read.c code/Makefile code/run_test.sh code/malloc.c $@/
+
+iso-text: iso-source img/seq-read-times.ods
+	mkdir -p $@
+	cp -- $</README.text.txt $@/README.txt
+	ln -f -- img/seq-read-times.ods $@/
+
+iso-full: iso-full/Nazarewicz_Michal-CMA.pdf
+iso-full: iso-full/Nazarewicz_Michal-CMA.tar.bz2
+iso-full: iso-full/Nazarewicz_Michal-CMA.tar.gz
+iso-full: iso-full/Nazarewicz_Michal-CMA.tar.xz
+iso-full: iso-full/Nazarewicz_Michal-CMA.zip
+iso-text: iso-text/Nazarewicz_Michal-CMA.pdf
+
+iso-full/Nazarewicz_Michal-CMA.%: $(RELEASE_BASE).%
+	@mkdir -p $(@D)
+	ln -f -- $< $@
+
+iso-text/Nazarewicz_Michal-CMA.%: $(RELEASE_BASE).%
+	@mkdir -p $(@D)
+	ln -f -- $< $@
+
+iso-full: iso-full/linux-3.5.tar.xz iso-full/linux-3.5.tar.bz2 iso-full/linux-3.5.tar.gz
+
+iso-full/linux-3.5.tar.xz:
+	@mkdir -p $(@D)
+	wget -O $@ http://kernel.org/pub/linux/kernel/v3.0/linux-3.5.tar.xz
+
+iso-full/linux-3.5.tar.bz2: iso-full/linux-3.5.tar.xz
+	bzip2 -9 <$< >$@
+
+iso-full/linux-3.5.tar.gz: iso-full/linux-3.5.tar.xz
+	gzip -9 <$< >$@
+
+isos: full.iso text.iso
+
+%.iso: iso-%
+	mkisofs -o $@ -J -l -r $<
+
+
 clean:
 	exec rm -fr -- build
 
