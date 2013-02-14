@@ -122,13 +122,13 @@ isos: full.iso text.iso
 
 
 clean:
-	exec rm -fr -- build
+	exec rm -fr -- build iso-full iso-text
 
 clean-tex:
 	exec rm -r -- build/main.*
 
 distclean: clean
-	exec rm -f -- cma-bsc.pdf Nazarewicz_Michal-CMA-$(RELEASE_TYPE)*
+	exec rm -f -- cma-bsc.pdf $(RELEASE_BASE)* iso-full.iso iso-text.iso
 
 
 .PHONY: clean clean-tex distclean
