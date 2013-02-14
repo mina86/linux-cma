@@ -71,7 +71,7 @@ clean-tex:
 	exec rm -r -- build/main.*
 
 distclean: clean
-	exec rm -f -- cma-sdi.pdf
+	exec rm -f -- cma-sdi.pdf $(RELEASE_BASE)*
 
 
 .PHONY: clean clean-tex distclean
