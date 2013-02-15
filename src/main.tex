@@ -70,18 +70,11 @@
 
 \setbeamertemplate{footline}{}
 
-\newcommand\Section[1]{%
-\section{#1}%
-\begin{frame}%
-\frametitle{Zarys prezentacji}
-\tableofcontents[currentsection]%,sections=\thesection]%
-\end{frame}}
-
 
 \newcommand\theauthor{Michał Nazarewicz}
 \newcommand\theemail{mina86@mina86.com}
 \title{Continuous Memory Allocator}
-\subtitle{Alokacja dużych obszarów ciągłej fizycznie pamięci}
+\subtitle{Alokacja ciągłych fizycznie obszarów pamięci w~systemie Linux}
 \author[\theauthor]{%
   \texorpdfstring{\theauthor\vskip 8pt%
     \scriptsize\href{mailto:\theemail}{\theemail}}{%
@@ -104,38 +97,23 @@
   \tableofcontents
 \end{frame}
 
-\Section{Wstęp}
-\input{src/part-the-problem}
-\input{src/part-solutions}
-\Section{Pamięć w Linuksie}
-\input{src/part-alloc-overview}
-\input{src/part-page-alloc}
-\Section{Implementacja}
-\input{src/part-implementation}
-\input{src/part-future}
+\input{src/content}
 
 \appendix
 
-\section*{Pytania?}
+\section*{Dziękuję!}
 \begin{frame}
+  \vskip 7em
   \begin{center}
-    \vskip 2em
     {\Huge Dziękuję!}
-    \vskip 2em
-    \includegraphics[width=0.3\textwidth]{build/interrogation.eps}
   \end{center}
 
-  \vskip 2em
+  \vskip 7em
 
   \begin{itemize}
   \item \theauthor
-  \item \href{mailto:\theemail}{\theemail}, \href{mailto:mpn@google.com}{mpn@google.com}
-  \item \url{http://mina86.com/cma/}
+  \item \href{mailto:\theemail}{\theemail}
   \end{itemize}
-
-  \vskip 1em
-  \hfill \href{http://creativecommons.org/licenses/by-sa/3.0}{%
-    \includegraphics[height=0.8em,clip=true]{build/cc-by-sa.eps}}
 \end{frame}
 
 \end{document}

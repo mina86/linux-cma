@@ -1,15 +1,15 @@
 LATEX	:= latex -halt-on-error -file-line-error -output-directory=build
 FAST	?= false
 
-all: cma-sdi.pdf
+all: cma-bsc-slides.pdf
 
 
 build/deps: find-deps.sh $(wildcard src/*.tex)
 	@exec mkdir -p build
-	@DEPS_TARGET=build/cma-sdi.dvi exec sh $^ >$@
+	@DEPS_TARGET=build/cma-bsc-slides.dvi exec sh $^ >$@
 
-build/cma-sdi.dvi: src/main.tex
-build/cma-sdi.dvi: $(wildcard src/*.tex)
+build/cma-bsc-slides.dvi: src/main.tex
+build/cma-bsc-slides.dvi: $(wildcard src/*.tex)
 
 -include build/deps
 
@@ -17,7 +17,7 @@ build/cma-sdi.dvi: $(wildcard src/*.tex)
 %.pdf: build/%.dvi
 	exec dvipdf $< $@
 
-build/cma-sdi.dvi:
+build/cma-bsc-slides.dvi:
 	@exec mkdir -p build
 	exec $(LATEX) $<
 	$FAST || exec $(LATEX) $<
@@ -37,12 +37,12 @@ build/%.eps: img/%.eps
 	exec ln -sf -- ../$< $@
 
 
-RELEASE_TYPE	:= prezentacja
+RELEASE_TYPE	:= obrona
 RELEASE_BASE	:= Nazarewicz_Michal-CMA-$(RELEASE_TYPE)
 release: $(RELEASE_BASE).pdf $(RELEASE_BASE).zip $(RELEASE_BASE).tar.bz2
 release: $(RELEASE_BASE).tar.gz $(RELEASE_BASE).tar.xz
 
-$(RELEASE_BASE).pdf: cma-sdi.pdf
+$(RELEASE_BASE).pdf: cma-bsc-slides.pdf
 	cp -- $^ $@
 
 $(RELEASE_BASE).zip:
@@ -71,7 +71,7 @@ clean-tex:
 	exec rm -r -- build/main.*
 
 distclean: clean
-	exec rm -f -- cma-sdi.pdf
+	exec rm -f -- cma-bsc-slides.pdf $(RELEASE_BASE)*
 
 
 .PHONY: clean clean-tex distclean
