@@ -1,7 +1,5 @@
 
-Unless stated otherwise:
-
-* All content is copyright (c) 2012 by Michał Nazarewicz.
+* All content is copyright (c) 2012-2013 by Michał Nazarewicz.
 
 * All TeX source files and images are distributed under the terms of
   the Creative Commons Attribution-ShareAlike 3.0 Unported (CC
@@ -22,16 +20,3 @@ Unless stated otherwise:
   permissions and limitations under the License.
 
 * The Makefile file is released as Public Domain.
-
-Exceptions from the above terms:
-
-* The CC-BY-SA license button (<img/cc-by-sa.eps>) is taken from
-  Creative Commons website
-  (<http://creativecommons.org/about/downloads>) and is used in
-  accordance to the policy described at
-  <http://creativecommons.org/policies#license>.
-
-* The interrogation image (<img/interrogation.svg>) is taken from the
-  Open Clip Art Library
-  (<http://openclipart.org/detail/31525/interrogation-by-cybergedeon>)
-  and is distributed as Public Domain.
